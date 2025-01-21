@@ -7,18 +7,20 @@ export type CarBodyObjectOptions = PhysicObjectOptions & {
 }
 
 
-export default class CarBodyObject extends PhysicObject {
-    private _axles: { front: number, rear: number };
+export default class CarObject extends PhysicObject {
     private readonly _wheelBase: number;
     private readonly _wheelSize: number;
+    private _axles: { front: number, rear: number };
+    private _angularVelocity: number;
+    private _speed: number;
 
     constructor(config: CarBodyObjectOptions) {
         super(
             {
                 size: config.size || vec2D(0, 0),
-                angle: config.angle || 0,
                 movable: config.movable || true ,
                 position: config.position || vec2D(0, 0),
+                collider: config.collider
             }
         );
 
@@ -28,12 +30,20 @@ export default class CarBodyObject extends PhysicObject {
         this._wheelBase = this._axles.rear - this._axles.front;
     }
 
-
     get wheelBase(): number {
         return this._wheelBase;
     }
 
     get wheelSize(): number {
         return this._wheelSize;
+    }
+
+    speedUp(delta: number): void {
+        this._speed += delta;
+    }
+
+    turn(delta: number): void {
+        this._angularVelocity *= 0.2;
+        this.rotation += delta;
     }
 }

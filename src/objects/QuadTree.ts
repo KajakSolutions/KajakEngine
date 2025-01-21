@@ -1,75 +1,112 @@
+import {BoundingBox} from "../types/math";
 import PhysicObject from "./PhysicObject.ts";
 
-interface QuadTreeNode {
-    objects: PhysicObject[];
-    bounds: { x: number; y: number; width: number; height: number };
-    children: QuadTreeNode[];
-}
+export class QuadTree {
+    private readonly boundary: BoundingBox;
+    private readonly capacity: number;
+    private objects: PhysicObject[] = [];
+    private divided: boolean = false;
+    private northwest?: QuadTree;
+    private northeast?: QuadTree;
+    private southwest?: QuadTree;
+    private southeast?: QuadTree;
 
-export default class QuadTree {
-    private root: QuadTreeNode;
-    private capacity: number;
-
-    constructor(bounds: { x: number; y: number; width: number; height: number }, capacity: number) {
-        this.root = { objects: [], bounds, children: [] };
+    constructor(boundary: BoundingBox, capacity: number = 4) {
+        this.boundary = boundary;
         this.capacity = capacity;
     }
 
-    insert(object: PhysicObject): void {
-        this.insertNode(this.root, object);
-    }
-
-    private insertNode(node: QuadTreeNode, object: PhysicObject): void {
-        if (!this.intersects(node.bounds, object.collider.getBoundingBox())) {
-            return;
-        }
-
-        if (node.objects.length < this.capacity && node.children.length === 0) {
-            node.objects.push(object);
-            return;
-        }
-
-        if (node.children.length === 0) {
-            this.subdivide(node);
-        }
-
-        for (const child of node.children) {
-            this.insertNode(child, object);
+    clear(): void {
+        this.objects = [];
+        if (this.divided) {
+            this.northwest?.clear();
+            this.northeast?.clear();
+            this.southwest?.clear();
+            this.southeast?.clear();
+            this.divided = false;
         }
     }
 
-    queryRange(range: { x: number; y: number; width: number; height: number }): PhysicObject[] {
-        return this.queryRangeNode(this.root, range);
+    subdivide(): void {
+        const x = this.boundary.x;
+        const y = this.boundary.y;
+        const w = this.boundary.width / 2;
+        const h = this.boundary.height / 2;
+
+        const nw = { x: x, y: y, width: w, height: h };
+        const ne = { x: x + w, y: y, width: w, height: h };
+        const sw = { x: x, y: y + h, width: w, height: h };
+        const se = { x: x + w, y: y + h, width: w, height: h };
+
+        this.northwest = new QuadTree(nw, this.capacity);
+        this.northeast = new QuadTree(ne, this.capacity);
+        this.southwest = new QuadTree(sw, this.capacity);
+        this.southeast = new QuadTree(se, this.capacity);
+        this.divided = true;
     }
 
-    private queryRangeNode(node: QuadTreeNode, range: { x: number; y: number; width: number; height: number }): PhysicObject[] {
-        if (!this.intersects(node.bounds, range)) {
-            return [];
+    insert(object: PhysicObject): boolean {
+        if (!this.boundaryContains(object.collider?.getBoundingBox())) {
+            return false;
         }
 
-        const found = [...node.objects];
+        if (this.objects.length < this.capacity && !this.divided) {
+            this.objects.push(object);
+            return true;
+        }
 
-        for (const child of node.children) {
-            found.push(...this.queryRangeNode(child, range));
+        if (!this.divided) {
+            this.subdivide();
+        }
+
+        return (
+            this.northwest!.insert(object) ||
+            this.northeast!.insert(object) ||
+            this.southwest!.insert(object) ||
+            this.southeast!.insert(object)
+        );
+    }
+
+    query(range: BoundingBox): PhysicObject[] {
+        const found: PhysicObject[] = [];
+
+        if (!this.boundaryIntersects(range)) {
+            return found;
+        }
+
+        for (const object of this.objects) {
+            if (this.boundaryIntersects(object.collider?.getBoundingBox())) {
+                found.push(object);
+            }
+        }
+
+        if (this.divided) {
+            found.push(...this.northwest!.query(range));
+            found.push(...this.northeast!.query(range));
+            found.push(...this.southwest!.query(range));
+            found.push(...this.southeast!.query(range));
         }
 
         return found;
     }
 
-    private intersects(a: { x: number; y: number; width: number; height: number }, b: { x: number; y: number; width: number; height: number }): boolean {
-        return !(a.x + a.width < b.x || a.x > b.x + b.width || a.y + a.height < b.y || a.y > b.y + b.height);
+    private boundaryContains(box?: BoundingBox): boolean {
+        if (!box) return false;
+        return (
+            box.x >= this.boundary.x &&
+            box.x + box.width <= this.boundary.x + this.boundary.width &&
+            box.y >= this.boundary.y &&
+            box.y + box.height <= this.boundary.y + this.boundary.height
+        );
     }
 
-    private subdivide(node: QuadTreeNode): void {
-        const { x, y, width, height } = node.bounds;
-        const halfWidth = width / 2;
-        const halfHeight = height / 2;
-
-        node.children.push(
-            { objects: [], bounds: { x, y, width: halfWidth, height: halfHeight }, children: [] },
-            { objects: [], bounds: { x: x + halfWidth, y, width: halfWidth, height: halfHeight }, children: [] },
-            { objects: [], bounds: { x, y: y + halfHeight, width: halfWidth, height: halfHeight }, children: [] },
-            { objects: [], bounds: { x: x + halfWidth, y: y + halfHeight, width: halfWidth, height: halfHeight }, children: [] }
+    private boundaryIntersects(box?: BoundingBox): boolean {
+        if (!box) return false;
+        return !(
+            box.x > this.boundary.x + this.boundary.width ||
+            box.x + box.width < this.boundary.x ||
+            box.y > this.boundary.y + this.boundary.height ||
+            box.y + box.height < this.boundary.y
         );
     }
 }

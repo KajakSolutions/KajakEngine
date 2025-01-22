@@ -3,6 +3,9 @@ import {BoundingBox} from "./types/math";
 import PhysicObject from "./objects/PhysicObject.ts";
 import CarObject from "./objects/CarObject.ts";
 import {vec2D} from "./utils/math.ts";
+import {AABBCollider} from "./objects/Colliders/AABBCollider.ts";
+import CircleCollider from "./objects/Colliders/CircleCollider.ts";
+import PolygonCollider from "./objects/Colliders/PolygonCollider.ts";
 
 export default class Scene {
     private _gameObjects: Map<number, PhysicObject> = new Map();
@@ -100,28 +103,7 @@ export default class Scene {
             this.drawWheel(ctx, obj.size.x/2, -obj.rearAxleToCg,  obj.steerAngle, obj);
             ctx.restore();
 
-            if (obj.collider) {
-                const bb = obj.collider.getBoundingBox();
-                ctx.strokeStyle = 'red';
-                ctx.lineWidth = 0.1;
-                ctx.strokeRect(bb.x, bb.y, bb.width, bb.height);
-
-                // @ts-ignore
-                ctx.strokeStyle = 'green';
-                ctx.lineWidth = 0.05;
-                ctx.beginPath();
-                // @ts-ignore
-                ctx.moveTo(obj.collider.vertices[0].x + obj.position.x, obj.collider.vertices[0].y - obj.position.y);
-                // @ts-ignore
-                ctx.lineTo(obj.collider.vertices[1].x + obj.position.x, obj.collider.vertices[1].y - obj.position.y);
-                // @ts-ignore
-                ctx.lineTo(obj.collider.vertices[2].x + obj.position.x, obj.collider.vertices[2].y - obj.position.y);
-                // @ts-ignore
-                ctx.lineTo(obj.collider.vertices[3].x + obj.position.x, obj.collider.vertices[3].y - obj.position.y);
-                ctx.closePath();
-                ctx.stroke();
-
-            }
+            if (obj.collider) this.drawCollider(ctx, obj);
         }
     }
 
@@ -137,5 +119,39 @@ export default class Scene {
             car.wheelSize.y
         );
         ctx.restore();
+    }
+
+    private drawCollider(ctx: CanvasRenderingContext2D, obj: PhysicObject): void {
+        const bb = obj.collider.getBoundingBox();
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = 0.1;
+        ctx.strokeRect(bb.x, bb.y, bb.width, bb.height);
+
+        if(obj.collider instanceof PolygonCollider){
+            // @ts-ignore
+            ctx.strokeStyle = 'green';
+            ctx.lineWidth = 0.05;
+            ctx.beginPath();
+            // @ts-ignore
+            ctx.moveTo(obj.collider.vertices[0].x + obj.position.x, obj.collider.vertices[0].y - obj.position.y);
+            // @ts-ignore
+            ctx.lineTo(obj.collider.vertices[1].x + obj.position.x, obj.collider.vertices[1].y - obj.position.y);
+            // @ts-ignore
+            ctx.lineTo(obj.collider.vertices[2].x + obj.position.x, obj.collider.vertices[2].y - obj.position.y);
+            // @ts-ignore
+            ctx.lineTo(obj.collider.vertices[3].x + obj.position.x, obj.collider.vertices[3].y - obj.position.y);
+            ctx.closePath();
+            ctx.stroke();
+        } else if (obj.collider instanceof AABBCollider) {
+            ctx.strokeStyle = 'green';
+            ctx.lineWidth = 0.05;
+            ctx.strokeRect(obj.collider.position.x, obj.collider.position.y, obj.collider.size.x, obj.collider.size.y);
+        } else if (obj.collider instanceof CircleCollider) {
+            ctx.strokeStyle = 'green';
+            ctx.lineWidth = 0.05;
+            ctx.beginPath();
+            ctx.arc(obj.collider.position.x, obj.collider.position.y, obj.collider.radius, 0, 2 * Math.PI);
+            ctx.stroke();
+        }
     }
 }

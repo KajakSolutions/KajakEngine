@@ -2,16 +2,18 @@ import {BoundingBox, Vec2D} from "../../types/math";
 import Collider, {ColliderInfo} from "./Collider.ts";
 import {AABBCollider} from "./AABBCollider.ts";
 import CircleCollider from "./CircleCollider.ts";
-import {length, squaredLength, subtract, vec2D} from "../../utils/math.ts";
+import {add, length, squaredLength, subtract, vec2D} from "../../utils/math.ts";
 
 export default class PolygonCollider extends Collider {
     private _position: Vec2D;
+    private readonly _absolutePosition: Vec2D;
     private _vertices: Vec2D[];
     private _lastRotation: number = 0;
 
-    constructor(position: Vec2D, vertices: Vec2D[]) {
+    constructor(absolutePosition: Vec2D, vertices: Vec2D[]) {
         super();
-        this._position = position;
+        this._absolutePosition = absolutePosition;
+        this._position = absolutePosition;
         this._vertices = vertices;
     }
 
@@ -35,7 +37,7 @@ export default class PolygonCollider extends Collider {
     }
 
     updatePosition(position: Vec2D, rotation: number): void {
-        this._position = position;
+        this._position = add(position,  this._absolutePosition);
 
         const rotationDelta = rotation - this._lastRotation;
         this._lastRotation = rotation;

@@ -1,5 +1,5 @@
 import {BoundingBox, Vec2D} from "../../types/math";
-import {squaredLength, vec2D} from "../../utils/math.ts";
+import {add, squaredLength, vec2D} from "../../utils/math.ts";
 
 import CircleCollider from "./CircleCollider.ts";
 import Collider, {ColliderInfo} from "./Collider.ts";
@@ -7,11 +7,13 @@ import PolygonCollider from "./PolygonCollider.ts";
 
 export class AABBCollider extends Collider {
     private _size: Vec2D;
+    private readonly _absolutePosition: Vec2D;
     private _position: Vec2D;
 
-    constructor(position: Vec2D, size: Vec2D) {
+    constructor(absolutePosition: Vec2D, size: Vec2D) {
         super();
-        this._position = position;
+        this._absolutePosition = absolutePosition;
+        this._position = absolutePosition;
         this._size = size;
     }
 
@@ -24,7 +26,7 @@ export class AABBCollider extends Collider {
     }
 
     updatePosition(position: Vec2D) {
-        this._position = position;
+        this._position = add(position,  this._absolutePosition);
     }
 
     checkCollision(other: Collider): ColliderInfo | null {

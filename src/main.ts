@@ -18,19 +18,18 @@ const mainScene = new Scene(worldBounds);
 engine.scenes.set(1, mainScene);
 engine.setCurrentScene(1);
 
-// Tworzenie samochodu
 const carCollider = new PolygonCollider(
     vec2D(0, 0),
     [
-        vec2D(-20, -10),
-        vec2D(20, -10),
-        vec2D(20, 10),
-        vec2D(-20, 10)
+        vec2D(-0.75, -1.5),
+        vec2D(0.75, -1.5),
+        vec2D(0.75, 1.5),
+        vec2D(-0.75, 1.5)
     ]
 );
 
 const playerCar = new CarObject({
-    position: vec2D(10, 10),
+    position: vec2D(0, 0),
     size: vec2D(1.5, 3),
     movable: true,
     collider: carCollider,
@@ -39,16 +38,36 @@ const playerCar = new CarObject({
     wheelBase: 2.4
 });
 
-mainScene.addObject(playerCar);
+const carCollider2 = new PolygonCollider(
+    vec2D(0, 0),
+    [
+        vec2D(-0.75, -1.5),
+        vec2D(0.75, -1.5),
+        vec2D(0.75, 1.5),
+        vec2D(-0.75, 1.5)
+    ]
+);
 
-// Obsługa sterowania
+const playerCar2 = new CarObject({
+    position: vec2D(0.1, 0.1),
+    size: vec2D(1.5, 3),
+    movable: true,
+    collider: carCollider2,
+    mass: 1500,
+    maxGrip: 2,
+    wheelBase: 2.4
+});
+
+mainScene.addObject(playerCar);
+mainScene.addObject(playerCar2);
+
 document.addEventListener('keydown', (e) => {
     switch(e.key) {
         case 'ArrowUp':
             playerCar.setThrottle(83.91);
             break;
         case 'ArrowDown':
-            playerCar.setBrake(1);
+            playerCar.setBrake(83);
             break;
         case 'ArrowLeft':
             playerCar.setSteerAngle(-Math.PI/4);

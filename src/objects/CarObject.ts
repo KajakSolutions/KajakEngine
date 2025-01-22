@@ -8,11 +8,12 @@ export interface CarObjectOptions extends PhysicObjectOptions {
     wheelBase?: number;
     frontAxleToCg?: number;
     rearAxleToCg?: number;
+    wheelSize?: Vec2D;
 }
 
 export default class CarObject extends PhysicObject {
     private velocity: Vec2D = vec2D(0, 0);
-    private steerAngle: number = 0;
+    public steerAngle: number = 0;
     private throttle: number = 0;
     private brake: number = 0;
     private angularVelocity: number = 0;
@@ -20,18 +21,18 @@ export default class CarObject extends PhysicObject {
     private readonly mass: number;
     private readonly inertia: number;
     private readonly maxGrip: number;
-    private readonly resistance: number = 30;
-    private readonly drag: number = 5;
-    private readonly gravity: number = 9.81;
-    private readonly frontAxleToCg: number;
-    private readonly rearAxleToCg: number;
+    private readonly resistance: number = 30 ;
+    private readonly drag: number = 10 ;
+    private readonly gravity: number = 9.81 ;
+    private readonly _frontAxleToCg: number;
+    private readonly _rearAxleToCg: number;
     private readonly wheelBase: number;
     private readonly caFront: number = -5;
     private readonly caRear: number = -5.2;
     private readonly driveTrain: number = 0;
     private readonly _wheelSize: Vec2D;
 
-    constructor({ mass = 1500, maxGrip = 2, wheelBase = 2.4, frontAxleToCg, rearAxleToCg, ...options }: CarObjectOptions) {
+    constructor({ mass = 1500, maxGrip = 2, wheelBase = 2.4, frontAxleToCg, rearAxleToCg, wheelSize, ...options }: CarObjectOptions) {
         super(options);
 
         this.mass = mass;
@@ -39,13 +40,21 @@ export default class CarObject extends PhysicObject {
         this.inertia = this.mass;
 
         this.wheelBase = wheelBase;
-        this.frontAxleToCg = frontAxleToCg || this.wheelBase / 2;
-        this.rearAxleToCg = rearAxleToCg || this.wheelBase / 2;
-        this._wheelSize = vec2D(0.3, 0.7);
+        this._frontAxleToCg = frontAxleToCg || this.wheelBase / 2;
+        this._rearAxleToCg = rearAxleToCg || this.wheelBase / 2;
+        this._wheelSize = wheelSize || vec2D(0.3, 0.7);
     }
 
     get wheelSize(): Vec2D {
         return this._wheelSize;
+    }
+
+    get frontAxleToCg(): number {
+        return this._frontAxleToCg;
+    }
+
+    get rearAxleToCg(): number {
+        return this._rearAxleToCg;
     }
 
     update(deltaTime: number): void {
@@ -59,8 +68,8 @@ export default class CarObject extends PhysicObject {
         };
 
         const weight = this.mass * this.gravity;
-        const rearNormal = (this.rearAxleToCg / this.wheelBase) * weight;
-        const frontNormal = (this.frontAxleToCg / this.wheelBase) * weight;
+        const rearNormal = (this._rearAxleToCg / this.wheelBase) * weight;
+        const frontNormal = (this._frontAxleToCg / this.wheelBase) * weight;
 
         let frontSlipAngle = 0;
         let rearSlipAngle = 0;
@@ -68,12 +77,12 @@ export default class CarObject extends PhysicObject {
 
         if (speed !== 0) {
             frontSlipAngle = Math.atan2(
-                localVelocity.right + this.angularVelocity * this.frontAxleToCg,
+                localVelocity.right + this.angularVelocity * this._frontAxleToCg,
                 speed
             ) - this.steerAngle * (localVelocity.forward < 0 ? -1 : 1);
 
             rearSlipAngle = Math.atan2(
-                localVelocity.right - this.angularVelocity * this.rearAxleToCg,
+                localVelocity.right - this.angularVelocity * this._rearAxleToCg,
                 speed
             );
         }
@@ -122,8 +131,8 @@ export default class CarObject extends PhysicObject {
         );
 
         const torque = (
-            -rearLateralForce * this.rearAxleToCg +
-            frontLateralForce * this.frontAxleToCg
+            -rearLateralForce * this._rearAxleToCg +
+            frontLateralForce * this._frontAxleToCg
         ) / this.inertia;
 
         this.angularVelocity += torque * deltaTime;
@@ -135,10 +144,14 @@ export default class CarObject extends PhysicObject {
     }
 
     setThrottle(value: number): void {
-        this.throttle = Math.max(0, Math.min(100, value));
+        this.throttle = value;
     }
 
     setBrake(value: number): void {
-        this.brake = Math.max(0, Math.min(1, value));
+        this.brake = value;
+    }
+
+    onCollision() {
+        console.log('collision');
     }
 }

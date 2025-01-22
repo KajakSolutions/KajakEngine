@@ -7,6 +7,7 @@ import {length, squaredLength, subtract, vec2D} from "../../utils/math.ts";
 export default class PolygonCollider extends Collider {
     private _position: Vec2D;
     private _vertices: Vec2D[];
+    private _lastRotation: number = 0;
 
     constructor(position: Vec2D, vertices: Vec2D[]) {
         super();
@@ -36,17 +37,16 @@ export default class PolygonCollider extends Collider {
     updatePosition(position: Vec2D, rotation: number): void {
         this._position = position;
 
+        const rotationDelta = rotation - this._lastRotation;
+        this._lastRotation = rotation;
+
         for (let i = 0; i < this._vertices.length; i++) {
 
-            const dx = this._vertices[i].x - this._position.x;
-            const dy = this._vertices[i].y - this._position.y;
+            const dx = this._vertices[i].x;
+            const dy = this._vertices[i].y;
 
-
-            const rotatedX = dx * Math.cos(rotation) - dy * Math.sin(rotation);
-            const rotatedY = dx * Math.sin(rotation) + dy * Math.cos(rotation);
-
-            this._vertices[i].x = rotatedX + this._position.x;
-            this._vertices[i].y = rotatedY + this._position.y;
+            this._vertices[i].x = dx * Math.cos(rotationDelta) - dy * Math.sin(rotationDelta);
+            this._vertices[i].y = dx * Math.sin(rotationDelta) + dy * Math.cos(rotationDelta);
         }
     }
 

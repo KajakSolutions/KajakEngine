@@ -56,6 +56,7 @@ export default class KajakEngine {
 
         if (this._currentScene) {
             this._currentScene.update(deltaTime);
+
             this._currentScene.draw(this._ctx);
         }
 

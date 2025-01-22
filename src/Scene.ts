@@ -2,12 +2,13 @@ import {QuadTree} from "./objects/QuadTree.ts";
 import {BoundingBox} from "./types/math";
 import PhysicObject from "./objects/PhysicObject.ts";
 import CarObject from "./objects/CarObject.ts";
+import {vec2D} from "./utils/math.ts";
 
 export default class Scene {
     private _gameObjects: Map<number, PhysicObject> = new Map();
     private _quadTree: QuadTree;
     private nextId: number = 1;
-    private scale = 40;
+    private scale: number = 40;
 
     constructor(worldBounds: BoundingBox) {
         this._quadTree = new QuadTree(worldBounds);
@@ -35,7 +36,6 @@ export default class Scene {
             }
         }
 
-        // Aktualizuj obiekty i sprawdź kolizje
         for (const obj of this._gameObjects.values()) {
             if (obj instanceof PhysicObject) {
                 const boundingBox = obj.collider.getBoundingBox();
@@ -45,6 +45,7 @@ export default class Scene {
                     if (other !== obj && other instanceof PhysicObject) {
                         const collisionInfo = obj.collider.checkCollision(other.collider);
                         if (collisionInfo) {
+                            console.log('collision');
                             obj.onCollision();
                             other.onCollision();
                         }
@@ -58,44 +59,84 @@ export default class Scene {
     draw(ctx: CanvasRenderingContext2D): void {
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
+        ctx.save();
+        ctx.translate(window.innerWidth/2, window.innerHeight/2);
+        ctx.scale(this.scale, this.scale);
+
         for (const obj of this._gameObjects.values()) {
             this.drawObject(ctx, obj);
         }
+
+        ctx.restore();
     }
 
     private drawObject(ctx: CanvasRenderingContext2D, obj: PhysicObject): void {
-        ctx.save();
-        ctx.translate(obj.position.x * this.scale, obj.position.y * this.scale);
-        ctx.rotate(obj.rotation);
-
         if (obj instanceof CarObject) {
-            // Rysuj samochód
+            obj.collider.updatePosition(vec2D(obj.position.x, -obj.position.y), obj.rotation);
+
+            ctx.save();
+            ctx.translate(obj.position.x,- obj.position.y);
+            ctx.rotate(obj.rotation);
+
+            ctx.fillStyle = 'blue';
+            ctx.fillRect(
+                -obj.size.x/2,
+                -obj.size.y/2,
+                obj.size.x,
+                obj.size.y/2
+            );
+
             ctx.fillStyle = 'black';
-            ctx.fillRect(-obj.size.x * this.scale, -obj.size.y * this.scale, obj.size.x * this.scale, obj.size.y * this.scale);
+            ctx.fillRect(
+                -obj.size.x/2,
+                0,
+                obj.size.x,
+                obj.size.y/2
+            );
 
-            // Rysuj koła
-            ctx.fillStyle = 'black';
-            const wheelWidth = obj.wheelSize.x;
-            const wheelHeight = obj.wheelSize.y;
-            // Przednie koła
-            ctx.fillRect(-obj.size.x/2, -obj.size.y/2, wheelWidth, wheelHeight);
-            ctx.fillRect(obj.size.x/2 - wheelWidth, -obj.size.y/2, wheelWidth, wheelHeight);
-            // Tylne koła
-            ctx.fillRect(-obj.size.x/2, obj.size.y/2 - wheelHeight, wheelWidth, wheelHeight);
-            ctx.fillRect(obj.size.x/2 - wheelWidth, obj.size.y/2 - wheelHeight, wheelWidth, wheelHeight);
-        } else {
-            // Domyślne rysowanie dla innych obiektów
-            ctx.fillStyle = 'gray';
-            ctx.fillRect(-obj.size.x/2, -obj.size.y/2, obj.size.x, obj.size.y);
+           ctx.fillStyle = 'red';
+            this.drawWheel(ctx, -obj.size.x/2, obj.frontAxleToCg, 0, obj);
+            this.drawWheel(ctx, obj.size.x/2, obj.frontAxleToCg,  0, obj);
+            this.drawWheel(ctx, -obj.size.x/2, -obj.rearAxleToCg, obj.steerAngle, obj);
+            this.drawWheel(ctx, obj.size.x/2, -obj.rearAxleToCg,  obj.steerAngle, obj);
+            ctx.restore();
+
+            if (obj.collider) {
+                const bb = obj.collider.getBoundingBox();
+                ctx.strokeStyle = 'red';
+                ctx.lineWidth = 0.1;
+                ctx.strokeRect(bb.x, bb.y, bb.width, bb.height);
+
+                // @ts-ignore
+                ctx.strokeStyle = 'green';
+                ctx.lineWidth = 0.05;
+                ctx.beginPath();
+                // @ts-ignore
+                ctx.moveTo(obj.collider.vertices[0].x + obj.position.x, obj.collider.vertices[0].y - obj.position.y);
+                // @ts-ignore
+                ctx.lineTo(obj.collider.vertices[1].x + obj.position.x, obj.collider.vertices[1].y - obj.position.y);
+                // @ts-ignore
+                ctx.lineTo(obj.collider.vertices[2].x + obj.position.x, obj.collider.vertices[2].y - obj.position.y);
+                // @ts-ignore
+                ctx.lineTo(obj.collider.vertices[3].x + obj.position.x, obj.collider.vertices[3].y - obj.position.y);
+                ctx.closePath();
+                ctx.stroke();
+
+            }
         }
+    }
 
-        // Debug - rysowanie boundingboxa
-        if (obj.collider) {
-            const bb = obj.collider.getBoundingBox();
-            ctx.strokeStyle = 'red';
-            ctx.strokeRect(bb.x + obj.position.x / 2, bb.y + obj.position.y / 2, bb.width, bb.height);
-        }
-
+    // @ts-ignore
+    private drawWheel(ctx, x, y, angle, car) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        ctx.fillRect(
+            -car.wheelSize.x/2,
+            -car.wheelSize.y/2,
+            car.wheelSize.x,
+            car.wheelSize.y
+        );
         ctx.restore();
     }
 }

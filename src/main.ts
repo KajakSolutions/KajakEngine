@@ -43,7 +43,7 @@ const carCircleCollider = new CircleCollider(
 );
 
 const playerCar = new CarObject({
-    position: vec2D(0, 0),
+    position: vec2D(3, 0),
     size: vec2D(1.5, 3),
     movable: true,
     collider: carPolygonCollider,
@@ -81,13 +81,26 @@ document.addEventListener('keydown', (e) => {
             playerCar.setThrottle(83.91);
             break;
         case 'ArrowDown':
-            playerCar.setBrake(83);
+            playerCar.setThrottle(-30);
             break;
         case 'ArrowLeft':
             playerCar.setSteerAngle(-Math.PI/4);
             break;
         case 'ArrowRight':
             playerCar.setSteerAngle(Math.PI/4);
+            break;
+
+        case 'w':
+            playerCar2.setThrottle(83.91);
+            break;
+        case 's':
+            playerCar2.setThrottle(-30);
+            break;
+        case 'a':
+            playerCar2.setSteerAngle(-Math.PI/4);
+            break;
+        case 'd':
+            playerCar2.setSteerAngle(Math.PI/4);
             break;
     }
 });
@@ -98,11 +111,21 @@ document.addEventListener('keyup', (e) => {
             playerCar.setThrottle(0);
             break;
         case 'ArrowDown':
-            playerCar.setBrake(0);
+            playerCar.setThrottle(0);
             break;
         case 'ArrowLeft':
         case 'ArrowRight':
             playerCar.setSteerAngle(0);
+            break;
+        case 'w':
+            playerCar2.setThrottle(0);
+            break;
+        case 's':
+            playerCar2.setThrottle(0);
+            break;
+        case 'a':
+        case 'd':
+            playerCar2.setSteerAngle(0);
             break;
     }
 });

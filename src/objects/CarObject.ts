@@ -1,6 +1,7 @@
 import {Vec2D} from "../types/math";
 import PhysicObject, {PhysicObjectOptions} from "./PhysicObject.ts";
-import {vec2D} from "../utils/math.ts";
+import {length, vec2D} from "../utils/math.ts";
+import {ColliderInfo} from "./Colliders/Collider.ts";
 
 export interface CarObjectOptions extends PhysicObjectOptions {
     mass?: number;
@@ -12,7 +13,6 @@ export interface CarObjectOptions extends PhysicObjectOptions {
 }
 
 export default class CarObject extends PhysicObject {
-    private velocity: Vec2D = vec2D(0, 0);
     public steerAngle: number = 0;
     private throttle: number = 0;
     private brake: number = 0;
@@ -31,6 +31,8 @@ export default class CarObject extends PhysicObject {
     private readonly caRear: number = -5.2;
     private readonly driveTrain: number = 0;
     private readonly _wheelSize: Vec2D;
+    public readonly restitution: number = 0.3;
+    public readonly collisionDamping: number = 0.9;
 
     constructor({ mass = 1500, maxGrip = 2, wheelBase = 2.4, frontAxleToCg, rearAxleToCg, wheelSize, ...options }: CarObjectOptions) {
         super(options);
@@ -151,7 +153,65 @@ export default class CarObject extends PhysicObject {
         this.brake = value;
     }
 
-    onCollision() {
-        console.log('collision');
+    onCollision(other: PhysicObject, collisionInfo: ColliderInfo): void {
+            const colliderABoundingBox = collisionInfo.objectA.getBoundingBox()
+            const centerA = vec2D(colliderABoundingBox.x, colliderABoundingBox.y) ;
+
+            const colliderBBoundingBox = collisionInfo.objectB.getBoundingBox()
+            const centerB = vec2D(colliderBBoundingBox.x, colliderBBoundingBox.y) ;
+
+
+            const collisionVector = vec2D(
+                centerB.x - centerA.x,
+                centerB.y - centerA.y
+            );
+            const distance = Math.sqrt(collisionVector.x * collisionVector.x + collisionVector.y * collisionVector.y);
+
+            const normal = distance === 0
+                ? vec2D(1, 0)
+                : vec2D(collisionVector.x / distance, collisionVector.y / distance);
+
+            const totalRadius = (length(vec2D(colliderABoundingBox.width, colliderABoundingBox.height)) + colliderBBoundingBox.width/2, colliderBBoundingBox.height/2);
+            const penetrationDepth = Math.max(0, totalRadius - distance);
+
+            const relativeVelocity = vec2D(
+                this.velocity.x - (other.velocity?.x || 0),
+                this.velocity.y - (other.velocity?.y || 0)
+            );
+
+            const impulseStrength = -(
+                (1 + this.restitution) *
+                (relativeVelocity.x * normal.x + relativeVelocity.y * normal.y)
+            ) / (
+                1 / this.mass + (other instanceof CarObject ? 1 / other.mass : 0)
+            );
+
+            const impulse = vec2D(
+                normal.x * impulseStrength,
+                normal.y * impulseStrength
+            );
+
+            this.velocity = vec2D(
+                this.velocity.x + (impulse.x / this.mass) * this.collisionDamping,
+                this.velocity.y + (impulse.y / this.mass) * this.collisionDamping
+            );
+
+        if (other instanceof CarObject) {
+
+            other.velocity = vec2D(
+                other.velocity.x - (impulse.x / other.mass) * other.collisionDamping,
+                other.velocity.y - (impulse.y / other.mass) * other.collisionDamping
+            );
+        }
+
+            this.angularVelocity *= this.collisionDamping;
+
+            const separation = penetrationDepth * 0.5;
+            this.position = vec2D(
+                this.position.x - normal.x * separation,
+                this.position.y - normal.y * separation
+            );
+
+
     }
 }

@@ -74,6 +74,8 @@ export class QuadTree {
             return found;
         }
 
+
+
         for (const object of this.objects) {
             if (this.boundaryIntersects(object.collider?.getBoundingBox())) {
                 found.push(object);
@@ -102,6 +104,7 @@ export class QuadTree {
 
     private boundaryIntersects(box?: BoundingBox): boolean {
         if (!box) return false;
+
         return !(
             box.x > this.boundary.x + this.boundary.width ||
             box.x + box.width < this.boundary.x ||

@@ -45,7 +45,6 @@ export default class Scene {
                     if (other !== obj && other instanceof PhysicObject) {
                         const collisionInfo = obj.collider.checkCollision(other.collider);
                         if (collisionInfo) {
-                            console.log('collision');
                             obj.onCollision();
                             other.onCollision();
                         }

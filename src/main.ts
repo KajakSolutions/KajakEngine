@@ -13,7 +13,7 @@ document.body.appendChild(canvas);
 const engine = new KajakEngine(canvas);
 
 // Tworzenie sceny
-const worldBounds = { x: 0, y: 0, width: canvas.width, height: canvas.height };
+const worldBounds = { x: -canvas.width/2, y: -canvas.height/2, width: canvas.width, height: canvas.height };
 const mainScene = new Scene(worldBounds);
 engine.scenes.set(1, mainScene);
 engine.setCurrentScene(1);

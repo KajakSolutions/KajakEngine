@@ -1,7 +1,6 @@
 import {BoundingBox, Vec2D} from "../../types/math";
-import {add, squaredLength, vec2D} from "../../utils/math.ts";
+import {add, vec2D} from "../../utils/math.ts";
 
-import CircleCollider from "./CircleCollider.ts";
 import Collider, {ColliderInfo} from "./Collider.ts";
 import PolygonCollider from "./PolygonCollider.ts";
 
@@ -32,8 +31,6 @@ export class AABBCollider extends Collider {
     checkCollision(other: Collider): ColliderInfo | null {
         if(other instanceof AABBCollider) {
             return this.checkCollisionAABB(other);
-        } else if (other instanceof CircleCollider) {
-            return this.checkCollisionCircle(other);
         } else if (other instanceof  PolygonCollider) {
             return  this.checkCollisionWithPolygon(other);
         }
@@ -49,43 +46,6 @@ export class AABBCollider extends Collider {
             this._position.y + this.size.y > other.position.y;
 
         if(isOverlapping) {
-            return {
-                objectA: this,
-                objectB: other,
-                contactPoints: []
-            }
-        }
-
-        return null;
-    }
-
-    private checkCollisionCircle(other: CircleCollider): ColliderInfo | null {
-        const circleDistance = vec2D(
-            Math.abs(other.position.x - (this._position.x + this._size.x / 2)),
-            Math.abs(other.position.y - (this._position.y + this._size.y / 2))
-        )
-
-        if(
-            circleDistance.x > (this._size.x / 2 + other.radius) ||
-            circleDistance.y > (this._size.y / 2 + other.radius)
-        ) {
-            return null;
-        }
-
-        if(
-            circleDistance.x <= this._size.x / 2 ||
-            circleDistance.y <= this._size.y / 2
-        ) {
-            return {
-                objectA: this,
-                objectB: other,
-                contactPoints: []
-            }
-        }
-
-        const cornerDistanceSq = squaredLength(vec2D(circleDistance.x - this._size.x / 2, circleDistance.y - this._size.y / 2));
-
-        if(cornerDistanceSq <= other.radius ** 2) {
             return {
                 objectA: this,
                 objectB: other,

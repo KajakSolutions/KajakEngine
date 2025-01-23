@@ -4,7 +4,6 @@ import PhysicObject from "./objects/PhysicObject.ts";
 import CarObject from "./objects/CarObject.ts";
 import {vec2D} from "./utils/math.ts";
 import {AABBCollider} from "./objects/Colliders/AABBCollider.ts";
-import CircleCollider from "./objects/Colliders/CircleCollider.ts";
 import PolygonCollider from "./objects/Colliders/PolygonCollider.ts";
 import MapObject from "./objects/MapObject.ts";
 
@@ -13,7 +12,7 @@ export default class Scene {
     private _quadTree: QuadTree;
     private nextId: number = 1;
     private scale: number = 10;
-    private _map = new MapObject({backgroundSrc: 'src/assets/map.png', traceFragments: []});
+    private _map = new MapObject({backgroundSrc: '', traceFragments: []});
 
     constructor(worldBounds: BoundingBox) {
         this._quadTree = new QuadTree(worldBounds);
@@ -52,11 +51,17 @@ export default class Scene {
 
                 for (const other of nearbyObjects) {
                     if (other !== obj && other instanceof PhysicObject) {
+                        if(!obj.movable && !other.movable) continue;
+
                         obj.collider.updatePosition(vec2D(obj.position.x, -obj.position.y), obj.rotation);
+                        other.collider.updatePosition(
+                            vec2D(other.position.x, -other.position.y),
+                            other.rotation
+                        );
                         const collisionInfo = obj.collider.checkCollision(other.collider);
+
                         if (collisionInfo) {
                             obj.onCollision(other, collisionInfo);
-                            // other.onCollision(obj, collisionInfo);
                         }
                     }
                 }
@@ -137,26 +142,22 @@ export default class Scene {
             ctx.strokeStyle = 'green';
             ctx.lineWidth = 0.05;
             ctx.beginPath();
-            // @ts-ignore
-            ctx.moveTo(obj.collider.vertices[0].x + obj.position.x, obj.collider.vertices[0].y - obj.position.y);
-            // @ts-ignore
-            ctx.lineTo(obj.collider.vertices[1].x + obj.position.x, obj.collider.vertices[1].y - obj.position.y);
-            // @ts-ignore
-            ctx.lineTo(obj.collider.vertices[2].x + obj.position.x, obj.collider.vertices[2].y - obj.position.y);
-            // @ts-ignore
-            ctx.lineTo(obj.collider.vertices[3].x + obj.position.x, obj.collider.vertices[3].y - obj.position.y);
+            for (let i = 0; i < obj.collider.vertices.length; i++) {
+                // @ts-ignore
+                const vertex = obj.collider.vertices[i];
+                const x = vertex.x + obj.collider.position.x;
+                const y = vertex.y + obj.collider.position.y;
+                ctx.font = "0.8px serif";
+                ctx.fillText(`(${x.toFixed(2)}, ${y.toFixed(2)})`, x, y);
+                ctx.lineTo(x, y);
+            }
+
             ctx.closePath();
             ctx.stroke();
         } else if (obj.collider instanceof AABBCollider) {
             ctx.strokeStyle = 'green';
             ctx.lineWidth = 0.05;
             ctx.strokeRect(obj.collider.position.x, obj.collider.position.y, obj.collider.size.x, obj.collider.size.y);
-        } else if (obj.collider instanceof CircleCollider) {
-            ctx.strokeStyle = 'green';
-            ctx.lineWidth = 0.05;
-            ctx.beginPath();
-            ctx.arc(obj.collider.position.x, obj.collider.position.y, obj.collider.radius, 0, 2 * Math.PI);
-            ctx.stroke();
         }
     }
 }

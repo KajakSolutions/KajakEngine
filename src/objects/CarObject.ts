@@ -1,6 +1,6 @@
 import {Vec2D} from "../types/math";
 import PhysicObject, {PhysicObjectOptions} from "./PhysicObject.ts";
-import {vec2D} from "../utils/math.ts";
+import {add, dotProduct, length, subtract, vec2D} from "../utils/math.ts";
 import {ColliderInfo} from "./Colliders/Collider.ts";
 
 export interface CarObjectOptions extends PhysicObjectOptions {
@@ -151,61 +151,53 @@ export default class CarObject extends PhysicObject {
     }
 
     onCollision(other: PhysicObject, collisionInfo: ColliderInfo): void {
-        const mtv = collisionInfo.mtv || vec2D(0, 0);
+        const relativeVelocity = subtract(this.velocity, other.velocity);
 
-        this.position = vec2D(
-            this.position.x - mtv.x,
-            this.position.y - mtv.y
+        const normal = collisionInfo.mtv ?
+            vec2D(collisionInfo.mtv.x, collisionInfo.mtv.y) :
+            vec2D(0, 0);
+
+        const normalLength = length(normal);
+        const unitNormal = normalLength > 0 ?
+            vec2D(normal.x / normalLength, normal.y / normalLength) :
+            vec2D(0, 0);
+
+        const e = 0.3;
+
+        const j = -(1 + e) * dotProduct(relativeVelocity, unitNormal) /
+            ((1 / this.mass) + (1 / other.mass));
+
+        const impulse = vec2D(
+            unitNormal.x * j,
+            unitNormal.y * j
         );
 
-        console.log(other)
-        // this.angularVelocity = 0;
-        // this.velocity = vec2D(0, 0);
+        if (this.movable) {
+            this.velocity = add(this.velocity,
+                vec2D(impulse.x / this.mass, impulse.y / this.mass)
+            );
+        }
 
-        // console.log(mtv);
-        //
-        // this.position = vec2D(
-        //     this.position.x + mtv.x,
-        //     this.position.y + mtv.y
-        // );
-        //
-        // if (other instanceof CarObject) {
-        //     other.position = vec2D(
-        //         other.position.x - mtv.x,
-        //         other.position.y - mtv.y
-        //     );
-        //
-        //     const relativeVelocity = vec2D(
-        //         this.velocity.x - other.velocity.x,
-        //         this.velocity.y - other.velocity.y
-        //     );
-        //
-        //     const normal = normalize(mtv);
-        //
-        //     const impulseStrength = -(
-        //         (1 + this.restitution) *
-        //         (relativeVelocity.x * normal.x + relativeVelocity.y * normal.y)
-        //     ) / (
-        //         1 / this.mass + 1 / other.mass
-        //     );
-        //
-        //     const impulse = vec2D(
-        //         normal.x * impulseStrength,
-        //         normal.y * impulseStrength
-        //     );
-        //
-        //     this.velocity = vec2D(
-        //         this.velocity.x + (impulse.x / this.mass) * this.collisionDamping,
-        //         this.velocity.y + (impulse.y / this.mass) * this.collisionDamping
-        //     );
-        //
-        //     other.velocity = vec2D(
-        //         other.velocity.x - (impulse.x / other.mass) * other.collisionDamping,
-        //         other.velocity.y - (impulse.y / other.mass) * other.collisionDamping
-        //     );
-        //
-        //     this.angularVelocity *= this.collisionDamping;
-        //     other.angularVelocity *= this.collisionDamping;
-        // }
+        if (other.movable) {
+            other.velocity = subtract(other.velocity,
+                vec2D(impulse.x / other.mass, impulse.y / other.mass)
+            );
+        }
+
+        if (collisionInfo.mtv) {
+            const correctionFactor = 0.1;
+            const separation = vec2D(
+                collisionInfo.mtv.x * correctionFactor,
+                collisionInfo.mtv.y * correctionFactor
+            );
+
+            if (this.movable) {
+                this.position = add(this.position, vec2D(-separation.x, -separation.y));
+            }
+
+            if (other.movable) {
+                other.position = add(other.position, separation);
+            }
     }
+}
 }

@@ -1,8 +1,7 @@
 import {BoundingBox, Vec2D} from "../../types/math";
 import Collider, {ColliderInfo} from "./Collider.ts";
 import {AABBCollider} from "./AABBCollider.ts";
-import CircleCollider from "./CircleCollider.ts";
-import {add, dotProduct, length, squaredLength, subtract, vec2D} from "../../utils/math.ts";
+import {add, dotProduct, length, subtract, vec2D} from "../../utils/math.ts";
 
 export default class PolygonCollider extends Collider {
     private _position: Vec2D;
@@ -18,7 +17,7 @@ export default class PolygonCollider extends Collider {
     }
 
     get position(): Vec2D {
-        return this._position;
+        return add(this._position, this._absolutePosition);
     }
 
     get vertices(): Vec2D[] {
@@ -28,8 +27,6 @@ export default class PolygonCollider extends Collider {
     checkCollision(other: Collider): ColliderInfo | null {
         if (other instanceof AABBCollider) {
             return this.checkCollisionWithAABB(other);
-        } else if (other instanceof CircleCollider) {
-            return this.checkCollisionWithCircle(other);
         } else if (other instanceof PolygonCollider) {
             return this.checkCollisionWithPolygon(other);
         }
@@ -49,62 +46,6 @@ export default class PolygonCollider extends Collider {
 
             this._vertices[i].x = dx * Math.cos(rotationDelta) - dy * Math.sin(rotationDelta);
             this._vertices[i].y = dx * Math.sin(rotationDelta) + dy * Math.cos(rotationDelta);
-        }
-    }
-
-    private checkCollisionWithCircle(other: CircleCollider): ColliderInfo | null  {
-        const nearestVertex = this.vertices.reduce(
-            (nearest: Vec2D & { distanceSq: number }, vertex) => {
-                const distanceSq = squaredLength(subtract(vertex, this._position));
-                return distanceSq < nearest.distanceSq
-                    ? { ...vertex, distanceSq }
-                    : nearest;
-            },
-            {
-                x: this.vertices[0].x,
-                y: this.vertices[0].y,
-                distanceSq: Infinity,
-            } as Vec2D & { distanceSq: number }
-        );
-
-        const  axis = vec2D(
-            nearestVertex.x + this.position.x - other.position.x,
-            nearestVertex.y + this.position.y - other.position.y,
-        )
-
-        const axes = this.getAxes().concat(axis);
-        let overlap = Infinity;
-        let smallestAxis = null;
-
-        for (const a of axes) {
-            const projectionA = this.project(a);
-            const projectionB = other.projectCircle(a)
-
-            const o = this.getOverlap(projectionA, projectionB);
-
-            if(o === 0) return null;
-
-            if (o < overlap) {
-                overlap = o;
-                smallestAxis = a;
-            }
-        }
-
-        if(!smallestAxis) {
-            return {
-                objectA: this,
-                objectB: other,
-                contactPoints: [],
-            };
-        }
-
-        const mtv = this.calculateMTV(smallestAxis, overlap, other);
-
-        return {
-            objectA: this,
-            objectB: other,
-            contactPoints: [],
-            mtv
         }
     }
 

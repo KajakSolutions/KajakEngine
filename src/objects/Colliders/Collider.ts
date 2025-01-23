@@ -4,6 +4,7 @@ export interface ColliderInfo {
     objectA: Collider;
     objectB: Collider;
     contactPoints: Vec2D[];
+    mtv?: Vec2D;
 }
 
 export default abstract class Collider {

@@ -5,15 +5,18 @@ import {vec2D} from "../utils/math.ts";
 
 export type PhysicObjectOptions = GameObjectOptions & {
     collider: Collider;
+    mass: number;
 }
 
 export default class PhysicObject extends GameObject {
     private _collider: Collider;
     private _velocity: Vec2D = vec2D(0, 0);
+    private readonly _mass: number;
 
-    constructor({ collider, ...options }: PhysicObjectOptions) {
+    constructor({mass, collider, ...options }: PhysicObjectOptions) {
         super(options);
         this._collider = collider;
+        this._mass = mass;
     }
 
 
@@ -27,6 +30,10 @@ export default class PhysicObject extends GameObject {
 
     set velocity(value: Vec2D) {
         this._velocity = value;
+    }
+
+    get mass(): number {
+        return this._mass;
     }
 
     // @ts-ignore

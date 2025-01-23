@@ -5,6 +5,7 @@ import Scene from "./Scene.ts";
 import KajakEngine from "./KajakEngine.ts";
 import {AABBCollider} from "./objects/Colliders/AABBCollider.ts";
 import CircleCollider from "./objects/Colliders/CircleCollider.ts";
+import TreeObject from "./objects/TreeObject.ts";
 
 const canvas = document.createElement('canvas');
 canvas.width = window.innerWidth;
@@ -46,7 +47,7 @@ const playerCar = new CarObject({
     position: vec2D(3, 0),
     size: vec2D(1.5, 3),
     movable: true,
-    collider: carPolygonCollider,
+    collider: carAABBCollider,
     mass: 1500,
     maxGrip: 2,
     wheelBase: 2.4
@@ -63,7 +64,7 @@ const carCollider2 = new PolygonCollider(
 );
 
 const playerCar2 = new CarObject({
-    position: vec2D(0.1, 0.1),
+    position: vec2D(10, 0.1),
     size: vec2D(1.5, 3),
     movable: true,
     collider: carCollider2,
@@ -72,8 +73,24 @@ const playerCar2 = new CarObject({
     wheelBase: 2.4
 });
 
+const TreeCollider = new CircleCollider(
+    vec2D(-5, -5),
+    2
+);
+
+const tree = new TreeObject({
+    position: vec2D(-5, -5),
+    size: vec2D(2, 2),
+    movable: false,
+    collider: TreeCollider,
+    mass: 1500
+    }
+)
+
 mainScene.addObject(playerCar);
 mainScene.addObject(playerCar2);
+mainScene.addObject(tree);
+
 
 document.addEventListener('keydown', (e) => {
     switch(e.key) {

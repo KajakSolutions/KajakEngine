@@ -33,6 +33,8 @@ export default class KajakEngine {
         const scene = this._scenes.get(sceneId);
         if (scene) {
             this._currentScene = scene;
+            this._canvas.style.backgroundImage = `url(${this._currentScene.map.backgroundSrc})`;
+            console.log(this._canvas.style.backgroundImage);
         }
     }
 

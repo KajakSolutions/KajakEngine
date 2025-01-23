@@ -6,12 +6,14 @@ import {vec2D} from "./utils/math.ts";
 import {AABBCollider} from "./objects/Colliders/AABBCollider.ts";
 import CircleCollider from "./objects/Colliders/CircleCollider.ts";
 import PolygonCollider from "./objects/Colliders/PolygonCollider.ts";
+import MapObject from "./objects/MapObject.ts";
 
 export default class Scene {
     private _gameObjects: Map<number, PhysicObject> = new Map();
     private _quadTree: QuadTree;
     private nextId: number = 1;
-    private scale: number = 40;
+    private scale: number = 10;
+    private _map = new MapObject({backgroundSrc: 'src/assets/map.png', traceFragments: []});
 
     constructor(worldBounds: BoundingBox) {
         this._quadTree = new QuadTree(worldBounds);
@@ -19,6 +21,10 @@ export default class Scene {
 
     get gameObjects(): Map<number, PhysicObject> {
         return this._gameObjects;
+    }
+
+    get map(): MapObject {
+        return this._map;
     }
 
     addObject(object: PhysicObject): number {
@@ -46,10 +52,11 @@ export default class Scene {
 
                 for (const other of nearbyObjects) {
                     if (other !== obj && other instanceof PhysicObject) {
+                        obj.collider.updatePosition(vec2D(obj.position.x, -obj.position.y), obj.rotation);
                         const collisionInfo = obj.collider.checkCollision(other.collider);
                         if (collisionInfo) {
                             obj.onCollision(other, collisionInfo);
-                            other.onCollision(obj, collisionInfo);
+                            // other.onCollision(obj, collisionInfo);
                         }
                     }
                 }
@@ -74,8 +81,6 @@ export default class Scene {
 
     private drawObject(ctx: CanvasRenderingContext2D, obj: PhysicObject): void {
         if (obj instanceof CarObject) {
-            obj.collider.updatePosition(vec2D(obj.position.x, -obj.position.y), obj.rotation);
-
             ctx.save();
             ctx.translate(obj.position.x,- obj.position.y);
             ctx.rotate(obj.rotation);
@@ -102,9 +107,9 @@ export default class Scene {
             this.drawWheel(ctx, -obj.size.x/2, -obj.rearAxleToCg, obj.steerAngle, obj);
             this.drawWheel(ctx, obj.size.x/2, -obj.rearAxleToCg,  obj.steerAngle, obj);
             ctx.restore();
-
-            if (obj.collider) this.drawCollider(ctx, obj);
         }
+
+        if (obj.collider) this.drawCollider(ctx, obj);
     }
 
     // @ts-ignore

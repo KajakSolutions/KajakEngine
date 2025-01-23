@@ -2,7 +2,7 @@ import {BoundingBox, Vec2D} from "../../types/math";
 import Collider, {ColliderInfo} from "./Collider.ts";
 import {AABBCollider} from "./AABBCollider.ts";
 import CircleCollider from "./CircleCollider.ts";
-import {add, length, squaredLength, subtract, vec2D} from "../../utils/math.ts";
+import {add, dotProduct, length, squaredLength, subtract, vec2D} from "../../utils/math.ts";
 
 export default class PolygonCollider extends Collider {
     private _position: Vec2D;
@@ -90,12 +90,21 @@ export default class PolygonCollider extends Collider {
             }
         }
 
-        console.log(smallestAxis);
+        if(!smallestAxis) {
+            return {
+                objectA: this,
+                objectB: other,
+                contactPoints: [],
+            };
+        }
+
+        const mtv = this.calculateMTV(smallestAxis, overlap, other);
 
         return {
             objectA: this,
             objectB: other,
-            contactPoints: []
+            contactPoints: [],
+            mtv
         }
     }
 
@@ -117,12 +126,21 @@ export default class PolygonCollider extends Collider {
             }
         }
 
-        console.log(smallestAxis);
+        if(!smallestAxis) {
+            return {
+                objectA: this,
+                objectB: other,
+                contactPoints: [],
+            };
+        }
+
+        const mtv = this.calculateMTV(smallestAxis, overlap, other);
 
         return {
             objectA: this,
             objectB: other,
             contactPoints: [],
+            mtv
         };
     }
 
@@ -139,6 +157,23 @@ export default class PolygonCollider extends Collider {
 
     private getOverlap(projectionA: { min: number, max: number }, projectionB: { min: number, max: number }): number {
         return Math.max(0, Math.min(projectionA.max, projectionB.max) - Math.max(projectionA.min, projectionB.min));
+    }
+
+    private calculateMTV(smallestAxis:Vec2D, minOverlap: number, other: Collider,  ): Vec2D {
+        const centerA = this.getBoundingBox();
+        const centerB = other.getBoundingBox();
+
+        const direction = vec2D(
+            centerB.x + centerB.width/2 - (centerA.x + centerA.width/2),
+            centerB.y + centerB.height/2 - (centerA.y + centerA.height/2)
+        );
+
+        const sign = Math.sign(dotProduct(direction, smallestAxis));
+
+        return vec2D(
+            smallestAxis.x * minOverlap * sign,
+            smallestAxis.y * minOverlap * sign
+        );
     }
 
     project(axis: Vec2D): { min: number, max: number } {

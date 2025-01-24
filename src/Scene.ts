@@ -49,20 +49,28 @@ export default class Scene {
 
         for (const obj of this._gameObjects.values()) {
             if (obj instanceof PhysicObject) {
-                const boundingBox = obj.collider.getBoundingBox();
-                const nearbyObjects = this._quadTree.query(boundingBox);
 
-                for (const other of nearbyObjects) {
-                    if (other !== obj && other instanceof PhysicObject) {
-                        if(!obj.movable && !other.movable) continue;
+                obj.collider.updatePosition(vec2D(obj.position.x, -obj.position.y), obj.rotation);
+                // const boundingBox = obj.collider.getBoundingBox();
+                // const nearbyObjects = this._quadTree.query(boundingBox);
+                //
+                // for (const other of nearbyObjects) {
+                //     if (other !== obj && other instanceof PhysicObject) {
+                //         if(!obj.movable && !other.movable) continue;
+                //
+                //         obj.collider.updatePosition(vec2D(obj.position.x, -obj.position.y), obj.rotation);
+                //         other.collider.updatePosition(
+                //             vec2D(other.position.x, -other.position.y),
+                //             other.rotation
+                //         );
 
-                        obj.collider.updatePosition(vec2D(obj.position.x, -obj.position.y), obj.rotation);
-                        other.collider.updatePosition(
-                            vec2D(other.position.x, -other.position.y),
-                            other.rotation
-                        );
-                    }
-                }
+                        // const collisionInfo = obj.collider.checkCollision(other.collider);
+                        // if (collisionInfo) {
+                        //     obj.onCollision(other, collisionInfo);
+                        //
+                        //     }
+                //     }
+                // }
             }
             obj.update(deltaTime);
         }
@@ -77,7 +85,7 @@ export default class Scene {
         ctx.scale(Scene.scale, Scene.scale);
 
         for (const obj of this._gameObjects.values()) {
-            this.drawObject(ctx, obj);
+            // this.drawObject(ctx, obj);
 
             const spriteIndex = obj.spriteManager.getSprinteIndexByRotation(obj.rotation, 36);
             obj.spriteManager.drawSprite(ctx, spriteIndex, obj.position);

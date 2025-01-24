@@ -178,18 +178,18 @@ document.addEventListener('keydown', (e) => {
         case 'ArrowRight':
             playerCar.setSteerAngle(Math.PI/4);
             break;
-        // case 'w':
-        //     playerCar2.setThrottle(83.91);
-        //     break;
-        // case 's':
-        //     playerCar2.setThrottle(-30);
-        //     break;
-        // case 'a':
-        //     playerCar2.setSteerAngle(-Math.PI/4);
-        //     break;
-        // case 'd':
-        //     playerCar2.setSteerAngle(Math.PI/4);
-        //     break;
+        case 'w':
+            playerCar2.setThrottle(83.91);
+            break;
+        case 's':
+            playerCar2.setThrottle(-30);
+            break;
+        case 'a':
+            playerCar2.setSteerAngle(-Math.PI/4);
+            break;
+        case 'd':
+            playerCar2.setSteerAngle(Math.PI/4);
+            break;
     }
 });
 
@@ -205,16 +205,16 @@ document.addEventListener('keyup', (e) => {
         case 'ArrowRight':
             playerCar.setSteerAngle(0);
             break;
-        // case 'w':
-        //     playerCar2.setThrottle(0);
-        //     break;
-        // case 's':
-        //     playerCar2.setThrottle(0);
-        //     break;
-        // case 'a':
-        // case 'd':
-        //     playerCar2.setSteerAngle(0);
-        //     break;
+        case 'w':
+            playerCar2.setThrottle(0);
+            break;
+        case 's':
+            playerCar2.setThrottle(0);
+            break;
+        case 'a':
+        case 'd':
+            playerCar2.setSteerAngle(0);
+            break;
     }
 });
 

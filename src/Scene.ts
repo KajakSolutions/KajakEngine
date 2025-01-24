@@ -11,8 +11,8 @@ export default class Scene {
     private _gameObjects: Map<number, PhysicObject> = new Map();
     private _quadTree: QuadTree;
     private nextId: number = 1;
-    private scale: number = 10;
-    private _map = new MapObject({backgroundSrc: '', traceFragments: []});
+    private _map = new MapObject({backgroundSrc: 'src/assets/map2.png', traceFragments: []});
+    static scale: number = 10;
 
     constructor(worldBounds: BoundingBox) {
         this._quadTree = new QuadTree(worldBounds);
@@ -37,6 +37,7 @@ export default class Scene {
     }
 
     update(deltaTime: number): void {
+        console.log(`FPS: ${Math.round(1 / deltaTime)}`);
         this._quadTree.clear();
         for (const obj of this._gameObjects.values()) {
             if (obj.collider) {
@@ -74,11 +75,14 @@ export default class Scene {
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
         ctx.save();
-        ctx.translate(window.innerWidth/2, window.innerHeight/2);
-        ctx.scale(this.scale, this.scale);
+        ctx.translate(ctx.canvas.width/2, ctx.canvas.height/2);
+        ctx.scale(Scene.scale, Scene.scale);
 
         for (const obj of this._gameObjects.values()) {
             this.drawObject(ctx, obj);
+
+            const spriteIndex = obj.spriteManager.getSprinteIndexByRotation(obj.rotation, 36);
+            obj.spriteManager.drawSprite(ctx, spriteIndex, obj.position);
         }
 
         ctx.restore();

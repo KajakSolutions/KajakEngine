@@ -5,16 +5,13 @@ import Scene from "./Scene.ts";
 import KajakEngine from "./KajakEngine.ts";
 import {AABBCollider} from "./objects/Colliders/AABBCollider.ts";
 import TreeObject from "./objects/TreeObject.ts";
+import SpriteManager from "./objects/SpriteManager.ts";
 
 const canvas = document.createElement('canvas');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-canvas.style.width = '100%';
-canvas.style.height = '100%';
 document.body.appendChild(canvas);
 const engine = new KajakEngine(canvas);
 
-const worldBounds = { x: -canvas.width/2, y: -canvas.height/2, width: canvas.width, height: canvas.height };
+const worldBounds = { x: -canvas.width/(2 * Scene.scale), y: -canvas.height/(2 * Scene.scale), width: canvas.width* Scene.scale, height: canvas.height * Scene.scale };
 const mainScene = new Scene(worldBounds);
 engine.scenes.set(1, mainScene);
 engine.setCurrentScene(1);
@@ -25,6 +22,7 @@ const carAABBCollider = new AABBCollider(
     vec2D(3, 3)
 );
 
+// @ts-ignore
 const carAABBCollider2 = new AABBCollider(
     vec2D(-1.5, -1.5),
     vec2D(3, 3)
@@ -48,7 +46,13 @@ const playerCar = new CarObject({
     collider: carPolygonCollider,
     mass: 1500,
     maxGrip: 2,
-    wheelBase: 2.4
+    wheelBase: 2.4,
+    spriteManager: new SpriteManager({
+        imageSrc: 'src/assets/car1.png',
+        cellSize: vec2D(32, 32),
+        count: 48,
+        columns: 7
+    })
 });
 
 const carCollider2 = new PolygonCollider(
@@ -68,51 +72,97 @@ const playerCar2 = new CarObject({
     collider: carCollider2,
     mass: 1500,
     maxGrip: 2,
-    wheelBase: 2.4
+    wheelBase: 2.4,
+    spriteManager: new SpriteManager({
+        imageSrc: 'src/assets/car2.png',
+        cellSize: vec2D(32, 32),
+        count: 48,
+        columns: 7
+    })
 });
 
-const TreeCollider = new PolygonCollider(
-    vec2D(-5, 0),
+const BoxCollider2 = new PolygonCollider(
+    vec2D(0, 0),
     [
-        vec2D(-2, -2),
-        vec2D(2, -2),
-        vec2D(2, 2),
-        vec2D(-2, 2)
+        vec2D(0, 14),
+        vec2D(-22, 2),
+        vec2D(-22, -2),
+        vec2D(0, -14),
     ]
 );
 
-const tree = new TreeObject({
-    position: vec2D(-5, -5),
+const box2 = new TreeObject({
+    position: vec2D(38, 0),
     size: vec2D(2, 2),
     movable: false,
-    collider: TreeCollider,
-    mass: 1500
-    }
-)
+    collider: BoxCollider2,
+    mass: 1500,
+    spriteManager: new SpriteManager({
+        imageSrc: 'src/assets/car1.png',
+        cellSize: vec2D(32, 32),
+        count: 48,
+        columns: 7
+    })
+});
 
 const BoxCollider = new PolygonCollider(
     vec2D(0, 0),
     [
-        vec2D(0, 4),
-        vec2D(3, 1.2),
-        vec2D(2.4, -3.2),
-        vec2D(-2.4, -3.2),
-        vec2D(-3.8, 1.2)
+        vec2D(0, 14),
+        vec2D(22, 1),
+        vec2D(22, -1),
+        vec2D(0, -14),
     ]
 );
 
 const box = new TreeObject({
-        position: vec2D(0, 0),
+        position: vec2D(-36, 0),
         size: vec2D(2, 2),
         movable: false,
         collider: BoxCollider,
-        mass: 1500
-    }
-)
+        mass: 1500,
+        spriteManager: new SpriteManager({
+            imageSrc: 'src/assets/car1.png',
+            cellSize: vec2D(32, 32),
+            count: 48,
+            columns: 7
+        })
+});
+
+for(let i = 0; i < 10; i++) {
+    const collider = new PolygonCollider(
+        vec2D(0, 0),
+        [
+            vec2D(-0.75, -1.5),
+            vec2D(0.75, -1.5),
+            vec2D(0.75, 1.5),
+            vec2D(-0.75, 1.5)
+        ]
+    );
+
+    const car = new CarObject({
+        position: vec2D(0.1* i - 60,0.05 * i - 20),
+        size: vec2D(1.5, 3),
+        movable: true,
+        collider: collider,
+        mass: 1500,
+        maxGrip: 2,
+        wheelBase: 2.4,
+        spriteManager: new SpriteManager({
+            imageSrc: 'src/assets/car2.png',
+            cellSize: vec2D(32, 32),
+            count: 48,
+            columns: 7
+        })
+    });
+
+    mainScene.addObject(car);
+}
+
 
 mainScene.addObject(playerCar);
 mainScene.addObject(playerCar2);
-mainScene.addObject(tree);
+mainScene.addObject(box2);
 mainScene.addObject(box);
 
 

@@ -10,6 +10,9 @@ export default class KajakEngine {
 
     constructor(canvas: HTMLCanvasElement) {
         this._canvas = canvas;
+        canvas.width = 1280;
+        canvas.height = 720;
+
         const ctx = this._canvas.getContext('2d');
         if (!ctx) throw new Error('Unable to get 2d context from canvas');
         this._ctx = ctx;
@@ -33,6 +36,10 @@ export default class KajakEngine {
         const scene = this._scenes.get(sceneId);
         if (scene) {
             this._currentScene = scene;
+            this._canvas.style.cssText = `
+            background: rgba(0, 0, 0, 1);
+            background-size: cover;
+        `;
             this._canvas.style.backgroundImage = `url(${this._currentScene.map.backgroundSrc})`;
             console.log(this._canvas.style.backgroundImage);
         }

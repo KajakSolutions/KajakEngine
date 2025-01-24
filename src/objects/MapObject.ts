@@ -1,3 +1,5 @@
+import CheckpointObject from "./CheckpointObject.ts";
+
 export type MapOptions = {
     backgroundSrc: string;
     traceFragments: [];
@@ -6,6 +8,7 @@ export type MapOptions = {
 export default class MapObject {
     private _backgroundSrc: string;
     private _traceFragments: [];
+    private _checkpoints: CheckpointObject [];
 
 
     constructor(options: MapOptions) {

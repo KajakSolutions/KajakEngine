@@ -9,6 +9,8 @@ export interface CarObjectOptions extends PhysicObjectOptions {
     frontAxleToCg?: number;
     rearAxleToCg?: number;
     wheelSize?: Vec2D;
+    drag?: number;
+    resistance?: number;
 }
 
 export default class CarObject extends PhysicObject {
@@ -19,8 +21,8 @@ export default class CarObject extends PhysicObject {
 
     private readonly inertia: number;
     private readonly maxGrip: number;
-    private readonly resistance: number = 30 ;
-    private readonly drag: number = 10 ;
+    private readonly resistance: number = 30;
+    private readonly drag: number;
     private readonly gravity: number = 9.81 ;
     private readonly _frontAxleToCg: number;
     private readonly _rearAxleToCg: number;
@@ -32,16 +34,18 @@ export default class CarObject extends PhysicObject {
     public readonly restitution: number = 0.3;
     public readonly collisionDamping: number = 0.9;
 
-    constructor({maxGrip = 2, wheelBase = 2.4, frontAxleToCg, rearAxleToCg, wheelSize, ...options }: CarObjectOptions) {
+    constructor({resistance  = 30, drag = 10 , maxGrip = 2, wheelBase = 2.4, frontAxleToCg, rearAxleToCg, wheelSize =  vec2D(0.3, 0.7), ...options }: CarObjectOptions) {
         super(options);
 
         this.maxGrip = maxGrip;
         this.inertia = options.mass;
 
+        this.drag = drag
+        this.resistance = resistance;
         this.wheelBase = wheelBase;
         this._frontAxleToCg = frontAxleToCg || this.wheelBase / 2;
         this._rearAxleToCg = rearAxleToCg || this.wheelBase / 2;
-        this._wheelSize = wheelSize || vec2D(0.3, 0.7);
+        this._wheelSize = wheelSize;
     }
 
     get wheelSize(): Vec2D {
@@ -162,7 +166,7 @@ export default class CarObject extends PhysicObject {
             vec2D(normal.x / normalLength, normal.y / normalLength) :
             vec2D(0, 0);
 
-        const e = 0.3;
+        const e = this.restitution;
 
         const j = -(1 + e) * dotProduct(relativeVelocity, unitNormal) /
             ((1 / this.mass) + (1 / other.mass));
@@ -172,10 +176,17 @@ export default class CarObject extends PhysicObject {
             unitNormal.y * j
         );
 
+        const collisionPoint = vec2D(0, 0);
+        const r = subtract(collisionPoint, this.position);
+
+        const torqueScalar = r.x * impulse.y - r.y * impulse.x;
+
         if (this.movable) {
             this.velocity = add(this.velocity,
                 vec2D(impulse.x / this.mass, impulse.y / this.mass)
             );
+
+            this.angularVelocity += (torqueScalar / this.inertia) * 0.1;
         }
 
         if (other.movable) {
@@ -192,12 +203,12 @@ export default class CarObject extends PhysicObject {
             );
 
             if (this.movable) {
-                this.position = add(this.position, vec2D(-separation.x, -separation.y));
+                this.position = add(this.position, vec2D(-separation.x, separation.y));
             }
 
             if (other.movable) {
                 other.position = add(other.position, separation);
             }
+        }
     }
-}
 }

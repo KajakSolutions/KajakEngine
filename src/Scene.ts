@@ -6,12 +6,14 @@ import {vec2D} from "./utils/math.ts";
 import {AABBCollider} from "./objects/Colliders/AABBCollider.ts";
 import PolygonCollider from "./objects/Colliders/PolygonCollider.ts";
 import MapObject from "./objects/MapObject.ts";
+import OverlapManager from "./objects/OverlapManager.ts";
 
 export default class Scene {
     private _gameObjects: Map<number, PhysicObject> = new Map();
     private _quadTree: QuadTree;
     private nextId: number = 1;
     private _map = new MapObject({backgroundSrc: 'src/assets/map2.png', traceFragments: []});
+    public readonly overlapManager = new OverlapManager();
     static scale: number = 10;
 
     constructor(worldBounds: BoundingBox) {
@@ -59,16 +61,12 @@ export default class Scene {
                             vec2D(other.position.x, -other.position.y),
                             other.rotation
                         );
-                        const collisionInfo = obj.collider.checkCollision(other.collider);
-
-                        if (collisionInfo) {
-                            obj.onCollision(other, collisionInfo);
-                        }
                     }
                 }
             }
             obj.update(deltaTime);
         }
+        this.overlapManager.processOverlaps()
     }
 
     draw(ctx: CanvasRenderingContext2D): void {

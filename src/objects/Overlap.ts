@@ -15,7 +15,7 @@ export default class Overlap {
     private _enabled: boolean;
     private _triggerOnce: boolean;
     private _hasTriggered: boolean;
-    private customCollisionHandler: boolean;
+    private readonly customCollisionHandler: boolean;
 
     constructor(obj1: PhysicObject, obj2: PhysicObject, callback: OverlapCallback, options: OverlapOptions = {}) {
         this.obj1 = obj1;

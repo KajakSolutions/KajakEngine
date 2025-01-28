@@ -85,7 +85,9 @@ export default class Scene {
         ctx.scale(Scene.scale, Scene.scale);
 
         for (const obj of this._gameObjects.values()) {
-            // this.drawObject(ctx, obj);
+            this.drawObject(ctx, obj);
+
+            if(!obj.spriteManager) continue;
 
             const spriteIndex = obj.spriteManager.getSprinteIndexByRotation(obj.rotation, 36);
             obj.spriteManager.drawSprite(ctx, spriteIndex, obj.position);

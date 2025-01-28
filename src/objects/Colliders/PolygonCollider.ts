@@ -1,7 +1,8 @@
 import {BoundingBox, Vec2D} from "../../types/math";
 import Collider, {ColliderInfo} from "./Collider.ts";
 import {AABBCollider} from "./AABBCollider.ts";
-import {add, dotProduct, length, subtract, vec2D} from "../../utils/math.ts";
+import {add, dotProduct, length, multiply, normalize, subtract, vec2D} from "../../utils/math.ts";
+import {LineCollider} from "./LineCollider.ts";
 
 export default class PolygonCollider extends Collider {
     private _position: Vec2D;
@@ -29,6 +30,8 @@ export default class PolygonCollider extends Collider {
             return this.checkCollisionWithAABB(other);
         } else if (other instanceof PolygonCollider) {
             return this.checkCollisionWithPolygon(other);
+        } else if (other instanceof LineCollider) {
+            return this.checkCollisionWithLine(other);
         }
         return null;
     }
@@ -47,6 +50,55 @@ export default class PolygonCollider extends Collider {
             this._vertices[i].x = dx * Math.cos(rotationDelta) - dy * Math.sin(rotationDelta);
             this._vertices[i].y = dx * Math.sin(rotationDelta) + dy * Math.cos(rotationDelta);
         }
+    }
+
+    private checkCollisionWithLine(line: LineCollider): ColliderInfo | null {
+        for (let i = 0; i < this.vertices.length; i++) {
+            const start = add(this.vertices[i], this.position);
+            const end = add(this.vertices[(i + 1) % this.vertices.length], this.position);
+
+            const intersection = this.lineIntersection(
+                start,
+                end,
+                line.start,
+                line.end
+            );
+
+            if (intersection) {
+                // Obliczamy wektor normalny do linii bandy
+                const dx = line.end.x - line.start.x;
+                const dy = line.end.y - line.start.y;
+                const normal = normalize(vec2D(-dy, dx));
+
+                return {
+                    objectA: this,
+                    objectB: line,
+                    contactPoints: [intersection],
+                    mtv: multiply(normal, -line.thickness)
+                };
+            }
+        }
+        return null;
+    }
+
+    private lineIntersection(a1: Vec2D, a2: Vec2D, b1: Vec2D, b2: Vec2D): Vec2D | null {
+        const denominator = ((b2.y - b1.y) * (a2.x - a1.x)) - ((b2.x - b1.x) * (a2.y - a1.y));
+
+        if (denominator === 0) {
+            return null;
+        }
+
+        const ua = (((b2.x - b1.x) * (a1.y - b1.y)) - ((b2.y - b1.y) * (a1.x - b1.x))) / denominator;
+        const ub = (((a2.x - a1.x) * (a1.y - b1.y)) - ((a2.y - a1.y) * (a1.x - b1.x))) / denominator;
+
+        if (ua < 0 || ua > 1 || ub < 0 || ub > 1) {
+            return null;
+        }
+
+        return vec2D(
+            a1.x + (ua * (a2.x - a1.x)),
+            a1.y + (ua * (a2.y - a1.y))
+        );
     }
 
     private checkCollisionWithPolygon(other: PolygonCollider): ColliderInfo | null  {

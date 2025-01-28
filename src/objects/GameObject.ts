@@ -6,7 +6,7 @@ export type GameObjectOptions = {
     rotation?: number;
     movable?: boolean;
     position?: Vec2D;
-    spriteManager: SpriteManager;
+    spriteManager?: SpriteManager;
 };
 
 export default class GameObject {
@@ -14,7 +14,7 @@ export default class GameObject {
     public size: Vec2D;
     public rotation: number;
     public movable: boolean;
-    public spriteManager: SpriteManager;
+    public spriteManager: SpriteManager | undefined;
 
     constructor({ size = { x: 0, y: 0 }, rotation = 0, movable = false, position = { x: 0, y: 0 }, spriteManager }: GameObjectOptions) {
         this.size = size;

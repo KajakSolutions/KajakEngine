@@ -8,7 +8,12 @@ import SpriteManager from "./objects/SpriteManager.ts";
 import {Vec2D} from "./types/math";
 import Overlap from "./objects/Overlap.ts";
 import {TrackBarriers} from "./objects/BarierSystem.ts";
-import {AIController} from "./objects/AIController.ts";
+import AIStrategy, {
+    AggressiveSideHitterStrategy,
+    AIController,
+    CenterLineFollowerStrategy,
+    RoadBlockerStrategy, StraightLineMasterStrategy
+} from "./objects/AIController.ts";
 import CheckpointObject from "./objects/CheckpointObject.ts";
 
 const canvas = document.createElement('canvas');
@@ -244,13 +249,20 @@ function createCar(position: Vec2D, imageSrc: string, isPlayer: boolean = false)
     });
 }
 
-function createAICar(position: Vec2D, imageSrc: string): CarObject {
+function createAICar(
+    position: Vec2D,
+    imageSrc: string,
+    strategy: AIStrategy,
+    playerCar: CarObject
+): CarObject {
     const car = createCar(position, imageSrc);
-    const ai = new AIController(car);
+    const ai = new AIController(car, playerCar, strategy);
 
+    // Add waypoints based on checkpoints
     const waypoints = checkpoints.map(cp => cp.position);
     ai.setWaypoints(waypoints);
 
+    // Update AI in game loop
     const originalUpdate = car.update.bind(car);
     car.update = (deltaTime: number) => {
         ai.update();
@@ -260,16 +272,38 @@ function createAICar(position: Vec2D, imageSrc: string): CarObject {
     return car;
 }
 
-const playerCar = createCar(vec2D(-50, -5), 'src/assets/car3.png', true);
+const playerCar = createCar(vec2D(3, 0), 'src/assets/car3.png', true);
 mainScene.addObject(playerCar);
 
-for (let i = 0; i < 4; i++) {
-    const aiCar = createAICar(
-        vec2D(-45 - i * 3, -10),
-        'src/assets/car2.png'
-    );
-    mainScene.addObject(aiCar);
-}
+const aiCar1 = createAICar(
+    vec2D(-45, 0),
+    'src/assets/car2.png',
+    new StraightLineMasterStrategy(),
+    playerCar
+);
+
+const aiCar2 = createAICar(
+    vec2D(-48, 0),
+    'src/assets/car2.png',
+    new CenterLineFollowerStrategy(),
+    playerCar
+);
+
+const aiCar3 = createAICar(
+    vec2D(-41, 0),
+    'src/assets/car2.png',
+    new AggressiveSideHitterStrategy(),
+    playerCar
+);
+
+const aiCar4 = createAICar(
+    vec2D(-44, 0),
+    'src/assets/car2.png',
+    new RoadBlockerStrategy(),
+    playerCar
+);
+
+[aiCar1, aiCar2, aiCar3, aiCar4].forEach(car => mainScene.addObject(car));
 
 const box = new TreeObject({
     position: vec2D(-36, 0),

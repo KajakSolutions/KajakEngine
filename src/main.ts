@@ -30,12 +30,12 @@ const trackBarriers = new TrackBarriers({
         { start: vec2D(60, 30), end: vec2D(-60, 30) },
         { start: vec2D(-60, 30), end: vec2D(-60, -30) },
 
-        { start: vec2D(-20, -10), end: vec2D(20, -10) },
-        { start: vec2D(20, -10), end: vec2D(20, 10) },
-        { start: vec2D(20, 10), end: vec2D(-20, 10) },
-        { start: vec2D(-20, 10), end: vec2D(-20, -10) },
+        { end: vec2D(-20, -10), start: vec2D(20, -10) },
+        { end: vec2D(20, -10), start: vec2D(20, 10) },
+        { end: vec2D(20, 10), start: vec2D(-20, 10) },
+        { end: vec2D(-20, 10), start: vec2D(-20, -10) },
     ],
-    thickness: 0.5
+    thickness: 1
 });
 
 trackBarriers.addToScene(mainScene);

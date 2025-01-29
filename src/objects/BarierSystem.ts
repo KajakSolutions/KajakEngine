@@ -2,7 +2,6 @@ import PhysicObject, { PhysicObjectOptions } from "./PhysicObject.ts";
 import { Vec2D } from "../types/math";
 import { vec2D } from "../utils/math.ts";
 import { LineCollider } from "./Colliders/LineCollider.ts";
-import SpriteManager from "./SpriteManager.ts";
 
 export interface BarrierSegmentOptions extends Omit<PhysicObjectOptions, 'collider'> {
     start: Vec2D;
@@ -61,7 +60,6 @@ export class TrackBarriers {
                 end: segment.end,
                 thickness: options.thickness,
                 mass: 1000000,
-                spriteManager: options.spriteManager
             });
         });
     }

@@ -25,15 +25,15 @@ engine.setCurrentScene(1);
 
 const trackBarriers = new TrackBarriers({
     segments: [
-        { start: vec2D(-60, -30), end: vec2D(60, -30) },
-        { start: vec2D(60, -30), end: vec2D(60, 30) },
-        { start: vec2D(60, 30), end: vec2D(-60, 30) },
-        { start: vec2D(-60, 30), end: vec2D(-60, -30) },
+        { end: vec2D(-55, -30), start: vec2D(60, -30) },
+        { end: vec2D(60, -30), start: vec2D(60, 30) },
+        { end: vec2D(60, 30), start: vec2D(-60, 30) },
+        { end: vec2D(-60, 30), start: vec2D(-55, -30) },
 
-        { end: vec2D(-20, -10), start: vec2D(20, -10) },
-        { end: vec2D(20, -10), start: vec2D(20, 10) },
-        { end: vec2D(20, 10), start: vec2D(-20, 10) },
-        { end: vec2D(-20, 10), start: vec2D(-20, -10) },
+        { start: vec2D(-20, -10), end: vec2D(20, -10) },
+        { start: vec2D(20, -10),   end: vec2D(20, 10) },
+        { start: vec2D(20, 10),  end: vec2D(-20, 10) },
+        { start: vec2D(-20, 10), end: vec2D(-20, -10) },
     ],
     thickness: 1
 });

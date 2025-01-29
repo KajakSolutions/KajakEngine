@@ -26,7 +26,6 @@ const mainScene = new Scene(worldBounds);
 engine.scenes.set(1, mainScene);
 engine.setCurrentScene(1);
 
-// Create checkpoints
 const checkpoints = [
     new CheckpointObject({
         position: vec2D(-50, 10),
@@ -166,7 +165,6 @@ const checkpoints = [
         }),
         mass: 1
     }),
-    // Add more checkpoints here as needed for the track
 ];
 
 checkpoints.forEach(checkpoint => {
@@ -262,11 +260,9 @@ function createAICar(position: Vec2D, imageSrc: string): CarObject {
     return car;
 }
 
-// Create the player car
 const playerCar = createCar(vec2D(-50, -5), 'src/assets/car3.png', true);
 mainScene.addObject(playerCar);
 
-// Create AI opponents
 for (let i = 0; i < 4; i++) {
     const aiCar = createAICar(
         vec2D(-45 - i * 3, -10),
@@ -275,7 +271,6 @@ for (let i = 0; i < 4; i++) {
     mainScene.addObject(aiCar);
 }
 
-// Add static obstacles
 const box = new TreeObject({
     position: vec2D(-36, 0),
     size: vec2D(2, 2),
@@ -361,7 +356,6 @@ function setupOverlaps(scene: Scene) {
     const barriers = Array.from(scene.gameObjects.values())
         .filter(obj => obj instanceof TreeObject);
 
-    // Car-to-car collisions
     for (let i = 0; i < cars.length; i++) {
         for (let j = i + 1; j < cars.length; j++) {
             const overlap = new Overlap(
@@ -378,7 +372,6 @@ function setupOverlaps(scene: Scene) {
         }
     }
 
-    // Car-to-barrier collisions
     for (const car of cars) {
         for (const barrier of barriers) {
             const overlap = new Overlap(
@@ -399,10 +392,8 @@ function setupOverlaps(scene: Scene) {
     setupCheckpointOverlaps(scene);
 }
 
-// Setup all overlaps
 setupOverlaps(mainScene);
 
-// Handle player controls
 document.addEventListener('keydown', (e) => {
     switch(e.key) {
         case 'ArrowUp':
@@ -433,10 +424,8 @@ document.addEventListener('keyup', (e) => {
     }
 });
 
-// Add leaderboard container
 const leaderboardContainer = document.createElement('div');
 leaderboardContainer.id = 'leaderboard-container';
 document.body.appendChild(leaderboardContainer);
 
-// Start the game
 engine.start();

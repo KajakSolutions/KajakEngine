@@ -21,7 +21,6 @@ export class RaceManager {
 
     addCheckpoint(checkpoint: CheckpointObject): void {
         this.checkpoints.push(checkpoint);
-        // Sort checkpoints by order
         this.checkpoints.sort((a, b) => a.checkpointOrder - b.checkpointOrder);
     }
 

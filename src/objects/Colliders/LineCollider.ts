@@ -38,7 +38,6 @@ export class LineCollider extends Collider {
     }
 
     private checkCollisionWithPolygon(polygon: PolygonCollider): ColliderInfo | null {
-        // Sprawdzamy każdy segment wielokąta pod kątem przecięcia z linią
         const vertices = polygon.vertices;
         const position = polygon.position;
 
@@ -57,7 +56,6 @@ export class LineCollider extends Collider {
             );
 
             if (intersection) {
-                // Obliczamy wektor normalny do linii bandy
                 const dx = this._end.x - this._start.x;
                 const dy = this._end.y - this._start.y;
                 const normal = normalize(vec2D(-dy, dx));

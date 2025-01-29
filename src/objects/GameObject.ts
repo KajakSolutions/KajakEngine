@@ -15,6 +15,7 @@ export default class GameObject {
     public rotation: number;
     public movable: boolean;
     public spriteManager: SpriteManager | undefined;
+    public  _id: number = -1;
 
     constructor({ size = { x: 0, y: 0 }, rotation = 0, movable = false, position = { x: 0, y: 0 }, spriteManager }: GameObjectOptions) {
         this.size = size;
@@ -22,9 +23,16 @@ export default class GameObject {
         this.movable = movable;
         this.position = position;
         this.spriteManager = spriteManager;
+
     }
 
+    get id(): number {
+        return this._id;
+    }
 
+    set id(value: number) {
+        this._id = value;
+    }
 
 // @ts-ignore
     update(deltaTime: number): void {}

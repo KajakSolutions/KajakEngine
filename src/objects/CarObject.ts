@@ -11,6 +11,8 @@ export interface CarObjectOptions extends PhysicObjectOptions {
     wheelSize?: Vec2D;
     drag?: number;
     resistance?: number;
+    isPlayer?: boolean;
+    id: number;
 }
 
 export default class CarObject extends PhysicObject {
@@ -18,7 +20,11 @@ export default class CarObject extends PhysicObject {
     private throttle: number = 0;
     private brake: number = 0;
     private angularVelocity: number = 0;
+    private _lastCheckpoint: number = -1;
 
+    private readonly _isPlayer: boolean = false;
+    private readonly _playerId: number;
+    // physics stuff
     private readonly inertia: number;
     private readonly maxGrip: number;
     private readonly resistance: number = 30;
@@ -46,6 +52,8 @@ export default class CarObject extends PhysicObject {
         this._frontAxleToCg = frontAxleToCg || this.wheelBase / 2;
         this._rearAxleToCg = rearAxleToCg || this.wheelBase / 2;
         this._wheelSize = wheelSize;
+        this._isPlayer = options.isPlayer || false;
+        this._playerId = options.id;
     }
 
     get wheelSize(): Vec2D {
@@ -58,6 +66,22 @@ export default class CarObject extends PhysicObject {
 
     get rearAxleToCg(): number {
         return this._rearAxleToCg;
+    }
+
+    get isPlayer(): boolean {
+        return this._isPlayer;
+    }
+
+    get lastCheckpoint(): number {
+        return this._lastCheckpoint;
+    }
+
+    set lastCheckpoint(value: number) {
+        this._lastCheckpoint = value;
+    }
+
+    get playerId(): number {
+        return this._playerId;
     }
 
     update(deltaTime: number): void {

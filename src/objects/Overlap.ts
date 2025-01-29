@@ -9,8 +9,8 @@ type OverlapOptions = {
 }
 
 export default class Overlap {
-    private readonly obj1: PhysicObject;
-    private readonly obj2: PhysicObject;
+    private readonly _obj1: PhysicObject;
+    private readonly _obj2: PhysicObject;
     private readonly callback: OverlapCallback;
     private _enabled: boolean;
     private _triggerOnce: boolean;
@@ -18,8 +18,8 @@ export default class Overlap {
     private readonly customCollisionHandler: boolean;
 
     constructor(obj1: PhysicObject, obj2: PhysicObject, callback: OverlapCallback, options: OverlapOptions = {}) {
-        this.obj1 = obj1;
-        this.obj2 = obj2;
+        this._obj1 = obj1;
+        this._obj2 = obj2;
         this.callback = callback;
         this._enabled = options.enabled ?? true;
         this._triggerOnce = options.triggerOnce ?? false;
@@ -33,6 +33,14 @@ export default class Overlap {
 
     set enabled(value: boolean) {
         this._enabled = value;
+    }
+
+    get obj1(): PhysicObject {
+        return this._obj1;
+    }
+
+    get obj2(): PhysicObject {
+        return this._obj2;
     }
 
     get triggerOnce(): boolean {
@@ -55,7 +63,7 @@ export default class Overlap {
         if (!this._enabled) return null;
         if (this._hasTriggered && this._triggerOnce) return null;
 
-        return this.obj1.collider.checkCollision(this.obj2.collider);
+        return this._obj1.collider.checkCollision(this._obj2.collider);
     }
 
     onOverlap(): void {
@@ -64,9 +72,9 @@ export default class Overlap {
         if(!collisionInfo) return;
 
         if (this.customCollisionHandler) {
-            this.callback(this.obj1, this.obj2, collisionInfo);
+            this.callback(this._obj1, this._obj2, collisionInfo);
         } else {
-            this.callback(this.obj1, this.obj2);
+            this.callback(this._obj1, this._obj2);
         }
 
         if (this.triggerOnce) {

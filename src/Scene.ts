@@ -7,17 +7,21 @@ import {AABBCollider} from "./objects/Colliders/AABBCollider.ts";
 import PolygonCollider from "./objects/Colliders/PolygonCollider.ts";
 import MapObject from "./objects/MapObject.ts";
 import OverlapManager from "./objects/OverlapManager.ts";
+import {RaceManager} from "./objects/RaceManager.ts";
+import CheckpointObject from "./objects/CheckpointObject.ts";
 
 export default class Scene {
     private _gameObjects: Map<number, PhysicObject> = new Map();
     private _quadTree: QuadTree;
     private nextId: number = 1;
-    private _map = new MapObject({backgroundSrc: 'src/assets/map2.png', traceFragments: []});
+    private _map = new MapObject({backgroundSrc: 'src/assets/map2.png'});
     public readonly overlapManager = new OverlapManager();
+    private readonly _raceManager: RaceManager;
     static scale: number = 10;
 
     constructor(worldBounds: BoundingBox) {
         this._quadTree = new QuadTree(worldBounds);
+        this._raceManager = new RaceManager();
     }
 
     get gameObjects(): Map<number, PhysicObject> {
@@ -27,19 +31,43 @@ export default class Scene {
     get map(): MapObject {
         return this._map;
     }
+    get raceManager(): RaceManager {
+        return this._raceManager;
+    }
 
     addObject(object: PhysicObject): number {
         const id = this.nextId++;
         this._gameObjects.set(id, object);
+        object.id = id;
+
+        // Tylko  po to żeby nie trzeba było ręcznie dodawać samochodów i checkpointów do RaceManagera
+        if (object instanceof CarObject) {
+            this._raceManager.addCar(object);
+        } else if (object instanceof CheckpointObject) {
+            this._raceManager.addCheckpoint(object);
+        }
+
         return id;
     }
 
     removeObject(id: number): void {
+        const object = this._gameObjects.get(id);
+        if (!object) return;
+
+        const overlapsToRemove = Array.from(this.overlapManager.overlaps).filter(overlap =>
+            overlap.obj1 === object || overlap.obj2 === object
+        );
+
+        overlapsToRemove.forEach(overlap => {
+            this.overlapManager.removeOverlap(overlap);
+        });
+
         this._gameObjects.delete(id);
     }
 
     update(deltaTime: number): void {
-        console.log(`FPS: ${Math.round(1 / deltaTime)}`);
+        // console.log(`FPS: ${Math.round(1 / deltaTime)}`);
+
         this._quadTree.clear();
         for (const obj of this._gameObjects.values()) {
             if (obj.collider) {
@@ -51,29 +79,11 @@ export default class Scene {
             if (obj instanceof PhysicObject) {
 
                 obj.collider.updatePosition(vec2D(obj.position.x, -obj.position.y), obj.rotation);
-                // const boundingBox = obj.collider.getBoundingBox();
-                // const nearbyObjects = this._quadTree.query(boundingBox);
-                //
-                // for (const other of nearbyObjects) {
-                //     if (other !== obj && other instanceof PhysicObject) {
-                //         if(!obj.movable && !other.movable) continue;
-                //
-                //         obj.collider.updatePosition(vec2D(obj.position.x, -obj.position.y), obj.rotation);
-                //         other.collider.updatePosition(
-                //             vec2D(other.position.x, -other.position.y),
-                //             other.rotation
-                //         );
-
-                        // const collisionInfo = obj.collider.checkCollision(other.collider);
-                        // if (collisionInfo) {
-                        //     obj.onCollision(other, collisionInfo);
-                        //
-                        //     }
-                //     }
-                // }
             }
             obj.update(deltaTime);
         }
+
+        this._raceManager.update();
         this.overlapManager.processOverlaps()
     }
 

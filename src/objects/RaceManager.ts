@@ -39,6 +39,7 @@ export class RaceManager {
     private processPlayerCheckpoints(car: CarObject): void {
         const currentCheckpoint = this.checkpoints[car.lastCheckpoint + 1];
         if (!currentCheckpoint) return;
+        currentCheckpoint.spriteManager!.hidden = false;
 
         if (car.collider.checkCollision(currentCheckpoint.collider)) {
             currentCheckpoint.activate(car);

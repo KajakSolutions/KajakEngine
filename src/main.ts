@@ -167,9 +167,9 @@ const checkpoints = [
     }),
 ];
 
-// checkpoints.forEach(checkpoint => {
-//     mainScene.addObject(checkpoint);
-// });
+checkpoints.forEach(checkpoint => {
+     mainScene.addObject(checkpoint);
+});
 
 const trackBarriers = new TrackBarriers({
     segments: [
@@ -267,11 +267,11 @@ const aiController2 = new CarAIController(aiCar2, AIBehaviorType.STEADY_MIDDLE);
 // const aiController3 = new CarAIController(aiCar3, AIBehaviorType.AGGRESSIVE_CHASER);
 // const aiController4 = new CarAIController(aiCar4, AIBehaviorType.TACTICAL_BLOCKER);
 
-mainScene.addObject(aiCar1);
-mainScene.addObject(aiCar2);
+// mainScene.addObject(aiCar1);
+// mainScene.addObject(aiCar2);
 
-mainScene.addAIController(aiController1);
-mainScene.addAIController(aiController2);
+// mainScene.addAIController(aiController1);
+// mainScene.addAIController(aiController2);
 // mainScene.addAIController(aiController3);
 // mainScene.addAIController(aiController4);
 
@@ -336,8 +336,8 @@ function setupCheckpointOverlaps(scene: Scene) {
                 checkpoint,
                 (vehicle, checkpointObj) => {
                     if (vehicle instanceof CarObject && checkpointObj instanceof CheckpointObject) {
-                        console.log(vehicle.isPlayer, !checkpointObj.isActivated);
-                        if (vehicle.isPlayer && !checkpointObj.isActivated) {
+                        console.log(vehicle.isPlayer, checkpointObj.isActivated);
+                        if (vehicle.isPlayer && checkpointObj.isActivated) {
                             console.log('overlap', vehicle.isPlayer, checkpointObj);
                             checkpointObj.activate(vehicle);
                             if (!checkpointObj.isFinish) {

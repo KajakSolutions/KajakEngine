@@ -14,6 +14,7 @@ export default class SpriteManager {
     private readonly _cellSize: Vec2D;
     private readonly _columns: number;
     private readonly _count: number;
+    private _hidden: boolean = false;
 
     constructor(options: SpriteOptions) {
         this._spriteSheet.src = options.imageSrc;
@@ -23,6 +24,7 @@ export default class SpriteManager {
     }
 
     drawSprite(ctx: CanvasRenderingContext2D, index: number, position: Vec2D, smoothing: boolean = false): void {
+        if (this._hidden) return;
         ctx.save();
 
         ctx.imageSmoothingEnabled = smoothing;
@@ -67,5 +69,14 @@ export default class SpriteManager {
 
     get count(): number {
         return this._count;
+    }
+
+
+    get hidden(): boolean {
+        return this._hidden;
+    }
+
+    set hidden(value: boolean) {
+        this._hidden = value;
     }
 }

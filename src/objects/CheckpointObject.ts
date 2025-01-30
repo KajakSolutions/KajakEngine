@@ -15,7 +15,8 @@ export default class CheckpointObject extends PhysicObject {
         super(options);
         this.isFinishLine = options.isFinishLine || false;
         this.order = options.order;
-        this.activated = options.order === 0;
+        this.activated = false;
+        this.spriteManager!.hidden = true;
     }
 
     get isActivated(): boolean {

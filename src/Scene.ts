@@ -9,6 +9,8 @@ import MapObject from "./objects/MapObject.ts";
 import OverlapManager from "./objects/OverlapManager.ts";
 import {RaceManager} from "./objects/RaceManager.ts";
 import CheckpointObject from "./objects/CheckpointObject.ts";
+import {CarAIController} from "./objects/CarAI.ts";
+import {LineCollider} from "./objects/Colliders/LineCollider.ts";
 
 export default class Scene {
     private _gameObjects: Map<number, PhysicObject> = new Map();
@@ -18,6 +20,7 @@ export default class Scene {
     public readonly overlapManager = new OverlapManager();
     private readonly _raceManager: RaceManager;
     static scale: number = 10;
+    private aiControllers: CarAIController[] = [];
 
     constructor(worldBounds: BoundingBox) {
         this._quadTree = new QuadTree(worldBounds);
@@ -33,6 +36,10 @@ export default class Scene {
     }
     get raceManager(): RaceManager {
         return this._raceManager;
+    }
+
+    addAIController(controller: CarAIController) {
+        this.aiControllers.push(controller);
     }
 
     addObject(object: PhysicObject): number {
@@ -66,7 +73,16 @@ export default class Scene {
     }
 
     update(deltaTime: number): void {
-        // console.log(`FPS: ${Math.round(1 / deltaTime)}`);
+        console.log(`FPS: ${Math.round(1 / deltaTime)}`);
+
+        this.aiControllers.forEach(controller => {
+            const playerCar = Array.from(this._gameObjects.values())
+                .find(obj => obj instanceof CarObject && obj.isPlayer) as CarObject;
+
+            if (playerCar) {
+                controller.update(this, playerCar);
+            }
+        });
 
         this._quadTree.clear();
         for (const obj of this._gameObjects.values()) {
@@ -103,7 +119,33 @@ export default class Scene {
             obj.spriteManager.drawSprite(ctx, spriteIndex, obj.position);
         }
 
+        this.drawRays(ctx);
+
         ctx.restore();
+    }
+
+    private drawRays(ctx: CanvasRenderingContext2D): void {
+        this.aiControllers.forEach(controller => {
+            const ai = controller.getAI();
+            const rays = ai.rays;
+            const results = ai.getRaycastResults(this);
+
+            rays.forEach((ray, index) => {
+                ctx.beginPath();
+                ctx.strokeStyle = results[index].distance < ai.rayLength ? 'red' : 'yellow';
+                ctx.lineWidth = 0.1;
+                ctx.moveTo(ray._start.x, ray._start.y);
+                ctx.lineTo(results[index].point.x, results[index].point.y);
+                ctx.stroke();
+
+                if (results[index].distance < ai.rayLength) {
+                    ctx.beginPath();
+                    ctx.fillStyle = 'red';
+                    ctx.arc(results[index].point.x, results[index].point.y, 0.3, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+        });
     }
 
     private drawObject(ctx: CanvasRenderingContext2D, obj: PhysicObject): void {
@@ -180,6 +222,13 @@ export default class Scene {
             ctx.strokeStyle = 'green';
             ctx.lineWidth = 0.05;
             ctx.strokeRect(obj.collider.position.x, obj.collider.position.y, obj.collider.size.x, obj.collider.size.y);
+        } else if (obj.collider instanceof LineCollider) {
+            ctx.strokeStyle = 'green';
+            ctx.lineWidth = 0.05;
+            ctx.beginPath();
+            ctx.moveTo(obj.collider.start.x, obj.collider.start.y);
+            ctx.lineTo(obj.collider.end.x, obj.collider.end.y);
+            ctx.stroke();
         }
     }
 }

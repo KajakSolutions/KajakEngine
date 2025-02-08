@@ -122,6 +122,7 @@ export default class Scene {
         ctx.restore();
     }
 
+    // @ts-ignore
     private drawRays(ctx: CanvasRenderingContext2D): void {
         this.aiControllers.forEach(controller => {
             const ai = controller.getAI();
@@ -146,6 +147,7 @@ export default class Scene {
         });
     }
 
+    // @ts-ignore
     private drawObject(ctx: CanvasRenderingContext2D, obj: PhysicObject): void {
         if (obj instanceof CarObject) {
             ctx.save();

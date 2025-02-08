@@ -1,15 +1,21 @@
 {
-  "name": "kajakracing",
+  "name": "@kajaksolutions/kajakengine",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
+  "description": "A 2D racing game engine",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepare": "npm run build"
   },
   "devDependencies": {
+    "@types/node": "^22.13.1",
     "typescript": "~5.6.2",
     "vite": "^6.0.5"
+  },
+  "dependencies": {
+    "vite-plugin-dts": "^4.5.0"
   }
 }

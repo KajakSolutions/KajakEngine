@@ -1,6 +1,6 @@
 import CarObject from "./objects/CarObject.ts";
 import PolygonCollider from "./objects/Colliders/PolygonCollider.ts";
-import {vec2D} from "./utils/math.ts";
+import {degreesToRadians, vec2D} from "./utils/math.ts";
 import Scene from "./Scene.ts";
 import KajakEngine from "./KajakEngine.ts";
 import TreeObject from "./objects/TreeObject.ts";
@@ -11,6 +11,7 @@ import {TrackBarriers} from "./objects/BarierSystem.ts";
 import CheckpointObject from "./objects/CheckpointObject.ts";
 import {AIBehaviorType, CarAIController} from "./objects/CarAI.ts";
 import {setupStartingGrid} from "./utils/gridPositionHelper.ts";
+import {AABBCollider} from "./objects/Colliders/AABBCollider.ts";
 
 const canvas = document.createElement('canvas');
 document.body.appendChild(canvas);
@@ -35,25 +36,22 @@ engine.setCurrentScene(1);
 
 const checkpoints = [
     new CheckpointObject({
-        position: vec2D(-50, 10),
+        position: vec2D(-46, 10),
         size: vec2D(10, 2),
         order: 0,
         isFinishLine: false,
         movable: false,
-        collider: new PolygonCollider(
-            vec2D(0, 0),
-            [
-                vec2D(-5, -1),
-                vec2D(5, -1),
-                vec2D(5, 1),
-                vec2D(-5, 1)
-            ]
+        rotation: degreesToRadians(45),
+        collider: new AABBCollider(
+            vec2D(-12, -1),
+            vec2D(22, 2)
         ),
         spriteManager: new SpriteManager({
-            imageSrc: 'src/assets/map2.png',
+            imageSrc: 'src/assets/checkpoint.png',
             cellSize: vec2D(32, 32),
-            count: 1,
-            columns: 1
+            count: 48,
+            columns: 7,
+            offset: 47
         }),
         mass: 1
     }),
@@ -63,112 +61,97 @@ const checkpoints = [
         order: 1,
         isFinishLine: false,
         movable: false,
-        collider: new PolygonCollider(
-            vec2D(0, 0),
-            [
-                vec2D(-5, -1),
-                vec2D(5, -1),
-                vec2D(5, 1),
-                vec2D(-5, 1)
-            ]
+        rotation: degreesToRadians(130),
+        collider: new AABBCollider(
+            vec2D( -1, -12),
+            vec2D(2, 18,)
         ),
         spriteManager: new SpriteManager({
-            imageSrc: 'src/assets/map2.png',
+            imageSrc: 'src/assets/checkpoint.png',
             cellSize: vec2D(32, 32),
-            count: 1,
-            columns: 1
+            count: 48,
+            columns: 7,
+            offset: 47
         }),
         mass: 1
     }),
     new CheckpointObject({
-        position: vec2D(25, -15),
+        position: vec2D(25, -18),
         size: vec2D(10, 2),
         order: 2,
         isFinishLine: false,
         movable: false,
-        collider: new PolygonCollider(
-            vec2D(0, 0),
-            [
-                vec2D(-5, -1),
-                vec2D(5, -1),
-                vec2D(5, 1),
-                vec2D(-5, 1)
-            ]
+        rotation: degreesToRadians(65),
+        collider: new AABBCollider(
+            vec2D( -1, -12),
+            vec2D(2, 18,)
         ),
         spriteManager: new SpriteManager({
-            imageSrc: 'src/assets/map2.png',
+            imageSrc: 'src/assets/checkpoint.png',
             cellSize: vec2D(32, 32),
-            count: 1,
-            columns: 1
+            count: 48,
+            columns: 7,
+            offset: 47
         }),
         mass: 1
     }),
     new CheckpointObject({
-        position: vec2D(45, 0),
+        position: vec2D(50, 0),
         size: vec2D(10, 2),
         order: 3,
         isFinishLine: false,
         movable: false,
-        collider: new PolygonCollider(
-            vec2D(0, 0),
-            [
-                vec2D(-5, -1),
-                vec2D(5, -1),
-                vec2D(5, 1),
-                vec2D(-5, 1)
-            ]
+        rotation: degreesToRadians(0),
+        collider: new AABBCollider(
+            vec2D(-12, -1),
+            vec2D(22, 2)
         ),
         spriteManager: new SpriteManager({
-            imageSrc: 'src/assets/map2.png',
+            imageSrc: 'src/assets/checkpoint.png',
             cellSize: vec2D(32, 32),
-            count: 1,
-            columns: 1
+            count: 48,
+            columns: 7,
+            offset: 47
         }),
         mass: 1
     }),
     new CheckpointObject({
-        position: vec2D(25, 18),
+        position: vec2D(26, 16),
         size: vec2D(10, 2),
         order: 4,
         isFinishLine: false,
         movable: false,
-        collider: new PolygonCollider(
-            vec2D(0, 0),
-            [
-                vec2D(-5, -1),
-                vec2D(5, -1),
-                vec2D(5, 1),
-                vec2D(-5, 1)
-            ]
+        rotation: degreesToRadians(245),
+        collider: new AABBCollider(
+            vec2D(-1, -12),
+            vec2D(2, 22)
         ),
         spriteManager: new SpriteManager({
-            imageSrc: 'src/assets/map2.png',
+            imageSrc: 'src/assets/checkpoint.png',
             cellSize: vec2D(32, 32),
-            count: 1,
-            columns: 1
+            count: 48,
+            columns: 7,
+            offset: 47
         }),
         mass: 1
     }),
     new CheckpointObject({
-        position: vec2D(-35, -23),
+        position: vec2D(-25, -18),
         size: vec2D(10, 2),
         order: 5,
         isFinishLine: false,
         movable: false,
-        collider: new PolygonCollider(
-            vec2D(0, 0),
-            [
-                vec2D(-5, -1),
-                vec2D(5, -1),
-                vec2D(5, 1),
-                vec2D(-5, 1)
-            ]
+        rotation: degreesToRadians(285),
+        collider: new AABBCollider(
+            vec2D(-1, -12),
+            vec2D(2, 22)
         ),
         spriteManager: new SpriteManager({
-            imageSrc: 'src/assets/map2.png',
+            imageSrc: 'src/assets/checkpoint.png',
             cellSize: vec2D(32, 32),
-            count: 1,
-            columns: 1
+            count: 48,
+            columns: 7,
+            offset: 47
         }),
         mass: 1
     }),
@@ -178,20 +161,17 @@ const checkpoints = [
         order: 6,
         isFinishLine: true,
         movable: false,
-        collider: new PolygonCollider(
-            vec2D(0, 0),
-            [
-                vec2D(-5, -1),
-                vec2D(5, -1),
-                vec2D(5, 1),
-                vec2D(-5, 1)
-            ]
+        rotation: degreesToRadians(0),
+        collider: new AABBCollider(
+            vec2D(-12, -1),
+            vec2D(22, 2)
         ),
         spriteManager: new SpriteManager({
-            imageSrc: 'src/assets/map2.png',
+            imageSrc: 'src/assets/checkpoint.png',
             cellSize: vec2D(32, 32),
-            count: 1,
-            columns: 1
+            count: 48,
+            columns: 7,
+            offset: 47
         }),
         mass: 1
     }),
@@ -271,7 +251,8 @@ function createCar(position: Vec2D, imageSrc: string, isPlayer: boolean = false)
             imageSrc: imageSrc,
             cellSize: vec2D(32, 32),
             count: 48,
-            columns: 7
+            columns: 7,
+            offset: 36
         }),
         isPlayer,
         id: carId
@@ -285,7 +266,7 @@ const playerCar = createCar(vec2D(3, 0), 'src/assets/car3.png', true);
 const aiCar1 = createCar(vec2D(-3, 2), 'src/assets/car1.png', false);
 const aiCar2 = createCar(vec2D(-2, -2), 'src/assets/car2.png', false);
 const aiCar3 = createCar(vec2D(-5, 0), 'src/assets/car4.png', false);
-const aiCar4 = createCar(vec2D(-5, 2), 'src/assets/car2.png', false);
+const aiCar4 = createCar(vec2D(-5, 2), 'src/assets/car5.png', false);
 
 const aiController1 = new CarAIController(aiCar1, AIBehaviorType.STRAIGHT_LINE_MASTER);
 const aiController2 = new CarAIController(aiCar2, AIBehaviorType.STEADY_MIDDLE);

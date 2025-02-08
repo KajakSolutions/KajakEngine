@@ -39,3 +39,7 @@ export const normalize = (vec: Vec2D) : Vec2D => {
 export const dotProduct = (vec1: Vec2D, vec2: Vec2D) : number => {
     return vec1.x * vec2.x + vec1.y * vec2.y;
 }
+
+export const degreesToRadians = (degrees: number): number => {
+    return degrees * (Math.PI / 180);
+}

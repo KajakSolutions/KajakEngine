@@ -113,7 +113,7 @@ export default class Scene {
 
             if(!obj.spriteManager) continue;
 
-            const spriteIndex = obj.spriteManager.getSprinteIndexByRotation(obj.rotation, 36);
+            const spriteIndex = obj.spriteManager.getSprinteIndexByRotation(obj.rotation);
             obj.spriteManager.drawSprite(ctx, spriteIndex, obj.position);
         }
 

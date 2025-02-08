@@ -7,6 +7,7 @@ export type SpriteOptions = {
     cellSize: Vec2D;
     columns: number;
     count: number;
+    offset?: number;
 };
 
 export default class SpriteManager {
@@ -14,6 +15,7 @@ export default class SpriteManager {
     private readonly _cellSize: Vec2D;
     private readonly _columns: number;
     private readonly _count: number;
+    private readonly _offset: number;
     private _hidden: boolean = false;
 
     constructor(options: SpriteOptions) {
@@ -21,6 +23,7 @@ export default class SpriteManager {
         this._cellSize = options.cellSize;
         this._count = options.count;
         this._columns = options.columns;
+        this._offset = options.offset || 0;
     }
 
     drawSprite(ctx: CanvasRenderingContext2D, index: number, position: Vec2D, smoothing: boolean = false): void {
@@ -53,10 +56,10 @@ export default class SpriteManager {
         )
     }
 
-    getSprinteIndexByRotation(rotation: number, offset: number = 0): number {
+    getSprinteIndexByRotation(rotation: number): number {
         const normalizedAngle = ((rotation * (180 / Math.PI)) % 360 + 360) % 360;
         const step = 360 / this._count;
-        return Math.floor(normalizedAngle / step + offset) % this._count;
+        return Math.floor(normalizedAngle / step + this._offset) % this._count;
     }
 
     get cellSize(): Vec2D {

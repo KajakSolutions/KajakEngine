@@ -9,6 +9,9 @@
     "preview": "vite preview",
     "prepare": "npm run build"
   },
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kajaksolutions/kajakengine.git"

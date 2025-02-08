@@ -73,7 +73,7 @@ export default class Scene {
     }
 
     update(deltaTime: number): void {
-        // console.log(`FPS: ${Math.round(1 / deltaTime)}`);
+        console.log(`FPS: ${Math.round(1 / deltaTime)}`);
 
         this.aiControllers.forEach(controller => {
             const playerCar = Array.from(this._gameObjects.values())
@@ -92,10 +92,7 @@ export default class Scene {
         }
 
         for (const obj of this._gameObjects.values()) {
-            if (obj instanceof PhysicObject) {
-
-                obj.collider.updatePosition(vec2D(obj.position.x, -obj.position.y), obj.rotation);
-            }
+            obj.collider.updatePosition(vec2D(obj.position.x, -obj.position.y), obj.rotation);
             obj.update(deltaTime);
         }
 

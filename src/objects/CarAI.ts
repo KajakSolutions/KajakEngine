@@ -185,7 +185,6 @@ export class CarAIController {
 
         const raycastResults = this.ai.getRaycastResults(scene);
         const nextCheckpoint = this.getNextCheckpoint(scene);
-        console.log(nextCheckpoint?.position);
         if (!nextCheckpoint) return;
 
         const roadAnalysis = this.analyzeRoad(raycastResults);

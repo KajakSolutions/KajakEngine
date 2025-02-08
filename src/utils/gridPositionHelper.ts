@@ -49,7 +49,6 @@ export function setupStartingGrid(cars: CarObject[], finishLine: Vec2D): void {
     };
 
     const startPositions = calculateGridPositions(gridConfig);
-    console.log(startPositions);
 
     cars.forEach((car, index) => {
         car.position = startPositions[index];

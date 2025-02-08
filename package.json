@@ -10,6 +10,10 @@
     "preview": "vite preview",
     "prepare": "npm run build"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kajaksolutions/kajakengine.git"
+  },
   "devDependencies": {
     "@types/node": "^22.13.1",
     "typescript": "~5.6.2",

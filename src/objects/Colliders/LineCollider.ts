@@ -15,6 +15,15 @@ export class LineCollider extends Collider {
         this._thickness = thickness;
     }
 
+
+    set start(value: Vec2D) {
+        this._start = value;
+    }
+
+    set end(value: Vec2D) {
+        this._end = value;
+    }
+
     get start(): Vec2D {
         return this._start;
     }
@@ -24,7 +33,7 @@ export class LineCollider extends Collider {
     }
 
     updatePosition(_: Vec2D, _2: number = 0): void {
-        // Line collider position update if needed
+        // Line collider position update, mabye in the future
     }
 
     checkCollision(other: Collider): ColliderInfo | null {

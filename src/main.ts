@@ -10,6 +10,7 @@ import Overlap from "./objects/Overlap.ts";
 import {TrackBarriers} from "./objects/BarierSystem.ts";
 import CheckpointObject from "./objects/CheckpointObject.ts";
 import {AIBehaviorType, CarAIController} from "./objects/CarAI.ts";
+import {setupStartingGrid} from "./utils/gridPositionHelper.ts";
 
 const canvas = document.createElement('canvas');
 document.body.appendChild(canvas);
@@ -103,7 +104,7 @@ const checkpoints = [
         mass: 1
     }),
     new CheckpointObject({
-        position: vec2D(25, 18),
+        position: vec2D(45, 0),
         size: vec2D(10, 2),
         order: 3,
         isFinishLine: false,
@@ -126,7 +127,7 @@ const checkpoints = [
         mass: 1
     }),
     new CheckpointObject({
-        position: vec2D(-35, -23),
+        position: vec2D(25, 18),
         size: vec2D(10, 2),
         order: 4,
         isFinishLine: false,
@@ -149,9 +150,32 @@ const checkpoints = [
         mass: 1
     }),
     new CheckpointObject({
-        position: vec2D(-45, 0),
+        position: vec2D(-35, -23),
         size: vec2D(10, 2),
         order: 5,
+        isFinishLine: false,
+        movable: false,
+        collider: new PolygonCollider(
+            vec2D(0, 0),
+            [
+                vec2D(-5, -1),
+                vec2D(5, -1),
+                vec2D(5, 1),
+                vec2D(-5, 1)
+            ]
+        ),
+        spriteManager: new SpriteManager({
+            imageSrc: 'src/assets/map2.png',
+            cellSize: vec2D(32, 32),
+            count: 1,
+            columns: 1
+        }),
+        mass: 1
+    }),
+    new CheckpointObject({
+        position: vec2D(-45, 0),
+        size: vec2D(10, 2),
+        order: 6,
         isFinishLine: true,
         movable: false,
         collider: new PolygonCollider(
@@ -192,11 +216,6 @@ const trackBarriers = new TrackBarriers({
         { end: vec2D(-32, 30), start: vec2D(-48, 29) },
         { end: vec2D(-48, 29), start: vec2D(-58, 20) },
         { end: vec2D(-58, 20), start: vec2D(-58, -20) },
-
-        // { start: vec2D(-20, -10), end: vec2D(20, -10) },
-        // { start: vec2D(20, -10), end: vec2D(20, 10) },
-        // { start: vec2D(20, 10), end: vec2D(-20, 10) },
-        // { start: vec2D(-20, 10), end: vec2D(-20, -10) },
     ],
     thickness: 1
 });
@@ -261,7 +280,7 @@ function createCar(position: Vec2D, imageSrc: string, isPlayer: boolean = false)
 
 
 const playerCar = createCar(vec2D(3, 0), 'src/assets/car3.png', true);
-mainScene.addObject(playerCar);
+
 
 const aiCar1 = createCar(vec2D(-3, 2), 'src/assets/car1.png', false);
 const aiCar2 = createCar(vec2D(-2, -2), 'src/assets/car2.png', false);
@@ -273,10 +292,11 @@ const aiController2 = new CarAIController(aiCar2, AIBehaviorType.STEADY_MIDDLE);
 const aiController3 = new CarAIController(aiCar3, AIBehaviorType.AGGRESSIVE_CHASER);
 const aiController4 = new CarAIController(aiCar4, AIBehaviorType.TACTICAL_BLOCKER);
 
-mainScene.addObject(aiCar1);
-mainScene.addObject(aiCar2);
-mainScene.addObject(aiCar3);
-mainScene.addObject(aiCar4);
+const allCars = [playerCar, aiCar1, aiCar2, aiCar3, aiCar4];
+const finishLinePosition = vec2D(-45, -10);
+setupStartingGrid(allCars, finishLinePosition);
+
+allCars.forEach(car => {mainScene.addObject(car)});
 
 mainScene.addAIController(aiController1);
 mainScene.addAIController(aiController2);

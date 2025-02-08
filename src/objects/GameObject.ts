@@ -23,7 +23,6 @@ export default class GameObject {
         this.movable = movable;
         this.position = position;
         this.spriteManager = spriteManager;
-
     }
 
     get id(): number {

@@ -20,10 +20,10 @@ export default class CarObject extends PhysicObject {
     private throttle: number = 0;
     private brake: number = 0;
     private angularVelocity: number = 0;
-    private _lastCheckpoint: number = -1;
 
     private readonly _isPlayer: boolean = false;
     private readonly _playerId: number;
+
     // physics stuff
     private readonly inertia: number;
     private readonly maxGrip: number;
@@ -70,14 +70,6 @@ export default class CarObject extends PhysicObject {
 
     get isPlayer(): boolean {
         return this._isPlayer;
-    }
-
-    get lastCheckpoint(): number {
-        return this._lastCheckpoint;
-    }
-
-    set lastCheckpoint(value: number) {
-        this._lastCheckpoint = value;
     }
 
     get playerId(): number {

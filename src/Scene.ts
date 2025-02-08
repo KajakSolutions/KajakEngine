@@ -73,7 +73,7 @@ export default class Scene {
     }
 
     update(deltaTime: number): void {
-        console.log(`FPS: ${Math.round(1 / deltaTime)}`);
+        // console.log(`FPS: ${Math.round(1 / deltaTime)}`);
 
         this.aiControllers.forEach(controller => {
             const playerCar = Array.from(this._gameObjects.values())
@@ -110,8 +110,9 @@ export default class Scene {
         ctx.translate(ctx.canvas.width/2, ctx.canvas.height/2);
         ctx.scale(Scene.scale, Scene.scale);
 
+
         for (const obj of this._gameObjects.values()) {
-            this.drawObject(ctx, obj);
+            // this.drawObject(ctx, obj);
 
             if(!obj.spriteManager) continue;
 
@@ -119,7 +120,7 @@ export default class Scene {
             obj.spriteManager.drawSprite(ctx, spriteIndex, obj.position);
         }
 
-        this.drawRays(ctx);
+        // this.drawRays(ctx);
 
         ctx.restore();
     }
@@ -134,7 +135,7 @@ export default class Scene {
                 ctx.beginPath();
                 ctx.strokeStyle = results[index].distance < ai.rayLength ? 'red' : 'yellow';
                 ctx.lineWidth = 0.1;
-                ctx.moveTo(ray._start.x, ray._start.y);
+                ctx.moveTo(ray.start.x, ray.start.y);
                 ctx.lineTo(results[index].point.x, results[index].point.y);
                 ctx.stroke();
 
@@ -181,8 +182,7 @@ export default class Scene {
         if (obj.collider) this.drawCollider(ctx, obj);
     }
 
-    // @ts-ignore
-    private drawWheel(ctx, x, y, angle, car) {
+    private drawWheel(ctx: CanvasRenderingContext2D, x: number, y: number, angle: number, car: CarObject): void {
         ctx.save();
         ctx.translate(x, y);
         ctx.rotate(angle);
@@ -202,12 +202,10 @@ export default class Scene {
         ctx.strokeRect(bb.x, bb.y, bb.width, bb.height);
 
         if(obj.collider instanceof PolygonCollider){
-            // @ts-ignore
             ctx.strokeStyle = 'green';
             ctx.lineWidth = 0.05;
             ctx.beginPath();
             for (let i = 0; i < obj.collider.vertices.length; i++) {
-                // @ts-ignore
                 const vertex = obj.collider.vertices[i];
                 const x = vertex.x + obj.collider.position.x;
                 const y = vertex.y + obj.collider.position.y;

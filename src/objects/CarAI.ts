@@ -2,6 +2,7 @@ import { Vec2D } from "../types/math";
 import { vec2D, length, normalize, multiply, add } from "../utils/math";
 import { LineCollider } from "./Colliders/LineCollider";
 import CarObject from "./CarObject";
+import CheckpointObject from "./CheckpointObject.ts";
 
 export interface RaycastResult {
     distance: number;
@@ -64,6 +65,7 @@ export class CarAI {
 
             for (const obj of scene.gameObjects.values()) {
                 if (obj === this.car) continue;
+                if(obj instanceof CheckpointObject) continue;
 
                 const collision = ray.checkCollision(obj.collider);
                 if (collision && collision.contactPoints.length > 0) {
@@ -110,7 +112,7 @@ export class CarAIController {
     private ai: CarAI;
     private behaviorType: AIBehaviorType;
     private targetSpeed: number = 0;
-    private maxSpeed: number = 83.91;
+    private maxSpeed: number = 183.91;
     private waitingForPlayer: boolean = false;
 
     constructor(car: CarObject, behaviorType: AIBehaviorType) {

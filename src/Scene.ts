@@ -7,7 +7,7 @@ import {AABBCollider} from "./objects/Colliders/AABBCollider.ts";
 import PolygonCollider from "./objects/Colliders/PolygonCollider.ts";
 import MapObject from "./objects/MapObject.ts";
 import OverlapManager from "./objects/OverlapManager.ts";
-import {RaceManager} from "./objects/RaceManager.ts";
+import {RaceConfiguration, RaceManager} from "./objects/RaceManager.ts";
 import CheckpointObject from "./objects/CheckpointObject.ts";
 import {CarAIController} from "./objects/CarAI.ts";
 import {LineCollider} from "./objects/Colliders/LineCollider.ts";
@@ -22,9 +22,9 @@ export default class Scene {
     static scale: number = 10;
     private aiControllers: CarAIController[] = [];
 
-    constructor(worldBounds: BoundingBox) {
+    constructor(worldBounds: BoundingBox, raceManagerOptions?: RaceConfiguration) {
         this._quadTree = new QuadTree(worldBounds);
-        this._raceManager = new RaceManager();
+        this._raceManager = new RaceManager(raceManagerOptions);
     }
 
     get gameObjects(): Map<number, PhysicObject> {

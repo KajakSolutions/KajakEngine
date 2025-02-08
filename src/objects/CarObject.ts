@@ -210,7 +210,7 @@ export default class CarObject extends PhysicObject {
                 vec2D(impulse.x / this.mass, impulse.y / this.mass)
             );
 
-            this.angularVelocity += (torqueScalar / this.inertia) * 0.1;
+            this.angularVelocity += (torqueScalar / this.inertia) * 0.01;
         }
 
         if (other.movable) {

@@ -13,3 +13,37 @@ body{
     justify-content:center;
     align-items:center
 }
+
+#leaderboard-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    font-family: Arial, sans-serif;
+    min-width: 250px;
+}
+
+.leaderboard h2 {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+    text-align: center;
+}
+
+.leaderboard-entry {
+    display: grid;
+    grid-template-columns: 30px 70px 80px 1fr;
+    gap: 10px;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.leaderboard-entry:last-child {
+    border-bottom: none;
+}
+
+.leaderboard-entry span {
+    font-size: 14px;
+}

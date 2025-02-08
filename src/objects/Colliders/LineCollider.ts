@@ -28,6 +28,7 @@ export class LineCollider extends Collider {
     }
 
     checkCollision(other: Collider): ColliderInfo | null {
+
         if (other instanceof PolygonCollider) {
             return this.checkCollisionWithPolygon(other);
         } else if (other instanceof LineCollider) {

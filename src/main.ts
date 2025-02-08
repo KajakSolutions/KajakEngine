@@ -23,6 +23,12 @@ const worldBounds = {
 };
 
 const mainScene = new Scene(worldBounds);
+
+const leaderboardContainer = document.createElement('div');
+leaderboardContainer.id = 'leaderboard-container';
+document.body.appendChild(leaderboardContainer);
+
+
 engine.scenes.set(1, mainScene);
 engine.setCurrentScene(1);
 
@@ -240,7 +246,7 @@ function createCar(position: Vec2D, imageSrc: string, isPlayer: boolean = false)
         movable: true,
         collider: createCarCollider(),
         mass: 1500,
-        maxGrip: 2,
+        maxGrip: 20,
         wheelBase: 2.4,
         spriteManager: new SpriteManager({
             imageSrc: imageSrc,
@@ -257,23 +263,25 @@ function createCar(position: Vec2D, imageSrc: string, isPlayer: boolean = false)
 const playerCar = createCar(vec2D(3, 0), 'src/assets/car3.png', true);
 mainScene.addObject(playerCar);
 
-const aiCar1 = createCar(vec2D(-3, 2), 'src/assets/car2.png', false);
+const aiCar1 = createCar(vec2D(-3, 2), 'src/assets/car1.png', false);
 const aiCar2 = createCar(vec2D(-2, -2), 'src/assets/car2.png', false);
-// const aiCar3 = createCar(vec2D(-5, 0), 'src/assets/car2.png', false);
-// const aiCar4 = createCar(vec2D(-5, 2), 'src/assets/car2.png', false);
+const aiCar3 = createCar(vec2D(-5, 0), 'src/assets/car4.png', false);
+const aiCar4 = createCar(vec2D(-5, 2), 'src/assets/car2.png', false);
 
 const aiController1 = new CarAIController(aiCar1, AIBehaviorType.STRAIGHT_LINE_MASTER);
 const aiController2 = new CarAIController(aiCar2, AIBehaviorType.STEADY_MIDDLE);
-// const aiController3 = new CarAIController(aiCar3, AIBehaviorType.AGGRESSIVE_CHASER);
-// const aiController4 = new CarAIController(aiCar4, AIBehaviorType.TACTICAL_BLOCKER);
+const aiController3 = new CarAIController(aiCar3, AIBehaviorType.AGGRESSIVE_CHASER);
+const aiController4 = new CarAIController(aiCar4, AIBehaviorType.TACTICAL_BLOCKER);
 
-// mainScene.addObject(aiCar1);
-// mainScene.addObject(aiCar2);
+mainScene.addObject(aiCar1);
+mainScene.addObject(aiCar2);
+mainScene.addObject(aiCar3);
+mainScene.addObject(aiCar4);
 
-// mainScene.addAIController(aiController1);
-// mainScene.addAIController(aiController2);
-// mainScene.addAIController(aiController3);
-// mainScene.addAIController(aiController4);
+mainScene.addAIController(aiController1);
+mainScene.addAIController(aiController2);
+mainScene.addAIController(aiController3);
+mainScene.addAIController(aiController4);
 
 const box = new TreeObject({
     position: vec2D(-36, 0),
@@ -336,14 +344,10 @@ function setupCheckpointOverlaps(scene: Scene) {
                 checkpoint,
                 (vehicle, checkpointObj) => {
                     if (vehicle instanceof CarObject && checkpointObj instanceof CheckpointObject) {
-                        console.log(vehicle.isPlayer, checkpointObj.isActivated);
                         if (vehicle.isPlayer && checkpointObj.isActivated) {
-                            console.log('overlap', vehicle.isPlayer, checkpointObj);
                             checkpointObj.activate(vehicle);
-                            if (!checkpointObj.isFinish) {
-                                scene.removeObject(checkpointObj.id);
 
-                            }
+                            checkpointObj.spriteManager!.hidden = true;
                         }
                     }
                 }
@@ -401,7 +405,7 @@ setupOverlaps(mainScene);
 document.addEventListener('keydown', (e) => {
     switch(e.key) {
         case 'ArrowUp':
-            playerCar.setThrottle(83.91);
+            playerCar.setThrottle(183.91);
             break;
         case 'ArrowDown':
             playerCar.setThrottle(-30);
@@ -427,9 +431,5 @@ document.addEventListener('keyup', (e) => {
             break;
     }
 });
-
-const leaderboardContainer = document.createElement('div');
-leaderboardContainer.id = 'leaderboard-container';
-document.body.appendChild(leaderboardContainer);
 
 engine.start();

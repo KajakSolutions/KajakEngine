@@ -1,6 +1,5 @@
 {
   "name": "@kajaksolutions/kajakengine",
-  "private": true,
   "version": "0.1.0",
   "description": "A 2D racing game engine",
   "type": "module",

@@ -1,6 +1,6 @@
 import { BoundingBox, Vec2D } from "../../types/math";
 import Collider, { ColliderInfo } from "./Collider";
-import { add, multiply, normalize, vec2D } from "../../utils/math";
+import { add, multiply, normalize, vec2D, length, subtract } from "../../utils/math";
 import PolygonCollider from "./PolygonCollider";
 
 export class LineCollider extends Collider {
@@ -23,9 +23,8 @@ export class LineCollider extends Collider {
         return this._end;
     }
 
-    // @ts-ignore
-    updatePosition(position: Vec2D, rotation: number = 0): void {
-
+    updatePosition(_: Vec2D, _2: number = 0): void {
+        // Line collider position update if needed
     }
 
     checkCollision(other: Collider): ColliderInfo | null {
@@ -40,6 +39,8 @@ export class LineCollider extends Collider {
     private checkCollisionWithPolygon(polygon: PolygonCollider): ColliderInfo | null {
         const vertices = polygon.vertices;
         const position = polygon.position;
+        let nearestIntersection: Vec2D | null = null;
+        let minDistance = Infinity;
 
         for (let i = 0; i < vertices.length; i++) {
             const start = vertices[i];
@@ -56,17 +57,25 @@ export class LineCollider extends Collider {
             );
 
             if (intersection) {
-                const dx = this._end.x - this._start.x;
-                const dy = this._end.y - this._start.y;
-                const normal = normalize(vec2D(-dy, dx));
-
-                return {
-                    objectA: this,
-                    objectB: polygon,
-                    contactPoints: [intersection],
-                    mtv: multiply(normal, this._thickness)
-                };
+                const distanceToStart = length(subtract(intersection, this._start));
+                if (distanceToStart < minDistance) {
+                    minDistance = distanceToStart;
+                    nearestIntersection = intersection;
+                }
             }
+        }
+
+        if (nearestIntersection) {
+            const dx = this._end.x - this._start.x;
+            const dy = this._end.y - this._start.y;
+            const normal = normalize(vec2D(-dy, dx));
+
+            return {
+                objectA: this,
+                objectB: polygon,
+                contactPoints: [nearestIntersection],
+                mtv: multiply(normal, this._thickness)
+            };
         }
 
         return null;
@@ -124,7 +133,6 @@ export class LineCollider extends Collider {
             height: maxY - minY + 2 * this._thickness
         };
     }
-
 
     get thickness(): number {
         return this._thickness;

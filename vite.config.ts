@@ -7,8 +7,12 @@ export default defineConfig({
         lib: {
             entry: resolve(__dirname, 'src/index.ts'),
             name: 'KajakEngine',
-            fileName: 'index'
+            fileName: (format) => `index.${format === 'es' ? 'js' : 'umd.cjs'}`
         }
     },
-    plugins: [dts()]
+    plugins: [
+        dts({
+            insertTypesEntry: true,
+        })
+    ]
 });

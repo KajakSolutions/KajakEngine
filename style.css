@@ -26,6 +26,16 @@ body{
     min-width: 250px;
 }
 
+#debug-switch {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 15px;
+    color: white;
+    border: none
+}
+
 .leaderboard h2 {
     margin: 0 0 10px 0;
     font-size: 18px;

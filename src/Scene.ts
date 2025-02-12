@@ -21,6 +21,7 @@ export default class Scene {
     private readonly _raceManager: RaceManager;
     static scale: number = 10;
     private aiControllers: CarAIController[] = [];
+    private _debugMode: boolean = false;
 
     constructor(worldBounds: BoundingBox, map: MapObject, raceManagerOptions?: RaceConfiguration) {
         this._quadTree = new QuadTree(worldBounds);
@@ -35,8 +36,13 @@ export default class Scene {
     get map(): MapObject {
         return this._map;
     }
+
     get raceManager(): RaceManager {
         return this._raceManager;
+    }
+
+    set debugMode(value: boolean) {
+        this._debugMode = value;
     }
 
     addAIController(controller: CarAIController) {
@@ -110,7 +116,9 @@ export default class Scene {
 
 
         for (const obj of this._gameObjects.values()) {
-            // this.drawObject(ctx, obj);
+            if (this._debugMode) {
+                this.drawObject(ctx, obj);
+            }
 
             if(!obj.spriteManager) continue;
 
@@ -118,7 +126,9 @@ export default class Scene {
             obj.spriteManager.drawSprite(ctx, spriteIndex, obj.position);
         }
 
-        // this.drawRays(ctx);
+        if (this._debugMode) {
+            this.drawRays(ctx);
+        }
 
         ctx.restore();
     }

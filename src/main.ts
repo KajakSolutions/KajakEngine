@@ -15,9 +15,20 @@ const worldBounds = {
 
 const mainScene = new Scene(worldBounds, new MapObject({backgroundSrc: 'src/assets/map2.png'}));
 
+let debugState = false
+
 const leaderboardContainer = document.createElement('div');
 leaderboardContainer.id = 'leaderboard-container';
 document.body.appendChild(leaderboardContainer);
+
+const debugSwitch = document.createElement('button');
+debugSwitch.innerText = 'Debug Switch';
+debugSwitch.id = 'debug-switch';
+document.body.appendChild(debugSwitch);
+debugSwitch.onclick = function () {
+    debugState = !debugState;
+    engine.setDebugMode(debugState);
+}
 
 
 engine.scenes.set(1, mainScene);

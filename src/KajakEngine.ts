@@ -32,6 +32,11 @@ export default class KajakEngine {
         return this._scenes;
     }
 
+    setDebugMode(debugMode: boolean): void {
+        if (!this._currentScene) return
+        this._currentScene.debugMode = debugMode;
+    }
+
     setCurrentScene(sceneId: number): void {
         const scene = this._scenes.get(sceneId);
         if (scene) {

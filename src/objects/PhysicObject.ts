@@ -1,39 +1,37 @@
-import GameObject, {GameObjectOptions} from "./GameObject.ts";
-import Collider, {ColliderInfo} from "./Colliders/Collider.ts";
-import {Vec2D} from "../types/math";
-import {vec2D} from "../utils/math.ts";
+import GameObject, { GameObjectOptions } from "./GameObject.ts"
+import Collider, { ColliderInfo } from "./Colliders/Collider.ts"
+import { Vec2D } from "../types/math"
+import { vec2D } from "../utils/math.ts"
 
 export type PhysicObjectOptions = GameObjectOptions & {
-    collider: Collider;
-    mass: number;
+    collider: Collider
+    mass: number
 }
 
 export default class PhysicObject extends GameObject {
-    private _collider: Collider;
-    private _velocity: Vec2D = vec2D(0, 0);
-    private readonly _mass: number;
-
-    constructor({mass, collider, ...options }: PhysicObjectOptions) {
-        super(options);
-        this._collider = collider;
-        this._mass = mass;
+    private _collider: Collider
+    private _velocity: Vec2D = vec2D(0, 0)
+    private readonly _mass: number
+    constructor({ mass, collider, ...options }: PhysicObjectOptions) {
+        super(options)
+        this._collider = collider
+        this._mass = mass
     }
 
-
     get collider(): Collider {
-        return this._collider;
+        return this._collider
     }
 
     get velocity(): Vec2D {
-        return this._velocity;
+        return this._velocity
     }
 
     set velocity(value: Vec2D) {
-        this._velocity = value;
+        this._velocity = value
     }
 
     get mass(): number {
-        return this._mass;
+        return this._mass
     }
 
     // @ts-ignore

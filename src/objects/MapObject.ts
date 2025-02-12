@@ -1,15 +1,15 @@
 export type MapOptions = {
-    backgroundSrc: string;
+    backgroundSrc: string
 }
 
 export default class MapObject {
-    private readonly _backgroundSrc: string;
+    private readonly _backgroundSrc: string
 
     constructor(options: MapOptions) {
-        this._backgroundSrc = options.backgroundSrc;
+        this._backgroundSrc = options.backgroundSrc
     }
 
     get backgroundSrc(): string {
-        return this._backgroundSrc;
+        return this._backgroundSrc
     }
 }

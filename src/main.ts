@@ -1,38 +1,56 @@
-import {setupStartingGrid} from "./utils/gridPositionHelper.ts";
-import type {Vec2D} from "./index.ts"
-import {MapObject, AABBCollider, AIBehaviorType, CarAIController, CheckpointObject, TrackBarriers, Overlap, SpriteManager, TreeObject, KajakEngine, degreesToRadians, PolygonCollider, CarObject, vec2D, Scene } from "./index.ts";
+import { setupStartingGrid } from "./utils/gridPositionHelper.ts"
+import type { Vec2D } from "./index.ts"
+import {
+    MapObject,
+    AABBCollider,
+    AIBehaviorType,
+    CarAIController,
+    CheckpointObject,
+    TrackBarriers,
+    Overlap,
+    SpriteManager,
+    TreeObject,
+    KajakEngine,
+    degreesToRadians,
+    PolygonCollider,
+    CarObject,
+    vec2D,
+    Scene,
+} from "./index.ts"
 
-const canvas = document.createElement('canvas');
-document.body.appendChild(canvas);
-const engine = new KajakEngine(canvas);
+const canvas = document.createElement("canvas")
+document.body.appendChild(canvas)
+const engine = new KajakEngine(canvas)
 
 const worldBounds = {
-    x: -canvas.width/(2 * Scene.scale),
-    y: -canvas.height/(2 * Scene.scale),
+    x: -canvas.width / (2 * Scene.scale),
+    y: -canvas.height / (2 * Scene.scale),
     width: canvas.width * Scene.scale,
-    height: canvas.height * Scene.scale
-};
+    height: canvas.height * Scene.scale,
+}
 
-const mainScene = new Scene(worldBounds, new MapObject({backgroundSrc: 'src/assets/map2.png'}));
+const mainScene = new Scene(
+    worldBounds,
+    new MapObject({ backgroundSrc: "src/assets/map2.png" })
+)
 
 let debugState = false
 
-const leaderboardContainer = document.createElement('div');
-leaderboardContainer.id = 'leaderboard-container';
-document.body.appendChild(leaderboardContainer);
+const leaderboardContainer = document.createElement("div")
+leaderboardContainer.id = "leaderboard-container"
+document.body.appendChild(leaderboardContainer)
 
-const debugSwitch = document.createElement('button');
-debugSwitch.innerText = 'Debug Switch';
-debugSwitch.id = 'debug-switch';
-document.body.appendChild(debugSwitch);
+const debugSwitch = document.createElement("button")
+debugSwitch.innerText = "Debug Switch"
+debugSwitch.id = "debug-switch"
+document.body.appendChild(debugSwitch)
 debugSwitch.onclick = function () {
-    debugState = !debugState;
-    engine.setDebugMode(debugState);
+    debugState = !debugState
+    engine.setDebugMode(debugState)
 }
 
-
-engine.scenes.set(1, mainScene);
-engine.setCurrentScene(1);
+engine.scenes.set(1, mainScene)
+engine.setCurrentScene(1)
 
 const checkpoints = [
     new CheckpointObject({
@@ -42,18 +60,15 @@ const checkpoints = [
         isFinishLine: false,
         movable: false,
         rotation: degreesToRadians(45),
-        collider: new AABBCollider(
-            vec2D(-12, -1),
-            vec2D(22, 2)
-        ),
+        collider: new AABBCollider(vec2D(-12, -1), vec2D(22, 2)),
         spriteManager: new SpriteManager({
-            imageSrc: 'src/assets/checkpoint.png',
+            imageSrc: "src/assets/checkpoint.png",
             cellSize: vec2D(32, 32),
             count: 48,
             columns: 7,
-            offset: 47
+            offset: 47,
         }),
-        mass: 1
+        mass: 1,
     }),
     new CheckpointObject({
         position: vec2D(-20, 12),
@@ -62,18 +77,15 @@ const checkpoints = [
         isFinishLine: false,
         movable: false,
         rotation: degreesToRadians(130),
-        collider: new AABBCollider(
-            vec2D( -1, -12),
-            vec2D(2, 18,)
-        ),
+        collider: new AABBCollider(vec2D(-1, -12), vec2D(2, 18)),
         spriteManager: new SpriteManager({
-            imageSrc: 'src/assets/checkpoint.png',
+            imageSrc: "src/assets/checkpoint.png",
             cellSize: vec2D(32, 32),
             count: 48,
             columns: 7,
-            offset: 47
+            offset: 47,
         }),
-        mass: 1
+        mass: 1,
     }),
     new CheckpointObject({
         position: vec2D(25, -18),
@@ -82,18 +94,15 @@ const checkpoints = [
         isFinishLine: false,
         movable: false,
         rotation: degreesToRadians(65),
-        collider: new AABBCollider(
-            vec2D( -1, -12),
-            vec2D(2, 18,)
-        ),
+        collider: new AABBCollider(vec2D(-1, -12), vec2D(2, 18)),
         spriteManager: new SpriteManager({
-            imageSrc: 'src/assets/checkpoint.png',
+            imageSrc: "src/assets/checkpoint.png",
             cellSize: vec2D(32, 32),
             count: 48,
             columns: 7,
-            offset: 47
+            offset: 47,
         }),
-        mass: 1
+        mass: 1,
     }),
     new CheckpointObject({
         position: vec2D(50, 0),
@@ -102,18 +111,15 @@ const checkpoints = [
         isFinishLine: false,
         movable: false,
         rotation: degreesToRadians(0),
-        collider: new AABBCollider(
-            vec2D(-12, -1),
-            vec2D(22, 2)
-        ),
+        collider: new AABBCollider(vec2D(-12, -1), vec2D(22, 2)),
         spriteManager: new SpriteManager({
-            imageSrc: 'src/assets/checkpoint.png',
+            imageSrc: "src/assets/checkpoint.png",
             cellSize: vec2D(32, 32),
             count: 48,
             columns: 7,
-            offset: 47
+            offset: 47,
         }),
-        mass: 1
+        mass: 1,
     }),
     new CheckpointObject({
         position: vec2D(26, 16),
@@ -122,18 +128,15 @@ const checkpoints = [
         isFinishLine: false,
         movable: false,
         rotation: degreesToRadians(245),
-        collider: new AABBCollider(
-            vec2D(-1, -12),
-            vec2D(2, 22)
-        ),
+        collider: new AABBCollider(vec2D(-1, -12), vec2D(2, 22)),
         spriteManager: new SpriteManager({
-            imageSrc: 'src/assets/checkpoint.png',
+            imageSrc: "src/assets/checkpoint.png",
             cellSize: vec2D(32, 32),
             count: 48,
             columns: 7,
-            offset: 47
+            offset: 47,
         }),
-        mass: 1
+        mass: 1,
     }),
     new CheckpointObject({
         position: vec2D(-25, -18),
@@ -142,18 +145,15 @@ const checkpoints = [
         isFinishLine: false,
         movable: false,
         rotation: degreesToRadians(285),
-        collider: new AABBCollider(
-            vec2D(-1, -12),
-            vec2D(2, 22)
-        ),
+        collider: new AABBCollider(vec2D(-1, -12), vec2D(2, 22)),
         spriteManager: new SpriteManager({
-            imageSrc: 'src/assets/checkpoint.png',
+            imageSrc: "src/assets/checkpoint.png",
             cellSize: vec2D(32, 32),
             count: 48,
             columns: 7,
-            offset: 47
+            offset: 47,
         }),
-        mass: 1
+        mass: 1,
     }),
     new CheckpointObject({
         position: vec2D(-45, 0),
@@ -162,34 +162,31 @@ const checkpoints = [
         isFinishLine: true,
         movable: false,
         rotation: degreesToRadians(0),
-        collider: new AABBCollider(
-            vec2D(-12, -1),
-            vec2D(22, 2)
-        ),
+        collider: new AABBCollider(vec2D(-12, -1), vec2D(22, 2)),
         spriteManager: new SpriteManager({
-            imageSrc: 'src/assets/checkpoint.png',
+            imageSrc: "src/assets/checkpoint.png",
             cellSize: vec2D(32, 32),
             count: 48,
             columns: 7,
-            offset: 47
+            offset: 47,
         }),
-        mass: 1
+        mass: 1,
     }),
-];
+]
 
-checkpoints.forEach(checkpoint => {
-     mainScene.addObject(checkpoint);
-});
+checkpoints.forEach((checkpoint) => {
+    mainScene.addObject(checkpoint)
+})
 
 const trackBarriers = new TrackBarriers({
     segments: [
         { end: vec2D(-58, -20), start: vec2D(-48, -30) },
         { end: vec2D(-48, -30), start: vec2D(-28, -30) },
         { end: vec2D(-28, -30), start: vec2D(0, -10) },
-        { end:vec2D(0, -10) , start: vec2D(32, -32) },
-        { end: vec2D(32, -32), start: vec2D(45, -32)},
-        { end: vec2D(45, -32), start: vec2D(60, -12)},
-        { end: vec2D(60, -12), start: vec2D(55, 30)},
+        { end: vec2D(0, -10), start: vec2D(32, -32) },
+        { end: vec2D(32, -32), start: vec2D(45, -32) },
+        { end: vec2D(45, -32), start: vec2D(60, -12) },
+        { end: vec2D(60, -12), start: vec2D(55, 30) },
         { end: vec2D(55, 30), start: vec2D(32, 30) },
         { end: vec2D(32, 30), start: vec2D(1, 8) },
         { end: vec2D(1, 8), start: vec2D(-32, 30) },
@@ -197,48 +194,50 @@ const trackBarriers = new TrackBarriers({
         { end: vec2D(-48, 29), start: vec2D(-58, 20) },
         { end: vec2D(-58, 20), start: vec2D(-58, -20) },
     ],
-    thickness: 1
-});
+    thickness: 1,
+})
 
-trackBarriers.addToScene(mainScene);
+trackBarriers.addToScene(mainScene)
 
 function setupBarrierCollisions(scene: Scene) {
-    const cars = Array.from(scene.gameObjects.values())
-        .filter(obj => obj instanceof CarObject);
+    const cars = Array.from(scene.gameObjects.values()).filter(
+        (obj) => obj instanceof CarObject
+    )
 
-    trackBarriers.segments.forEach(barrier => {
-        cars.forEach(car => {
+    trackBarriers.segments.forEach((barrier) => {
+        cars.forEach((car) => {
             const overlap = new Overlap(
                 car,
                 barrier,
                 (vehicle, barrierObj, collisionInfo) => {
                     if (collisionInfo) {
-                        vehicle.onCollision(barrierObj, collisionInfo);
+                        vehicle.onCollision(barrierObj, collisionInfo)
                     }
                 },
                 { customCollisionHandler: true }
-            );
-            scene.overlapManager.addOverlap(overlap);
-        });
-    });
+            )
+            scene.overlapManager.addOverlap(overlap)
+        })
+    })
 }
 
 function createCarCollider() {
-    return new PolygonCollider(
-        vec2D(0, 0),
-        [
-            vec2D(-0.75, -1.5),
-            vec2D(0.75, -1.5),
-            vec2D(0.75, 1.5),
-            vec2D(-0.75, 1.5)
-        ]
-    );
+    return new PolygonCollider(vec2D(0, 0), [
+        vec2D(-0.75, -1.5),
+        vec2D(0.75, -1.5),
+        vec2D(0.75, 1.5),
+        vec2D(-0.75, 1.5),
+    ])
 }
 
-let nextCarId = 0;
+let nextCarId = 0
 
-function createCar(position: Vec2D, imageSrc: string, isPlayer: boolean = false): CarObject {
-    const carId = nextCarId++;
+function createCar(
+    position: Vec2D,
+    imageSrc: string,
+    isPlayer: boolean = false
+): CarObject {
+    const carId = nextCarId++
     return new CarObject({
         position: position,
         size: vec2D(1.5, 3),
@@ -252,91 +251,96 @@ function createCar(position: Vec2D, imageSrc: string, isPlayer: boolean = false)
             cellSize: vec2D(32, 32),
             count: 48,
             columns: 7,
-            offset: 36
+            offset: 36,
         }),
         isPlayer,
-        id: carId
-    });
+        id: carId,
+    })
 }
 
+const playerCar = createCar(vec2D(3, 0), "src/assets/car3.png", true)
 
-const playerCar = createCar(vec2D(3, 0), 'src/assets/car3.png', true);
+const aiCar1 = createCar(vec2D(-3, 2), "src/assets/car1.png", false)
+const aiCar2 = createCar(vec2D(-2, -2), "src/assets/car2.png", false)
+const aiCar3 = createCar(vec2D(-5, 0), "src/assets/car4.png", false)
+const aiCar4 = createCar(vec2D(-5, 2), "src/assets/car5.png", false)
 
+const aiController1 = new CarAIController(
+    aiCar1,
+    AIBehaviorType.STRAIGHT_LINE_MASTER
+)
+const aiController2 = new CarAIController(aiCar2, AIBehaviorType.STEADY_MIDDLE)
+const aiController3 = new CarAIController(
+    aiCar3,
+    AIBehaviorType.AGGRESSIVE_CHASER
+)
+const aiController4 = new CarAIController(
+    aiCar4,
+    AIBehaviorType.TACTICAL_BLOCKER
+)
 
-const aiCar1 = createCar(vec2D(-3, 2), 'src/assets/car1.png', false);
-const aiCar2 = createCar(vec2D(-2, -2), 'src/assets/car2.png', false);
-const aiCar3 = createCar(vec2D(-5, 0), 'src/assets/car4.png', false);
-const aiCar4 = createCar(vec2D(-5, 2), 'src/assets/car5.png', false);
+const allCars = [playerCar, aiCar1, aiCar2, aiCar3, aiCar4]
+const finishLinePosition = vec2D(-45, -10)
+setupStartingGrid(allCars, finishLinePosition)
 
-const aiController1 = new CarAIController(aiCar1, AIBehaviorType.STRAIGHT_LINE_MASTER);
-const aiController2 = new CarAIController(aiCar2, AIBehaviorType.STEADY_MIDDLE);
-const aiController3 = new CarAIController(aiCar3, AIBehaviorType.AGGRESSIVE_CHASER);
-const aiController4 = new CarAIController(aiCar4, AIBehaviorType.TACTICAL_BLOCKER);
+allCars.forEach((car) => {
+    mainScene.addObject(car)
+})
 
-const allCars = [playerCar, aiCar1, aiCar2, aiCar3, aiCar4];
-const finishLinePosition = vec2D(-45, -10);
-setupStartingGrid(allCars, finishLinePosition);
-
-allCars.forEach(car => {mainScene.addObject(car)});
-
-mainScene.addAIController(aiController1);
-mainScene.addAIController(aiController2);
-mainScene.addAIController(aiController3);
-mainScene.addAIController(aiController4);
+mainScene.addAIController(aiController1)
+mainScene.addAIController(aiController2)
+mainScene.addAIController(aiController3)
+mainScene.addAIController(aiController4)
 
 const box = new TreeObject({
     position: vec2D(-36, 0),
     size: vec2D(2, 2),
     movable: false,
-    collider: new PolygonCollider(
-        vec2D(0, 0),
-        [
-            vec2D(0, 14),
-            vec2D(22, 1),
-            vec2D(22, -1),
-            vec2D(0, -14),
-        ]
-    ),
+    collider: new PolygonCollider(vec2D(0, 0), [
+        vec2D(0, 14),
+        vec2D(22, 1),
+        vec2D(22, -1),
+        vec2D(0, -14),
+    ]),
     mass: 1500,
     spriteManager: new SpriteManager({
-        imageSrc: 'src/assets/car1.png',
+        imageSrc: "src/assets/car1.png",
         cellSize: vec2D(32, 32),
         count: 48,
-        columns: 7
-    })
-});
+        columns: 7,
+    }),
+})
 
 const box2 = new TreeObject({
     position: vec2D(38, 0),
     size: vec2D(2, 2),
     movable: false,
-    collider: new PolygonCollider(
-        vec2D(0, 0),
-        [
-            vec2D(0, 14),
-            vec2D(-22, 1),
-            vec2D(-22, -1),
-            vec2D(0, -14),
-        ]
-    ),
+    collider: new PolygonCollider(vec2D(0, 0), [
+        vec2D(0, 14),
+        vec2D(-22, 1),
+        vec2D(-22, -1),
+        vec2D(0, -14),
+    ]),
     mass: 1500,
     spriteManager: new SpriteManager({
-        imageSrc: 'src/assets/car1.png',
+        imageSrc: "src/assets/car1.png",
         cellSize: vec2D(32, 32),
         count: 48,
-        columns: 7
-    })
-});
+        columns: 7,
+    }),
+})
 
-mainScene.addObject(box);
-mainScene.addObject(box2);
+mainScene.addObject(box)
+mainScene.addObject(box2)
 
 function setupCheckpointOverlaps(scene: Scene) {
-    const cars = Array.from(scene.gameObjects.values())
-        .filter(obj => obj instanceof CarObject);
+    const cars = Array.from(scene.gameObjects.values()).filter(
+        (obj) => obj instanceof CarObject
+    )
 
-    const checkpoints = Array.from(scene.gameObjects.values())
-        .filter(obj => obj instanceof CheckpointObject);
+    const checkpoints = Array.from(scene.gameObjects.values()).filter(
+        (obj) => obj instanceof CheckpointObject
+    )
 
     for (const car of cars) {
         for (const checkpoint of checkpoints) {
@@ -344,26 +348,31 @@ function setupCheckpointOverlaps(scene: Scene) {
                 car,
                 checkpoint,
                 (vehicle, checkpointObj) => {
-                    if (vehicle instanceof CarObject && checkpointObj instanceof CheckpointObject) {
+                    if (
+                        vehicle instanceof CarObject &&
+                        checkpointObj instanceof CheckpointObject
+                    ) {
                         if (vehicle.isPlayer && checkpointObj.isActivated) {
-                            checkpointObj.activate(vehicle);
+                            checkpointObj.activate(vehicle)
 
-                            checkpointObj.spriteManager!.hidden = true;
+                            checkpointObj.spriteManager!.hidden = true
                         }
                     }
                 }
-            );
-            scene.overlapManager.addOverlap(overlap);
+            )
+            scene.overlapManager.addOverlap(overlap)
         }
     }
 }
 
 function setupOverlaps(scene: Scene) {
-    const cars = Array.from(scene.gameObjects.values())
-        .filter(obj => obj instanceof CarObject);
+    const cars = Array.from(scene.gameObjects.values()).filter(
+        (obj) => obj instanceof CarObject
+    )
 
-    const barriers = Array.from(scene.gameObjects.values())
-        .filter(obj => obj instanceof TreeObject);
+    const barriers = Array.from(scene.gameObjects.values()).filter(
+        (obj) => obj instanceof TreeObject
+    )
 
     for (let i = 0; i < cars.length; i++) {
         for (let j = i + 1; j < cars.length; j++) {
@@ -372,12 +381,12 @@ function setupOverlaps(scene: Scene) {
                 cars[j],
                 (car1, car2, collisionInfo) => {
                     if (collisionInfo) {
-                        car1.onCollision(car2, collisionInfo);
+                        car1.onCollision(car2, collisionInfo)
                     }
                 },
                 { customCollisionHandler: true }
-            );
-            scene.overlapManager.addOverlap(overlap);
+            )
+            scene.overlapManager.addOverlap(overlap)
         }
     }
 
@@ -388,49 +397,49 @@ function setupOverlaps(scene: Scene) {
                 barrier,
                 (vehicle, staticObj, collisionInfo) => {
                     if (collisionInfo) {
-                        vehicle.onCollision(staticObj, collisionInfo);
+                        vehicle.onCollision(staticObj, collisionInfo)
                     }
                 },
                 { customCollisionHandler: true }
-            );
-            scene.overlapManager.addOverlap(overlap);
+            )
+            scene.overlapManager.addOverlap(overlap)
         }
     }
 
-    setupBarrierCollisions(scene);
-    setupCheckpointOverlaps(scene);
+    setupBarrierCollisions(scene)
+    setupCheckpointOverlaps(scene)
 }
 
-setupOverlaps(mainScene);
+setupOverlaps(mainScene)
 
-document.addEventListener('keydown', (e) => {
-    switch(e.key) {
-        case 'ArrowUp':
-            playerCar.setThrottle(183.91);
-            break;
-        case 'ArrowDown':
-            playerCar.setThrottle(-30);
-            break;
-        case 'ArrowLeft':
-            playerCar.setSteerAngle(-Math.PI/4);
-            break;
-        case 'ArrowRight':
-            playerCar.setSteerAngle(Math.PI/4);
-            break;
+document.addEventListener("keydown", (e) => {
+    switch (e.key) {
+        case "ArrowUp":
+            playerCar.setThrottle(183.91)
+            break
+        case "ArrowDown":
+            playerCar.setThrottle(-30)
+            break
+        case "ArrowLeft":
+            playerCar.setSteerAngle(-Math.PI / 4)
+            break
+        case "ArrowRight":
+            playerCar.setSteerAngle(Math.PI / 4)
+            break
     }
-});
+})
 
-document.addEventListener('keyup', (e) => {
-    switch(e.key) {
-        case 'ArrowUp':
-        case 'ArrowDown':
-            playerCar.setThrottle(0);
-            break;
-        case 'ArrowLeft':
-        case 'ArrowRight':
-            playerCar.setSteerAngle(0);
-            break;
+document.addEventListener("keyup", (e) => {
+    switch (e.key) {
+        case "ArrowUp":
+        case "ArrowDown":
+            playerCar.setThrottle(0)
+            break
+        case "ArrowLeft":
+        case "ArrowRight":
+            playerCar.setSteerAngle(0)
+            break
     }
-});
+})
 
-engine.start();
+engine.start()

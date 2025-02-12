@@ -1,17 +1,6 @@
-import CarObject from "./objects/CarObject.ts";
-import PolygonCollider from "./objects/Colliders/PolygonCollider.ts";
-import {degreesToRadians, vec2D} from "./utils/math.ts";
-import Scene from "./Scene.ts";
-import KajakEngine from "./KajakEngine.ts";
-import TreeObject from "./objects/TreeObject.ts";
-import SpriteManager from "./objects/SpriteManager.ts";
-import {Vec2D} from "./types/math";
-import Overlap from "./objects/Overlap.ts";
-import {TrackBarriers} from "./objects/BarierSystem.ts";
-import CheckpointObject from "./objects/CheckpointObject.ts";
-import {AIBehaviorType, CarAIController} from "./objects/CarAI.ts";
 import {setupStartingGrid} from "./utils/gridPositionHelper.ts";
-import {AABBCollider} from "./objects/Colliders/AABBCollider.ts";
+import type {Vec2D} from "./index.ts"
+import {MapObject, AABBCollider, AIBehaviorType, CarAIController, CheckpointObject, TrackBarriers, Overlap, SpriteManager, TreeObject, KajakEngine, degreesToRadians, PolygonCollider, CarObject, vec2D, Scene } from "./index.ts";
 
 const canvas = document.createElement('canvas');
 document.body.appendChild(canvas);
@@ -24,7 +13,7 @@ const worldBounds = {
     height: canvas.height * Scene.scale
 };
 
-const mainScene = new Scene(worldBounds);
+const mainScene = new Scene(worldBounds, new MapObject({backgroundSrc: 'src/assets/map2.png'}));
 
 const leaderboardContainer = document.createElement('div');
 leaderboardContainer.id = 'leaderboard-container';

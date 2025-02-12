@@ -16,14 +16,15 @@ export default class Scene {
     private _gameObjects: Map<number, PhysicObject> = new Map();
     private _quadTree: QuadTree;
     private nextId: number = 1;
-    private _map = new MapObject({backgroundSrc: 'src/assets/map2.png'});
+    private readonly _map: MapObject;
     public readonly overlapManager = new OverlapManager();
     private readonly _raceManager: RaceManager;
     static scale: number = 10;
     private aiControllers: CarAIController[] = [];
 
-    constructor(worldBounds: BoundingBox, raceManagerOptions?: RaceConfiguration) {
+    constructor(worldBounds: BoundingBox, map: MapObject, raceManagerOptions?: RaceConfiguration) {
         this._quadTree = new QuadTree(worldBounds);
+        this._map = map
         this._raceManager = new RaceManager(raceManagerOptions);
     }
 

@@ -1,0 +1,169 @@
+{
+    "name": "Race Track 1",
+    "backgroundSrc": "src/assets/map2.png",
+    "worldBounds": {
+        "x": -64,
+        "y": -36,
+        "width": 128,
+        "height": 72
+    },
+    "checkpoints": [
+        {
+            "position": { "x": -46, "y": 10 },
+            "size": { "x": 10, "y": 2 },
+            "rotation": 45,
+            "order": 0,
+            "isFinishLine": false,
+            "collider": {
+                "type": "AABB",
+                "offset": { "x": -12, "y": -1 },
+                "size": { "x": 22, "y": 2 }
+            }
+        },
+        {
+            "position": { "x": -20, "y": 12 },
+            "size": { "x": 10, "y": 2 },
+            "rotation": 130,
+            "order": 1,
+            "isFinishLine": false,
+            "collider": {
+                "type": "AABB",
+                "offset": { "x": -1, "y": -12 },
+                "size": { "x": 2, "y": 18 }
+            }
+        },
+        {
+            "position": { "x": 25, "y": -18 },
+            "size": { "x": 10, "y": 2 },
+            "rotation": 65,
+            "order": 2,
+            "isFinishLine": false,
+            "collider": {
+                "type": "AABB",
+                "offset": { "x": -1, "y": -12 },
+                "size": { "x": 2, "y": 18 }
+            }
+        },
+        {
+            "position": { "x": 50, "y": 0 },
+            "size": { "x": 10, "y": 2 },
+            "rotation": 0,
+            "order": 3,
+            "isFinishLine": false,
+            "collider": {
+                "type": "AABB",
+                "offset": { "x": -12, "y": -1 },
+                "size": { "x": 22, "y": 2 }
+            }
+        },
+        {
+            "position": { "x": 26, "y": 16 },
+            "size": { "x": 10, "y": 2 },
+            "rotation": 245,
+            "order": 4,
+            "isFinishLine": false,
+            "collider": {
+                "type": "AABB",
+                "offset": { "x": -1, "y": -12 },
+                "size": { "x": 2, "y": 22 }
+            }
+        },
+        {
+            "position": { "x": -25, "y": -18 },
+            "size": { "x": 10, "y": 2 },
+            "rotation": 285,
+            "order": 5,
+            "isFinishLine": false,
+            "collider": {
+                "type": "AABB",
+                "offset": { "x": -1, "y": -12 },
+                "size": { "x": 2, "y": 22 }
+            }
+        },
+        {
+            "position": { "x": -45, "y": 0 },
+            "size": { "x": 10, "y": 2 },
+            "rotation": 0,
+            "order": 6,
+            "isFinishLine": true,
+            "collider": {
+                "type": "AABB",
+                "offset": { "x": -12, "y": -1 },
+                "size": { "x": 22, "y": 2 }
+            }
+        }
+    ],
+    "barriers": {
+        "thickness": 1,
+        "segments": [
+            { "end": { "x": -58, "y": -20 }, "start": { "x": -48, "y": -30 } },
+            { "end": { "x": -48, "y": -30 }, "start": { "x": -28, "y": -30 } },
+            { "end": { "x": -28, "y": -30 }, "start": { "x": 0, "y": -10 } },
+            { "end": { "x": 0, "y": -10 }, "start": { "x": 32, "y": -32 } },
+            { "end": { "x": 32, "y": -32 }, "start": { "x": 45, "y": -32 } },
+            { "end": { "x": 45, "y": -32 }, "start": { "x": 60, "y": -12 } },
+            { "end": { "x": 60, "y": -12 }, "start": { "x": 55, "y": 30 } },
+            { "end": { "x": 55, "y": 30 }, "start": { "x": 32, "y": 30 } },
+            { "end": { "x": 32, "y": 30 }, "start": { "x": 1, "y": 8 } },
+            { "end": { "x": 1, "y": 8 }, "start": { "x": -32, "y": 30 } },
+            { "end": { "x": -32, "y": 30 }, "start": { "x": -48, "y": 29 } },
+            { "end": { "x": -48, "y": 29 }, "start": { "x": -58, "y": 20 } },
+            { "end": { "x": -58, "y": 20 }, "start": { "x": -58, "y": -20 } }
+        ]
+    },
+    "aiCars": [
+        {
+            "type": "STRAIGHT_LINE_MASTER",
+            "spriteSrc": "src/assets/car1.png",
+            "startOffset": { "x": -3, "y": 2 }
+        },
+        {
+            "type": "STEADY_MIDDLE",
+            "spriteSrc": "src/assets/car2.png",
+            "startOffset": { "x": -2, "y": -2 }
+        },
+        {
+            "type": "AGGRESSIVE_CHASER",
+            "spriteSrc": "src/assets/car4.png",
+            "startOffset": { "x": -5, "y": 0 }
+        },
+        {
+            "type": "TACTICAL_BLOCKER",
+            "spriteSrc": "src/assets/car5.png",
+            "startOffset": { "x": -5, "y": 2 }
+        }
+    ],
+    "obstacles": [
+        {
+            "position": { "x": -36, "y": 0 },
+            "size": { "x": 2, "y": 2 },
+            "vertices": [
+                { "x": 0, "y": 14 },
+                { "x": 22, "y": 1 },
+                { "x": 22, "y": -1 },
+                { "x": 0, "y": -14 }
+            ],
+            "spriteSrc": "src/assets/car1.png"
+        },
+        {
+            "position": { "x": 38, "y": 0 },
+            "size": { "x": 2, "y": 2 },
+            "vertices": [
+                { "x": 0, "y": 14 },
+                { "x": -22, "y": 1 },
+                { "x": -22, "y": -1 },
+                { "x": 0, "y": -14 }
+            ],
+            "spriteSrc": "src/assets/car1.png"
+        }
+    ],
+    "startPosition": { "x": -45, "y": -10 },
+    "playerCarConfig": {
+        "spriteSrc": "src/assets/car3.png",
+        "size": { "x": 1.5, "y": 3 }
+    },
+    "raceConfig": {
+        "totalLaps": 3,
+        "checkpointTimeout": 20000
+    }
+}

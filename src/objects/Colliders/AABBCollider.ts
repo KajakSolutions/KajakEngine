@@ -81,4 +81,13 @@ export class AABBCollider extends Collider {
             height: this._size.y,
         }
     }
+
+    containsPoint(point: Vec2D): boolean {
+        return (
+            point.x >= this.position.x &&
+            point.x <= this.position.x + this.size.x &&
+            point.y >= this.position.y &&
+            point.y <= this.position.y + this.size.y
+        );
+    }
 }

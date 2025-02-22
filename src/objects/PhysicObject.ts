@@ -6,13 +6,15 @@ import { vec2D } from "../utils/math.ts"
 export type PhysicObjectOptions = GameObjectOptions & {
     collider: Collider
     mass: number
+    aiDetectable?: boolean;
 }
 
 export default class PhysicObject extends GameObject {
     private _collider: Collider
     private _velocity: Vec2D = vec2D(0, 0)
     private readonly _mass: number
-    constructor({ mass, collider, ...options }: PhysicObjectOptions) {
+
+    constructor({ mass, collider, aiDetectable = true, ...options }: PhysicObjectOptions) {
         super(options)
         this._collider = collider
         this._mass = mass
@@ -32,6 +34,10 @@ export default class PhysicObject extends GameObject {
 
     get mass(): number {
         return this._mass
+    }
+
+    get aiDetectable(): boolean {
+        return true;
     }
 
     // @ts-ignore

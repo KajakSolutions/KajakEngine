@@ -11,4 +11,5 @@ export default abstract class Collider {
     abstract checkCollision(other: Collider): ColliderInfo | null
     abstract updatePosition(position: Vec2D, rotation?: number): void
     abstract getBoundingBox(): BoundingBox
+    abstract containsPoint(point: Vec2D): boolean;
 }

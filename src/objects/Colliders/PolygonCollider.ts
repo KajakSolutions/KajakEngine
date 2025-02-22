@@ -179,4 +179,24 @@ export default class PolygonCollider extends Collider {
             height: Math.max(...ys) - Math.min(...ys),
         }
     }
+
+    containsPoint(point: Vec2D): boolean {
+        const translatedPoint: Vec2D = {
+            x: point.x - this.position.x,
+            y: point.y - this.position.y
+        };
+
+        let inside = false;
+        for (let i = 0, j = this.vertices.length - 1; i < this.vertices.length; j = i++) {
+            const vi = this.vertices[i];
+            const vj = this.vertices[j];
+
+            if (((vi.y > translatedPoint.y) !== (vj.y > translatedPoint.y)) &&
+                (translatedPoint.x < (vj.x - vi.x) * (translatedPoint.y - vi.y) / (vj.y - vi.y) + vi.x)) {
+                inside = !inside;
+            }
+        }
+
+        return inside;
+    }
 }

@@ -2,17 +2,20 @@ import { Vec2D } from "../types/math"
 import PhysicObject, { PhysicObjectOptions } from "./PhysicObject.ts"
 import { add, dotProduct, length, subtract, vec2D } from "../utils/math.ts"
 import { ColliderInfo } from "./Colliders/Collider.ts"
+import {CarSoundSystem} from "./Sounds/CarSoundSystem.ts";
+import {TrackSurfaceManager} from "./TrackSurfaceManager.ts";
 
 export interface CarObjectOptions extends PhysicObjectOptions {
-    maxGrip?: number
-    wheelBase?: number
-    frontAxleToCg?: number
-    rearAxleToCg?: number
-    wheelSize?: Vec2D
-    drag?: number
-    resistance?: number
-    isPlayer?: boolean
-    id: number
+    maxGrip?: number;
+    wheelBase?: number;
+    frontAxleToCg?: number;
+    rearAxleToCg?: number;
+    wheelSize?: Vec2D;
+    drag?: number;
+    resistance?: number;
+    isPlayer?: boolean;
+    id: number;
+    surfaceManager?: TrackSurfaceManager;
 }
 
 export default class CarObject extends PhysicObject {
@@ -23,6 +26,8 @@ export default class CarObject extends PhysicObject {
 
     private readonly _isPlayer: boolean = false
     private readonly _playerId: number
+    private readonly surfaceManager?: TrackSurfaceManager;
+    private readonly _soundSystem: CarSoundSystem;
 
     // physics stuff
     private readonly inertia: number
@@ -63,6 +68,11 @@ export default class CarObject extends PhysicObject {
         this._wheelSize = wheelSize
         this._isPlayer = options.isPlayer || false
         this._playerId = options.id
+
+        this.surfaceManager = options.surfaceManager;
+
+        this._soundSystem = new CarSoundSystem(this);
+        this._soundSystem.initialize().catch(console.error);
     }
 
     get wheelSize(): Vec2D {
@@ -85,15 +95,25 @@ export default class CarObject extends PhysicObject {
         return this._playerId
     }
 
+    get soundSystem(): CarSoundSystem {
+        return this._soundSystem;
+    }
+
     update(deltaTime: number): void {
+        this._soundSystem.update();
+
         const angle = this.rotation
         const cosAngle = Math.cos(angle)
         const sinAngle = Math.sin(angle)
 
+        const surfaceProps = this.surfaceManager
+            ? this.surfaceManager.getSurfacePropertiesAt(this.position)
+            : { gripMultiplier: 1.0, dragMultiplier: 1.0 };
+
         const localVelocity = {
             forward: this.velocity.x * sinAngle + this.velocity.y * cosAngle,
             right: this.velocity.x * cosAngle - this.velocity.y * sinAngle,
-        }
+        };
 
         const weight = this.mass * this.gravity
         const rearNormal = (this._rearAxleToCg / this.wheelBase) * weight
@@ -122,13 +142,13 @@ export default class CarObject extends PhysicObject {
             Math.max(
                 -this.maxGrip,
                 Math.min(this.maxGrip, this.caFront * frontSlipAngle)
-            ) * frontNormal
+            ) * frontNormal * surfaceProps.gripMultiplier;
 
         const rearLateralForce =
             Math.max(
                 -this.maxGrip,
                 Math.min(this.maxGrip, this.caRear * rearSlipAngle)
-            ) * rearNormal
+            ) * rearNormal * surfaceProps.gripMultiplier;
 
         const driveRatio = 0.5 * this.driveTrain
         const tractionForce =
@@ -143,12 +163,12 @@ export default class CarObject extends PhysicObject {
         const resistanceForce = -(
             this.resistance * localVelocity.forward +
             this.drag * localVelocity.forward * Math.abs(localVelocity.forward)
-        )
+        ) * surfaceProps.dragMultiplier;
 
         const lateralResistance = -(
             this.resistance * localVelocity.right +
             this.drag * localVelocity.right * Math.abs(localVelocity.right)
-        )
+        ) * surfaceProps.dragMultiplier;
 
         const accelerationForward =
             (tractionForce + resistanceForce) / this.mass

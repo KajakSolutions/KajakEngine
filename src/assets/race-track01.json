@@ -164,6 +164,28 @@
     },
     "raceConfig": {
         "totalLaps": 3,
-        "checkpointTimeout": 20000
+        "checkpointTimeout": 10000
+    },
+    "surfaces": {
+        "segments": [
+            {
+                "start": {"x": -10, "y": 0},
+                "end": {"x": 0, "y": 0},
+                "width": 10,
+                "type": "ASPHALT"
+            },
+            {
+                "start": {"x": 0, "y": 0},
+                "end": {"x": 10, "y": 0},
+                "width": 10,
+                "type": "GRAVEL"
+            },
+            {
+                "start": {"x": 10, "y": 0},
+                "end": {"x": 20, "y": 0},
+                "width": 10,
+                "type": "ICE"
+            }
+        ]
     }
 }

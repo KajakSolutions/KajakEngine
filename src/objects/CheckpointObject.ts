@@ -36,4 +36,8 @@ export default class CheckpointObject extends PhysicObject {
     get isFinish(): boolean {
         return this.isFinishLine
     }
+
+    override get aiDetectable(): boolean {
+        return false;
+    }
 }

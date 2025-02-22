@@ -5,19 +5,70 @@ import {
     Overlap, CheckpointObject,
 } from "./index";
 import {MapLoader} from "./MapLoader.ts";
+import {soundManager} from "./SoundManager.ts";
+import {TrackSurfaceSegment} from "./objects/TrackSurfaceSegment.ts";
 
 class Game {
     private engine: KajakEngine;
     private currentScene: Scene | null = null;
     private debugState: boolean = false;
+    private audioInitialized: boolean = false;
 
     constructor() {
         const canvas = document.createElement("canvas");
         document.body.appendChild(canvas);
         this.engine = new KajakEngine(canvas);
 
+        const overlay = document.createElement("div");
+        overlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        `;
+
+        const startButton = document.createElement("button");
+        startButton.innerText = "Click to Start Game";
+        startButton.style.cssText = `
+            padding: 20px 40px;
+            font-size: 24px;
+            cursor: pointer;
+        `;
+
+        overlay.appendChild(startButton);
+        document.body.appendChild(overlay);
+
+        startButton.onclick = async () => {
+            await this.initializeAudio();
+            overlay.remove();
+            this.start();
+        };
+
         this.setupUI();
         this.setupEventListeners();
+    }
+
+    private async initializeAudio(): Promise<void> {
+        if (this.audioInitialized) return;
+
+        if (this.currentScene) {
+            for (const obj of this.currentScene.gameObjects.values()) {
+                if (obj instanceof CarObject) {
+                    const soundSystem = obj.soundSystem;
+                    if (soundSystem) {
+                        await soundSystem.initialize();
+                    }
+                }
+            }
+        }
+
+        this.audioInitialized = true;
     }
 
     private setupUI(): void {
@@ -34,10 +85,54 @@ class Game {
             this.debugState = !this.debugState;
             this.engine.setDebugMode(this.debugState);
         };
+
+        const volumeControls = document.createElement('div');
+        volumeControls.innerHTML = `
+        <div>
+            <label>Master Volume: <input type="range" id="master-volume" min="0" max="100" value="100"></label>
+            <label>Music Volume: <input type="range" id="music-volume" min="0" max="100" value="50"></label>
+            <label>SFX Volume: <input type="range" id="sfx-volume" min="0" max="100" value="100"></label>
+            <button id="mute-toggle">Mute</button>
+        </div>
+    `;
+        document.body.appendChild(volumeControls);
+
+        this.setupVolumeControls();
+    }
+    private setupVolumeControls(): void {
+        document.getElementById('master-volume')?.addEventListener('input', (e) => {
+            const volume = parseInt((e.target as HTMLInputElement).value) / 100;
+            soundManager.setMasterVolume(volume);
+        });
+
+        document.getElementById('music-volume')?.addEventListener('input', (e) => {
+            const volume = parseInt((e.target as HTMLInputElement).value) / 100;
+            soundManager.setCategoryVolume('music', volume);
+        });
+
+        document.getElementById('sfx-volume')?.addEventListener('input', (e) => {
+            const volume = parseInt((e.target as HTMLInputElement).value) / 100;
+            soundManager.setCategoryVolume('sfx', volume);
+        });
+
+        document.getElementById('mute-toggle')?.addEventListener('click', () => {
+            if (soundManager.muted) {
+                soundManager.unmute();
+            } else {
+                soundManager.mute();
+            }
+        });
     }
 
+
     private setupEventListeners(): void {
-        document.addEventListener("keydown", this.handleKeyDown.bind(this));
+        document.addEventListener("keydown", async (e) => {
+            if (!this.audioInitialized) {
+                await this.initializeAudio();
+            }
+            this.handleKeyDown(e);
+        });
+
         document.addEventListener("keyup", this.handleKeyUp.bind(this));
     }
 
@@ -100,7 +195,7 @@ class Game {
             .filter(obj => obj instanceof CheckpointObject) as CheckpointObject[];
 
         const barriers = Array.from(scene.gameObjects.values())
-            .filter(obj => !(obj instanceof CarObject) && !(obj instanceof CheckpointObject));
+            .filter(obj => !(obj instanceof CarObject) && !(obj instanceof CheckpointObject) && !(obj instanceof TrackSurfaceSegment));
 
         // Car-to-car collisions
         for (let i = 0; i < cars.length; i++) {
@@ -179,7 +274,6 @@ class Game {
 async function initGame() {
     const game = new Game();
     await game.loadMap("src/assets/race-track01.json");
-    game.start();
 }
 
 initGame().catch(error => {

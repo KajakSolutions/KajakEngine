@@ -67,7 +67,7 @@ export class CarAI {
             let closestHit: RaycastResult | null = null
 
             for (const obj of scene.gameObjects.values()) {
-                if (obj === this.car || obj instanceof CheckpointObject)
+                if (obj === this.car || !obj.aiDetectable)
                     continue
 
                 const collision = ray.checkCollision(obj.collider)

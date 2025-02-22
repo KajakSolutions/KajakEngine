@@ -10,6 +10,8 @@ import {
     vec2D
 } from "./index.ts";
 import Scene from "./Scene.ts";
+import {SurfaceType} from "./objects/TrackSurfaceSegment.ts";
+import {TrackSurfaceManager} from "./objects/TrackSurfaceManager.ts";
 
 
 interface MapConfig {
@@ -22,6 +24,16 @@ interface MapConfig {
     obstacles: ObstacleConfig[];
     startPosition: Vec2D;
     playerCarConfig: PlayerCarConfig;
+    surfaces: SurfaceConfig;
+}
+
+interface SurfaceConfig {
+    segments: Array<{
+        start: Vec2D;
+        end: Vec2D;
+        width: number;
+        type: SurfaceType;
+    }>;
 }
 
 interface CheckpointColliderConfig {
@@ -105,7 +117,8 @@ export class MapLoader {
         spriteSrc: string,
         size: Vec2D,
         isPlayer: boolean = false,
-        carId: number
+        carId: number,
+        surfaceManager: TrackSurfaceManager
     ): CarObject {
         return new CarObject({
             position,
@@ -124,6 +137,7 @@ export class MapLoader {
             }),
             isPlayer,
             id: carId,
+            surfaceManager,
         });
     }
 
@@ -153,6 +167,20 @@ export class MapLoader {
             new MapObject({ backgroundSrc: config.backgroundSrc })
         );
 
+        const surfaceManager = new TrackSurfaceManager();
+
+        if (config.surfaces) {
+            config.surfaces.segments.forEach(segment => {
+                surfaceManager.addSegment({
+                    start: segment.start,
+                    end: segment.end,
+                    width: segment.width,
+                    type: segment.type
+                });
+            });
+            surfaceManager.addToScene(scene);
+        }
+
         config.checkpoints.forEach(checkpointConfig => {
             const checkpoint = this.createCheckpoint(checkpointConfig);
             scene.addObject(checkpoint);
@@ -167,7 +195,8 @@ export class MapLoader {
             config.playerCarConfig.spriteSrc,
             config.playerCarConfig.size,
             true,
-            nextCarId++
+            nextCarId++,
+            surfaceManager
         );
         scene.addObject(playerCar);
 
@@ -182,7 +211,8 @@ export class MapLoader {
                 aiConfig.spriteSrc,
                 config.playerCarConfig.size,
                 false,
-                nextCarId++
+                nextCarId++,
+                surfaceManager
             );
 
             const aiController = new CarAIController(

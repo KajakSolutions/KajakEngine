@@ -16,7 +16,8 @@
     "noFallthroughCasesInSwitch": true,
     "declaration": true,
     "outDir": "dist",
-    "types": ["node"]
+    "esModuleInterop": true,
+    "types": ["jest", "node"]
   },
   "include": ["src"],
 }

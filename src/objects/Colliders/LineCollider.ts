@@ -160,6 +160,59 @@ export class LineCollider extends Collider {
         }
     }
 
+    containsPoint(point: Vec2D): boolean {
+        const direction: Vec2D = {
+            x: this.end.x - this.start.x,
+            y: this.end.y - this.start.y
+        };
+        const length = Math.sqrt(direction.x * direction.x + direction.y * direction.y);
+
+        if (length === 0) return false;
+
+        const normalized: Vec2D = {
+            x: direction.x / length,
+            y: direction.y / length
+        };
+
+        const perpendicular: Vec2D = {
+            x: -normalized.y,
+            y: normalized.x
+        };
+
+        const halfThickness = this.thickness / 2;
+        const vertices: Vec2D[] = [
+            {
+                x: this.start.x + perpendicular.x * halfThickness,
+                y: this.start.y + perpendicular.y * halfThickness
+            },
+            {
+                x: this.end.x + perpendicular.x * halfThickness,
+                y: this.end.y + perpendicular.y * halfThickness
+            },
+            {
+                x: this.end.x - perpendicular.x * halfThickness,
+                y: this.end.y - perpendicular.y * halfThickness
+            },
+            {
+                x: this.start.x - perpendicular.x * halfThickness,
+                y: this.start.y - perpendicular.y * halfThickness
+            }
+        ];
+
+        let inside = false;
+        for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
+            const vi = vertices[i];
+            const vj = vertices[j];
+
+            if (((vi.y > point.y) !== (vj.y > point.y)) &&
+                (point.x < (vj.x - vi.x) * (point.y - vi.y) / (vj.y - vi.y) + vi.x)) {
+                inside = !inside;
+            }
+        }
+
+        return inside;
+    }
+
     get thickness(): number {
         return this._thickness
     }

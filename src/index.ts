@@ -1,6 +1,8 @@
 // Core Engine
 export { default as KajakEngine } from "./KajakEngine"
 export { default as Scene } from "./Scene"
+export {  MapLoader } from "./MapLoader"
+export {  QuadTree } from "./objects/QuadTree"
 
 // Game Objects
 export { default as GameObject } from "./objects/GameObject"

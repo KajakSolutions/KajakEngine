@@ -11,6 +11,11 @@ import { RaceConfiguration, RaceManager } from "./objects/RaceManager.ts"
 import CheckpointObject from "./objects/CheckpointObject.ts"
 import { CarAIController } from "./objects/CarAI.ts"
 import { LineCollider } from "./objects/Colliders/LineCollider.ts"
+import {soundManager} from "./SoundManager.ts";
+
+// @ts-ignore
+import background from './assets/sounds/background.mp3';
+import {TrackSurfaceSegment} from "./objects/TrackSurfaceSegment.ts";
 
 export default class Scene {
     private _gameObjects: Map<number, PhysicObject> = new Map()
@@ -31,6 +36,14 @@ export default class Scene {
         this._quadTree = new QuadTree(worldBounds)
         this._map = map
         this._raceManager = new RaceManager(raceManagerOptions)
+
+        soundManager.loadSound('background_music',background, {
+            loop: true,
+            volume: 0.5,
+            category: 'music'
+        }).then(() => {
+            soundManager.play('background_music');
+        });
     }
 
     get gameObjects(): Map<number, PhysicObject> {
@@ -86,7 +99,7 @@ export default class Scene {
     }
 
     update(deltaTime: number): void {
-        console.log(`FPS: ${Math.round(1 / deltaTime)}`)
+        // console.log(`FPS: ${Math.round(1 / deltaTime)}`)
 
         this.aiControllers.forEach((controller) => {
             const playerCar = Array.from(this._gameObjects.values()).find(
@@ -124,6 +137,7 @@ export default class Scene {
         ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2)
         ctx.scale(Scene.scale, Scene.scale)
 
+
         for (const obj of this._gameObjects.values()) {
             if (this._debugMode) {
                 this.drawObject(ctx, obj)
@@ -138,6 +152,7 @@ export default class Scene {
         }
 
         if (this._debugMode) {
+            this.drawSurfaces(ctx);
             this.drawRays(ctx)
         }
 
@@ -277,5 +292,47 @@ export default class Scene {
             ctx.lineTo(obj.collider.end.x, obj.collider.end.y)
             ctx.stroke()
         }
+    }
+
+    private drawSurfaces(ctx: CanvasRenderingContext2D): void {
+        if (!this._debugMode) return;
+
+        const surfaceSegments = Array.from(this._gameObjects.values())
+            .filter(obj => obj instanceof TrackSurfaceSegment) as TrackSurfaceSegment[];
+
+        for (const segment of surfaceSegments) {
+            const debugInfo = segment.getDebugInfo();
+            const vertices = debugInfo.vertices;
+
+            ctx.fillStyle = debugInfo.color;
+            ctx.strokeStyle = debugInfo.color;
+            ctx.lineWidth = 0.1;
+            ctx.globalAlpha = 0.5;
+
+            ctx.beginPath();
+            ctx.moveTo(vertices[0].x + segment.position.x, -(vertices[0].y + segment.position.y));
+
+            for (let i = 1; i < vertices.length; i++) {
+                ctx.lineTo(
+                    vertices[i].x + segment.position.x,
+                    -(vertices[i].y + segment.position.y)
+                );
+            }
+
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            const centerX = vertices.reduce((sum, v) => sum + v.x, 0) / vertices.length + segment.position.x;
+            const centerY = -(vertices.reduce((sum, v) => sum + v.y, 0) / vertices.length + segment.position.y);
+
+            ctx.globalAlpha = 1.0;
+            ctx.font = '1px Arial';
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.fillText(String(segment.getSurfaceProperties().gripMultiplier), centerX, centerY);
+        }
+
+        ctx.globalAlpha = 1.0;
     }
 }

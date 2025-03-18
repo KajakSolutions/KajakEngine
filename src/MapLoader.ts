@@ -17,6 +17,7 @@ import {TrackSurfaceManager} from "./objects/TrackSurfaceManager.ts";
 interface MapConfig {
     name: string;
     backgroundSrc: string;
+    secondBackgroundSrc?: string;
     worldBounds: BoundingBox;
     checkpoints: CheckpointConfig[];
     barriers: BarrierConfig;
@@ -125,9 +126,11 @@ export class MapLoader {
             size,
             movable: true,
             collider: this.createCarCollider(),
-            mass: 1000,
-            maxGrip: 12,
-            wheelBase: 2.4,
+            mass: 900,
+            maxGrip: 10,
+            wheelBase: 4.5,
+            drag: 25,
+
             spriteManager: new SpriteManager({
                 imageSrc: spriteSrc,
                 cellSize: vec2D(32, 32),
@@ -164,7 +167,8 @@ export class MapLoader {
 
         const scene = new Scene(
             config.worldBounds,
-            new MapObject({ backgroundSrc: config.backgroundSrc })
+            new MapObject({ backgroundSrc: config.backgroundSrc ,
+            secondBackgroundSrc: config.secondBackgroundSrc})
         );
 
         const surfaceManager = new TrackSurfaceManager();

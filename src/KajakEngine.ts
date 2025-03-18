@@ -46,7 +46,19 @@ export default class KajakEngine {
             background-size: cover;
         `
             this._canvas.style.backgroundImage = `url(${this._currentScene.map.backgroundSrc})`
-            console.log(this._canvas.style.backgroundImage)
+
+            if(this._currentScene.map.secondBackgroundSrc) {
+                const img = document.createElement("img");
+                img.src = this._currentScene.map.secondBackgroundSrc;
+                // img.style = "position: absolute;\n" +
+                //     "            top: 0;\n" +
+                //     "            left: 0;\n" +
+                //     "            width: 100%;\n" +
+                //     "            height: 100%;\n" +
+                //     "            pointer-events: none;"
+
+                this._canvas.parentElement!.appendChild(img);
+            }
         }
     }
 

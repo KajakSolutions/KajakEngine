@@ -13,7 +13,7 @@ class Game {
 
     constructor() {
         const canvas = document.createElement("canvas");
-        document.body.appendChild(canvas);
+        document.querySelector('#app')!.appendChild(canvas);
         this.engine = new KajakEngine(canvas);
 
         this.setupUI();
@@ -55,10 +55,10 @@ class Game {
                 playerCar.setThrottle(-30);
                 break;
             case "ArrowLeft":
-                playerCar.setSteerAngle(-Math.PI / 4);
+                playerCar.setSteerAngle(-Math.PI / 2);
                 break;
             case "ArrowRight":
-                playerCar.setSteerAngle(Math.PI / 4);
+                playerCar.setSteerAngle(Math.PI / 2);
                 break;
         }
     }

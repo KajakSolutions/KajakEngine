@@ -119,7 +119,7 @@ export class CarAIController {
     private readonly car: CarObject
     private readonly ai: CarAI
     private readonly behaviorType: AIBehaviorType
-    private readonly maxSpeed: number = 183.91
+    private readonly maxSpeed: number = 180
     private readonly stuckCheckInterval: number = 2000
     private lastCheckTime: number = 0
     private lastPosition: Vec2D

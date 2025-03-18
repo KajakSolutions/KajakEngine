@@ -41,10 +41,10 @@ export default class CarObject extends PhysicObject {
     public readonly collisionDamping: number = 0.9
 
     constructor({
-        resistance = 30,
-        drag = 10,
-        maxGrip = 2,
-        wheelBase = 2.4,
+        resistance = 20,
+        drag = 1,
+        maxGrip = 0,
+        wheelBase = .4,
         frontAxleToCg,
         rearAxleToCg,
         wheelSize = vec2D(0.3, 0.7),
@@ -53,7 +53,7 @@ export default class CarObject extends PhysicObject {
         super(options)
 
         this.maxGrip = maxGrip
-        this.inertia = options.mass
+        this.inertia = options.mass / 2
 
         this.drag = drag
         this.resistance = resistance

@@ -273,7 +273,7 @@ class Game {
 
 async function initGame() {
     const game = new Game();
-    await game.loadMap("src/assets/race-track01.json");
+    await game.loadMap("src/assets/okok.json");
 }
 
 initGame().catch(error => {

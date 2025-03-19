@@ -3,10 +3,10 @@
     "backgroundSrc": "src/assets/map1.png",
     "secondBackgroundSrc": "src/assets/map_layer2.png",
     "worldBounds": {
-        "x": -64,
-        "y": -36,
-        "width": 128,
-        "height": 72
+        "x": -640,
+        "y": -360,
+        "width": 1280,
+        "height": 720
     },
     "checkpoints": [
         {

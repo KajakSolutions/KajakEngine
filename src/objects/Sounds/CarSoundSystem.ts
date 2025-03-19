@@ -1,10 +1,5 @@
 import {CarObject,  length} from "../../index.ts";
 import {soundManager} from "../../SoundManager.ts";
-
-// @ts-ignore
-import skidSound from '../../assets/sounds/skid.mp3';
-// @ts-ignore
-import collisionSound from '../../assets/sounds/collision.mp3';
 import {EngineSoundGenerator} from "./EngineSoundGenerator.ts";
 
 
@@ -25,7 +20,7 @@ export class CarSoundSystem {
     async initialize(): Promise<void> {
         await this.engineSound.initialize();
 
-        await soundManager.loadSound(this.collisionSoundId, collisionSound, {
+        await soundManager.loadSound(this.collisionSoundId, '/sounds/collision.mp3', {
             category: 'sfx'
         });
     }

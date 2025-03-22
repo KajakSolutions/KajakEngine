@@ -38,17 +38,17 @@ export default class SpriteManager {
         ctx.imageSmoothingEnabled = smoothing
         const spritePosition = this.getSpritePosition(index)
 
-        ctx.translate(position.x, -position.y)
+        ctx.translate(position.x + 2, -position.y + 2)
         ctx.drawImage(
             this._spriteSheet,
             spritePosition.x,
             spritePosition.y,
             this._cellSize.x,
             this._cellSize.y,
-            -this._cellSize.x / Scene.scale,
-            -this._cellSize.y / Scene.scale,
-            Scene.scale / 2,
-            Scene.scale / 2
+            -this._cellSize.x / Scene.scale * 1.5,
+            -this._cellSize.y / Scene.scale * 1.5,
+            this._cellSize.x / Scene.scale * 1.5,
+            this._cellSize.y / Scene.scale * 1.5,
         )
 
         ctx.restore()

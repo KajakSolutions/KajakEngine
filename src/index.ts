@@ -13,6 +13,7 @@ export { default as TreeObject } from "./objects/TreeObject"
 export { default as MapObject } from "./objects/MapObject"
 export { default as SpriteManager } from "./objects/SpriteManager"
 export { default as NitroBonus } from "./objects/NitroBonus"
+export { default as MovingBarrier } from "./objects/MovingBarrier"
 
 // Colliders
 export { default as Collider } from "./objects/Colliders/Collider"
@@ -45,6 +46,7 @@ export type {
     BarrierSegmentOptions,
     TrackBarriersOptions,
 } from "./objects/BarierSystem"
+export type { MovingBarrierOptions } from "./objects/MovingBarrier"
 
 // Utils
 export * from "./utils/math"

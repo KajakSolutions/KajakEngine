@@ -203,5 +203,27 @@
             "itemTypes": ["bananaPeel"],
             "spawnChance": 0.9
         }
+    ],
+    "movingBarriers": [
+        {
+            "position": { "x": -19, "y": -1.2 },
+            "size": { "x": 16, "y": 1 },
+            "movementTime": 2000,
+            "closedWaitTime": 3000,
+            "openWaitTime": 3000,
+            "movementDistance": 15,
+            "direction": -1,
+            "spriteSrc": "game/barier1.png"
+        },
+        {
+            "position": { "x": -10, "y": 9 },
+            "size": { "x": 12, "y": 1 },
+            "movementTime": 2000,
+            "closedWaitTime": 3000,
+            "openWaitTime": 3000,
+            "movementDistance": 12,
+            "direction": 1,
+            "spriteSrc": "game/barier2.png"
+        }
     ]
 }

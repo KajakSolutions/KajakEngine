@@ -12,6 +12,7 @@ import {
 import Scene from "./Scene.ts";
 import {SurfaceType} from "./objects/TrackSurfaceSegment.ts";
 import {TrackSurfaceManager} from "./objects/TrackSurfaceManager.ts";
+import MovingBarrier from "./objects/MovingBarrier.ts";
 
 
 interface MapConfig {
@@ -26,6 +27,7 @@ interface MapConfig {
     startPosition: Vec2D;
     playerCarConfig: PlayerCarConfig;
     surfaces: SurfaceConfig;
+    movingBarriers?: MovingBarrierConfig[];
 }
 
 interface SurfaceConfig {
@@ -35,6 +37,17 @@ interface SurfaceConfig {
         width: number;
         type: SurfaceType;
     }>;
+}
+
+interface MovingBarrierConfig {
+    position: Vec2D;
+    size: Vec2D;
+    movementTime?: number;
+    closedWaitTime?: number;
+    openWaitTime?: number;
+    movementDistance?: number;
+    direction?: number;
+    spriteSrc: string;
 }
 
 interface CheckpointColliderConfig {
@@ -183,6 +196,28 @@ export class MapLoader {
                 });
             });
             surfaceManager.addToScene(scene);
+        }
+
+        if (config.movingBarriers) {
+            config.movingBarriers.forEach(barrierConfig => {
+                const barrier = new MovingBarrier({
+                    position: barrierConfig.position,
+                    size: barrierConfig.size,
+                    movementTime: barrierConfig.movementTime,
+                    closedWaitTime: barrierConfig.closedWaitTime,
+                    openWaitTime: barrierConfig.openWaitTime,
+                    movementDistance: barrierConfig.movementDistance,
+                    direction: barrierConfig.direction,
+                    spriteManager: new SpriteManager({
+                        imageSrc: barrierConfig.spriteSrc,
+                        cellSize: vec2D(149, 10),
+                        count: 1,
+                        columns: 1
+                    }),
+                    mass: 100000
+                });
+                scene.addObject(barrier);
+            });
         }
 
         config.checkpoints.forEach(checkpointConfig => {

@@ -14,6 +14,7 @@ import { LineCollider } from "./objects/Colliders/LineCollider.ts"
 import {soundManager} from "./SoundManager.ts";
 
 import {TrackSurfaceSegment} from "./objects/TrackSurfaceSegment.ts";
+import MovingBarrier, {BarrierState} from "./objects/MovingBarrier.ts";
 
 export default class Scene {
     private _gameObjects: Map<number, PhysicObject> = new Map()
@@ -226,6 +227,39 @@ export default class Scene {
                 obj
             )
             ctx.restore()
+        }
+        if (obj instanceof MovingBarrier) {
+            ctx.save();
+            ctx.translate(obj.position.x, -obj.position.y);
+
+            ctx.beginPath();
+            ctx.strokeStyle = "blue";
+            ctx.lineWidth = 0.2;
+            ctx.moveTo(obj.initialPosition.x - obj.position.x, 0);
+            ctx.lineTo(0, 0);
+            ctx.stroke();
+
+            ctx.fillStyle = "white";
+            ctx.font = "0.8px Arial";
+
+            let stateText = "UNKNOWN";
+            switch (obj.state) {
+                case BarrierState.CLOSED:
+                    stateText = "CLOSED";
+                    break;
+                case BarrierState.CLOSING:
+                    stateText = "CLOSING";
+                    break;
+                case BarrierState.OPEN:
+                    stateText = "OPEN";
+                    break;
+                case BarrierState.OPENING:
+                    stateText = "OPENING";
+                    break;
+            }
+
+            ctx.fillText(stateText, 0, -1);
+            ctx.restore();
         }
 
         if (obj.collider) this.drawCollider(ctx, obj)

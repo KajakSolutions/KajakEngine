@@ -5,7 +5,7 @@ export type GameObjectOptions = {
     size?: Vec2D
     rotation?: number
     movable?: boolean
-    position?: Vec2D
+    position: Vec2D
     spriteManager?: SpriteManager
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "@kajaksolutions/kajakengine",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "A 2D racing game engine",
   "type": "module",
   "scripts": {
@@ -13,7 +13,9 @@
     "test:coverage": "jest --coverage"
   },
   "files": [
-    "dist"
+    "dist",
+    "!dist/**/*.test.*",
+    "!dist/**/__tests__"
   ],
   "main": "./dist/index.umd.cjs",
   "module": "./dist/index.js",

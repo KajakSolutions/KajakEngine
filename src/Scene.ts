@@ -13,8 +13,6 @@ import { CarAIController } from "./objects/CarAI.ts"
 import { LineCollider } from "./objects/Colliders/LineCollider.ts"
 import {soundManager} from "./SoundManager.ts";
 
-// @ts-ignore
-import background from './assets/sounds/background.mp3';
 import {TrackSurfaceSegment} from "./objects/TrackSurfaceSegment.ts";
 
 export default class Scene {
@@ -37,7 +35,7 @@ export default class Scene {
         this._map = map
         this._raceManager = new RaceManager(raceManagerOptions)
 
-        soundManager.loadSound('background_music',background, {
+        soundManager.loadSound('background_music','/sounds/background.mp3', {
             loop: true,
             volume: 0.5,
             category: 'music'
@@ -158,6 +156,7 @@ export default class Scene {
 
         ctx.restore()
     }
+
 
     // @ts-ignore
     private drawRays(ctx: CanvasRenderingContext2D): void {

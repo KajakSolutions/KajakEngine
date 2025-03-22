@@ -265,6 +265,10 @@ export class CarAIController {
         } else {
             this.car.setThrottle(this.maxSpeed)
         }
+
+        if (!roadAnalysis.hasTurnAhead && this.car.nitroAmount > 50) {
+            this.car.activateNitro();
+        }
     }
 
     private updateSteadyMiddle(
@@ -300,6 +304,15 @@ export class CarAIController {
             this.car.setThrottle(this.maxSpeed)
         } else {
             this.car.setThrottle(this.maxSpeed * 0.7)
+        }
+
+        const isPlayerAhead = dotProduct(
+            toPlayer,
+            vec2D(Math.cos(this.car.rotation), Math.sin(this.car.rotation))
+        ) > 0;
+
+        if (isPlayerAhead && distanceToPlayer < 30 && distanceToPlayer > 10 && this.car.nitroAmount > 30) {
+            this.car.activateNitro();
         }
     }
 

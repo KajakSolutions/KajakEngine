@@ -3,7 +3,15 @@ import dts from 'vite-plugin-dts';
 import { resolve } from 'path';
 
 export default defineConfig({
-    assetsInclude: ['**/*.mp3', '**/*.wav', '**/*.ogg'],
+    server: {
+        proxy: {
+            '/game': {
+                target: 'http://localhost:5173/src/assets',
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/game/, '')
+            }
+        }
+    },
     build: {
         lib: {
             entry: resolve(__dirname, 'src/index.ts'),
@@ -16,9 +24,11 @@ export default defineConfig({
             }
         }
     },
+    publicDir: 'public',
     plugins: [
         dts({
             insertTypesEntry: true,
+            tsconfigPath: 'tsconfig.prod.json'
         })
     ]
 });

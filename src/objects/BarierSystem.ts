@@ -56,6 +56,7 @@ export class TrackBarriers {
 
     constructor(options: TrackBarriersOptions) {
         this._segments = options.segments.map((segment) => {
+            // @ts-ignore
             return new BarrierSegment({
                 start: segment.start,
                 end: segment.end,

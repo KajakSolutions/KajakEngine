@@ -88,7 +88,7 @@ export class SoundManager {
 
     setCategoryVolume(category: string, volume: number): void {
         this.categoryVolumes.set(category, Math.max(0, Math.min(1, volume)));
-        
+
         this.sounds.forEach(sound => {
             if (sound.category === category) {
                 const categoryVolume = this.categoryVolumes.get(category) || 1.0;

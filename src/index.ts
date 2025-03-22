@@ -12,6 +12,7 @@ export { default as CheckpointObject } from "./objects/CheckpointObject"
 export { default as TreeObject } from "./objects/TreeObject"
 export { default as MapObject } from "./objects/MapObject"
 export { default as SpriteManager } from "./objects/SpriteManager"
+export { default as NitroBonus } from "./objects/NitroBonus"
 
 // Colliders
 export { default as Collider } from "./objects/Colliders/Collider"
@@ -22,6 +23,7 @@ export { default as PolygonCollider } from "./objects/Colliders/PolygonCollider"
 // AI and Race Management
 export { CarAI, CarAIController, AIBehaviorType } from "./objects/CarAI"
 export { RaceManager } from "./objects/RaceManager"
+export { SoundManager } from "./SoundManager"
 
 // Barrier System
 export { TrackBarriers, BarrierSegment } from "./objects/BarierSystem"

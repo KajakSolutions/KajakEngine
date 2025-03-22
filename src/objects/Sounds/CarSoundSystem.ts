@@ -1,32 +1,32 @@
 import {CarObject,  length} from "../../index.ts";
 import {soundManager} from "../../SoundManager.ts";
-
-// @ts-ignore
-import skidSound from '../../assets/sounds/skid.mp3';
-// @ts-ignore
-import collisionSound from '../../assets/sounds/collision.mp3';
 import {EngineSoundGenerator} from "./EngineSoundGenerator.ts";
 
 
 export class CarSoundSystem {
     private readonly car: CarObject;
     private readonly engineSound: EngineSoundGenerator;
-    private readonly skidSoundId: string;
     private readonly collisionSoundId: string;
+    private readonly nitroSoundId: string;
     private lastSpeed: number = 0;
 
     constructor(car: CarObject) {
         this.car = car;
         this.engineSound = new EngineSoundGenerator();
-        this.skidSoundId = `skid_${car.id}`;
         this.collisionSoundId = `collision_${car.id}`;
+        this.nitroSoundId = `nitro_${car.id}`;
     }
 
     async initialize(): Promise<void> {
         await this.engineSound.initialize();
 
-        await soundManager.loadSound(this.collisionSoundId, collisionSound, {
+        await soundManager.loadSound(this.collisionSoundId, '/sounds/collision.mp3', {
             category: 'sfx'
+        });
+
+        await soundManager.loadSound(this.nitroSoundId, '/sounds/nitro.mp3', {
+            category: 'sfx',
+            volume: 0.7
         });
     }
 
@@ -50,8 +50,12 @@ export class CarSoundSystem {
         this.lastSpeed = currentSpeed;
     }
 
+    playNitroSound(): void {
+        soundManager.play(this.nitroSoundId);
+    }
+
     dispose(): void {
         this.engineSound.dispose();
-        soundManager.stop(this.skidSoundId);
+        soundManager.stop(this.nitroSoundId);
     }
 }

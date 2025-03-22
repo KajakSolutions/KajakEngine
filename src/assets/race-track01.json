@@ -1,7 +1,7 @@
 {
     "name": "Race Track 1",
     "backgroundSrc": "src/assets/map1.png",
-    "secondBackgroundSrc": "src/assets/map_layer2.png",
+    "secondBackgroundSrc": "src/assets/map1_layer2.png",
     "worldBounds": {
         "x": -64,
         "y": -36,
@@ -129,7 +129,7 @@
     ],
     "startPosition": { "x": -45, "y": -10 },
     "playerCarConfig": {
-        "spriteSrc": "src/assets/car3.png",
+        "spriteSrc": "src/assets/Honda2.png",
         "size": { "x": 1.5, "y": 3 }
     },
     "raceConfig": {

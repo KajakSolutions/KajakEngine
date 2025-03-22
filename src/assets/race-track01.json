@@ -1,7 +1,7 @@
 {
     "name": "Race Track 1",
-    "backgroundSrc": "src/assets/map1.png",
-    "secondBackgroundSrc": "src/assets/map1_layer2.png",
+    "backgroundSrc": "src/assets/map3.png",
+    "secondBackgroundSrc": "src/assets/map3_layer2.png",
     "worldBounds": {
         "x": -640,
         "y": -360,

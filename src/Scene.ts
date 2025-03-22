@@ -157,6 +157,7 @@ export default class Scene {
         ctx.restore()
     }
 
+
     // @ts-ignore
     private drawRays(ctx: CanvasRenderingContext2D): void {
         this.aiControllers.forEach((controller) => {

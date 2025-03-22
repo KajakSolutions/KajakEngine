@@ -94,7 +94,7 @@ export class MapLoader {
             rotation: degreesToRadians(config.rotation),
             collider: collider,
             spriteManager: new SpriteManager({
-                imageSrc: "src/assets/checkpoint.png",
+                imageSrc: "game/checkpoint.png",
                 cellSize: vec2D(32, 32),
                 count: 48,
                 columns: 7,

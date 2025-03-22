@@ -127,6 +127,26 @@
             "spriteSrc": "src/assets/car1.png"
         }
     ],
+    "nitroSpawns": [
+        {
+            "position": { "x": -30, "y": 5 },
+            "respawnTime": 20000,
+            "size": { "x": 2, "y": 2 },
+            "spriteSrc": "game/checkpoint.png"
+        },
+        {
+            "position": { "x": 30, "y": -5 },
+            "respawnTime": 30000,
+            "size": { "x": 2, "y": 2 },
+            "spriteSrc": "game/checkpoint.png"
+        },
+        {
+            "position": { "x": 0, "y": 20 },
+            "respawnTime": 25000,
+            "size": { "x": 3, "y": 3 },
+            "spriteSrc": "game/checkpoint.png"
+        }
+    ],
     "startPosition": { "x": -45, "y": -10 },
     "playerCarConfig": {
         "spriteSrc": "src/assets/car3.png",
@@ -157,5 +177,31 @@
                 "type": "ICE"
             }
         ]
-    }
+    },
+    "itemSpawns": [
+        {
+            "position": { "x": -35, "y": 10 },
+            "respawnTime": 18000,
+            "itemTypes": ["bananaPeel"],
+            "spawnChance": 1.0
+        },
+        {
+            "position": { "x": 15, "y": -15 },
+            "respawnTime": 22000,
+            "itemTypes": ["bananaPeel"],
+            "spawnChance": 0.8
+        },
+        {
+            "position": { "x": 40, "y": 8 },
+            "respawnTime": 20000,
+            "itemTypes": ["bananaPeel"],
+            "spawnChance": 0.7
+        },
+        {
+            "position": { "x": -10, "y": -20 },
+            "respawnTime": 25000,
+            "itemTypes": ["bananaPeel"],
+            "spawnChance": 0.9
+        }
+    ]
 }

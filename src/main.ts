@@ -7,12 +7,18 @@ import {
 import {MapLoader} from "./MapLoader.ts";
 import {soundManager} from "./SoundManager.ts";
 import {TrackSurfaceSegment} from "./objects/TrackSurfaceSegment.ts";
+import {NitroManager} from "./objects/NitroManager.ts";
+import { ObstacleManager } from "./objects/ObstacleManager.ts";
+import {ItemManager} from "./objects/ItemManager.ts";
 
 class Game {
     private engine: KajakEngine;
     private currentScene: Scene | null = null;
     private debugState: boolean = false;
     private audioInitialized: boolean = false;
+    private nitroManager: NitroManager | null = null;
+    private obstacleManager: ObstacleManager | null = null;
+    private itemManager: ItemManager | null = null;
 
     constructor() {
         const canvas = document.createElement("canvas");
@@ -52,6 +58,7 @@ class Game {
 
         this.setupUI();
         this.setupEventListeners();
+        this.setupItemUI();
     }
 
     private async initializeAudio(): Promise<void> {
@@ -71,7 +78,81 @@ class Game {
         this.audioInitialized = true;
     }
 
+    private setupItemUI(): void {
+        const itemDisplay = document.createElement("div");
+        itemDisplay.id = "item-display";
+        itemDisplay.style.cssText = `
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+        font-family: Arial, sans-serif;
+        display: flex;
+        align-items: center;
+    `;
+
+        const bananaIcon = document.createElement("div");
+        bananaIcon.innerHTML = "🍌";
+        bananaIcon.style.fontSize = "24px";
+        bananaIcon.style.marginRight = "10px";
+
+        const bananaCount = document.createElement("div");
+        bananaCount.id = "banana-count";
+        bananaCount.style.fontSize = "20px";
+        bananaCount.innerText = "0/3";
+
+        itemDisplay.appendChild(bananaIcon);
+        itemDisplay.appendChild(bananaCount);
+        document.body.appendChild(itemDisplay);
+
+        setInterval(() => {
+            const playerCar = this.findPlayerCar();
+            if (playerCar) {
+                const bananaCount = document.getElementById("banana-count");
+                if (bananaCount) {
+                    bananaCount.innerText = `${playerCar.bananaPeels}/${playerCar.maxBananaPeels}`;
+                }
+            }
+        }, 100);
+    }
+
     private setupUI(): void {
+        const nitroDisplay = document.createElement("div");
+        nitroDisplay.id = "nitro-display";
+        nitroDisplay.style.cssText = `
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        width: 200px;
+        height: 20px;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 10px;
+    `;
+        document.body.appendChild(nitroDisplay);
+
+        const nitroBar = document.createElement("div");
+        nitroBar.id = "nitro-bar";
+        nitroBar.style.cssText = `
+        height: 100%;
+        width: 0%;
+        background-color: blue;
+        border-radius: 10px;
+        transition: width 0.3s;
+    `;
+        nitroDisplay.appendChild(nitroBar);
+
+        setInterval(() => {
+            const playerCar = this.findPlayerCar();
+            if (playerCar) {
+                const percentage = (playerCar.nitroAmount / playerCar.maxNitro) * 100;
+                nitroBar.style.width = `${percentage}%`;
+                nitroBar.style.backgroundColor = playerCar.nitroActive ? 'red' : 'blue';
+            }
+        }, 50);
+
         const leaderboardContainer = document.createElement("div");
         leaderboardContainer.id = "leaderboard-container";
         document.body.appendChild(leaderboardContainer);
@@ -155,6 +236,12 @@ class Game {
             case "ArrowRight":
                 playerCar.setSteerAngle(Math.PI / 2);
                 break;
+            case " ":
+                playerCar.activateNitro();
+                break;
+            case "b":
+                this.dropBananaPeel();
+                break;
         }
     }
 
@@ -187,6 +274,22 @@ class Game {
         return null;
     }
 
+    private dropBananaPeel(): void {
+        if (!this.currentScene || !this.obstacleManager) return;
+
+        const playerCar = this.findPlayerCar();
+        if (!playerCar) return;
+
+        if (playerCar.useBananaPeel()) {
+            const carAngle = playerCar.rotation;
+            const dropDistance = -3;
+            const dropX = playerCar.position.x - Math.sin(carAngle) * dropDistance;
+            const dropY = playerCar.position.y - Math.cos(carAngle) * dropDistance;
+
+            this.obstacleManager.createObstacle('bananaPeel', { x: dropX, y: dropY }, playerCar.id);
+        }
+    }
+
     private setupCollisions(scene: Scene): void {
         const cars = Array.from(scene.gameObjects.values())
             .filter(obj => obj instanceof CarObject) as CarObject[];
@@ -197,7 +300,6 @@ class Game {
         const barriers = Array.from(scene.gameObjects.values())
             .filter(obj => !(obj instanceof CarObject) && !(obj instanceof CheckpointObject) && !(obj instanceof TrackSurfaceSegment));
 
-        // Car-to-car collisions
         for (let i = 0; i < cars.length; i++) {
             for (let j = i + 1; j < cars.length; j++) {
                 const overlap = new Overlap(
@@ -214,7 +316,6 @@ class Game {
             }
         }
 
-        // Car-to-checkpoint collisions
         for (const car of cars) {
             for (const checkpoint of checkpoints) {
                 const overlap = new Overlap(
@@ -233,7 +334,6 @@ class Game {
             }
         }
 
-        // Car-to-barrier collisions
         for (const car of cars) {
             for (const barrier of barriers) {
                 const overlap = new Overlap(
@@ -253,12 +353,41 @@ class Game {
 
     public async loadMap(mapPath: string): Promise<void> {
         try {
+            const response = await fetch(mapPath);
+            const config = await response.json();
+
             this.currentScene = await MapLoader.loadMap(mapPath);
             this.engine.scenes.set(1, this.currentScene);
             this.engine.setCurrentScene(1);
 
             if (this.currentScene) {
                 this.setupCollisions(this.currentScene);
+
+                this.obstacleManager = new ObstacleManager(this.currentScene, {
+                    maxActiveObstacles: 15,
+                    bananaPeelLifespan: 30000
+                });
+
+                const itemSpawnPoints = config.itemSpawns ? config.itemSpawns.map((spawn: { position: any; respawnTime: any; itemTypes: any; spawnChance: undefined; }) => ({
+                    position: spawn.position,
+                    respawnTime: spawn.respawnTime || 15000,
+                    itemTypes: spawn.itemTypes || ['bananaPeel'],
+                    spawnChance: spawn.spawnChance !== undefined ? spawn.spawnChance : 1.0
+                })) : [];
+
+                this.itemManager = new ItemManager(this.currentScene, {
+                    maxItems: 8,
+                    itemRespawnTime: 15000,
+                    spawnInterval: 10000,
+                    spawnPoints: itemSpawnPoints
+                });
+
+                this.itemManager.startItemSpawning();
+            }
+
+            if (config.nitroSpawns) {
+                this.nitroManager = new NitroManager(this.currentScene);
+                this.nitroManager.initialize(config.nitroSpawns);
             }
         } catch (error) {
             console.error("Error loading map:", error);
@@ -268,12 +397,18 @@ class Game {
 
     public start(): void {
         this.engine.start();
+
+        setInterval(() => {
+            if (this.obstacleManager) {
+                this.obstacleManager.update();
+            }
+        }, 1000);
     }
 }
 
 async function initGame() {
     const game = new Game();
-    await game.loadMap("src/assets/okok.json");
+    await game.loadMap("src/assets/race-track01.json");
 }
 
 initGame().catch(error => {

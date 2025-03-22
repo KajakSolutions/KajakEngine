@@ -12,6 +12,7 @@ export { default as CheckpointObject } from "./objects/CheckpointObject"
 export { default as TreeObject } from "./objects/TreeObject"
 export { default as MapObject } from "./objects/MapObject"
 export { default as SpriteManager } from "./objects/SpriteManager"
+export { default as NitroBonus } from "./objects/NitroBonus"
 
 // Colliders
 export { default as Collider } from "./objects/Colliders/Collider"

@@ -36,7 +36,7 @@ export default class Scene {
         this._map = map
         this._raceManager = new RaceManager(raceManagerOptions)
 
-        soundManager.loadSound('background_music','/sounds/background.mp3', {
+        soundManager.loadSound('background_music','game/sounds/background.mp3', {
             loop: true,
             volume: 0.5,
             category: 'music'

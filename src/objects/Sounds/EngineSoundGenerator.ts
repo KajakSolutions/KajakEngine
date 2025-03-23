@@ -1,3 +1,5 @@
+import { soundManager } from "../../SoundManager.ts";
+
 export class EngineSoundGenerator {
     private audioContext!: AudioContext;
     private masterGain!: GainNode;
@@ -9,8 +11,11 @@ export class EngineSoundGenerator {
     private canvas!: HTMLCanvasElement;
     private canvasCtx!: CanvasRenderingContext2D;
     private animationFrameId: number | null = null;
+    private carId: string;
+    private baseVolume: number = 1.0;
 
-    constructor() {
+    constructor(carId: string = 'default') {
+        this.carId = carId;
         this.setupVisualization();
     }
 
@@ -77,15 +82,22 @@ export class EngineSoundGenerator {
             this.engineLFO.connect(this.modulationGain);
             this.modulationGain.connect(this.engineOsc.frequency);
 
-            this.masterGain.gain.value = 1;
+            this.masterGain.gain.value = 0;
             this.masterGain.connect(this.analyser);
             this.analyser.connect(this.audioContext.destination);
 
             this.engineOsc.start();
             this.engineLFO.start();
 
-            this.initialized = true;
+            // Register with sound manager
+            await soundManager.loadSound(`engine_${this.carId}`, '', {
+                category: 'sfx',
+                volume: 0.8,
+                virtualSound: true
+            });
 
+            this.initialized = true;
+            this.updateVolumeFromSoundManager();
             this.startVisualization();
 
             this.audioContext.onstatechange = async () => {
@@ -93,9 +105,28 @@ export class EngineSoundGenerator {
                     await this.audioContext.resume();
                 }
             };
-
         } catch (error) {
             console.error('Failed to initialize audio:', error);
+        }
+    }
+
+    private updateVolumeFromSoundManager(): void {
+        if (!this.initialized) return;
+
+        const soundId = `engine_${this.carId}`;
+        const sound = soundManager.getSound(soundId);
+
+        if (sound) {
+            if (soundManager.muted) {
+                this.masterGain.gain.value = 0;
+                return;
+            }
+
+            const categoryVolume = soundManager.getCategoryVolume(sound.category) || 1.0;
+
+            const calculatedVolume = soundManager.getMasterVolume() * categoryVolume * (sound.volume || 1.0) * this.baseVolume;
+
+            this.masterGain.gain.value = calculatedVolume;
         }
     }
 
@@ -141,6 +172,7 @@ export class EngineSoundGenerator {
     async resume(): Promise<void> {
         if (this.audioContext && this.audioContext.state === 'suspended') {
             await this.audioContext.resume();
+            this.updateVolumeFromSoundManager();
         }
     }
 
@@ -153,9 +185,9 @@ export class EngineSoundGenerator {
 
         this.modulationGain.gain.value = 30 - (speed * 10);
 
-        const baseVolume = 0.1 + (speed * 0.8);
-        const accelVolume = Math.max(0, acceleration) * .4;
-        this.masterGain.gain.value = Math.min(1.3, baseVolume + accelVolume);
+        this.baseVolume = Math.min(1.3, 0.1 + (speed * 0.8) + Math.max(0, acceleration) * 0.4);
+
+        this.updateVolumeFromSoundManager();
     }
 
     dispose(): void {
@@ -176,6 +208,9 @@ export class EngineSoundGenerator {
         if (this.audioContext) {
             this.audioContext.close();
         }
+
+        soundManager.removeSound(`engine_${this.carId}`);
+
         this.initialized = false;
     }
 }

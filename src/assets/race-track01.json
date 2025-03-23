@@ -119,7 +119,7 @@
         }
     ],
     "barriers": {
-        "thickness": 0.3,
+        "thickness": 2,
         "segments": [
             {
                 "id": "1nnjymf6",

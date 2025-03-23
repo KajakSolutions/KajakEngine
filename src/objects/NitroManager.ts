@@ -64,7 +64,9 @@ export class NitroManager {
                 (vehicle, bonus) => {
                     if (bonus instanceof NitroBonus && bonus.active && vehicle instanceof CarObject) {
                         vehicle.refillNitro();
-                        bonus.deactivate();
+                        if(vehicle.playerId === 0) {
+                            bonus.deactivate();
+                        }
                         console.log(`Car ${vehicle.playerId} collected nitro boost!`);
                     }
                 }

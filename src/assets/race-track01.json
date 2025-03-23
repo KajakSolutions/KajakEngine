@@ -1,5 +1,5 @@
 {
-    "name": "Race Track 1",
+    "name": "Race Track 3",
     "backgroundSrc": "src/assets/map3.png",
     "secondBackgroundSrc": "src/assets/map3_layer2.png",
     "worldBounds": {

@@ -53,7 +53,7 @@ export class ObstacleManager {
 
         if (type === 'bananaPeel') {
             const spriteManager = new SpriteManager({
-                imageSrc: "game/car1.png",
+                imageSrc: "game/banana.png",
                 cellSize: vec2D(32, 32),
                 count: 4,
                 columns: 4

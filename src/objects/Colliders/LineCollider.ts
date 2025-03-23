@@ -87,7 +87,16 @@ export class LineCollider extends Collider {
         if (nearestIntersection) {
             const dx = this._end.x - this._start.x
             const dy = this._end.y - this._start.y
-            const normal = normalize(vec2D(-dy, dx))
+            let normal = normalize(vec2D(-dy, dx))
+
+
+            const polygonCenter = polygon.getCenter()
+            const vectorToCenter = subtract(polygonCenter, nearestIntersection)
+            const dotProduct = normal.x * vectorToCenter.x + normal.y * vectorToCenter.y
+
+            if (dotProduct > 0) {
+                normal = multiply(normal, -1)
+            }
 
             return {
                 objectA: this,
@@ -179,7 +188,7 @@ export class LineCollider extends Collider {
             y: normalized.x
         };
 
-        const halfThickness = this.thickness / 2;
+        const halfThickness = this._thickness / 2;
         const vertices: Vec2D[] = [
             {
                 x: this.start.x + perpendicular.x * halfThickness,

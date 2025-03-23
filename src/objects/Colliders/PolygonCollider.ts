@@ -199,4 +199,29 @@ export default class PolygonCollider extends Collider {
 
         return inside;
     }
+    getCenter(): Vec2D {
+        // If there are no vertices, return the position
+        if (this.vertices.length === 0) {
+            return this.position;
+        }
+
+        // Calculate the centroid by averaging all vertices
+        let sumX = 0;
+        let sumY = 0;
+
+        for (const vertex of this.vertices) {
+            sumX += vertex.x;
+            sumY += vertex.y;
+        }
+
+        // Calculate the average position of all vertices
+        const centerX = sumX / this.vertices.length;
+        const centerY = sumY / this.vertices.length;
+
+        // Return the center position in world coordinates (adding the polygon's position)
+        return {
+            x: centerX + this.position.x,
+            y: centerY + this.position.y
+        };
+    }
 }

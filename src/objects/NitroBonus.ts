@@ -57,4 +57,8 @@ export default class NitroBonus extends PhysicObject {
     reposition(newPosition: Vec2D): void {
         this.position = newPosition;
     }
+
+    override get aiDetectable(): boolean {
+        return false;
+    }
 }

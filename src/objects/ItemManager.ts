@@ -122,7 +122,7 @@ export class ItemManager {
 
         if (type === 'bananaPeel') {
             spriteManager = new SpriteManager({
-                imageSrc: "game/car2.png",
+                imageSrc: "game/luckybox.png",
                 cellSize: vec2D(32, 32),
                 count: 8,
                 columns: 4

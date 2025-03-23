@@ -1,14 +1,6 @@
-import { Vec2D } from "../types/math"
-import {
-    add,
-    dotProduct,
-    length,
-    multiply,
-    normalize,
-    subtract,
-    vec2D,
-} from "../utils/math"
-import { LineCollider } from "./Colliders/LineCollider"
+import {Vec2D} from "../types/math"
+import {add, dotProduct, length, multiply, normalize, subtract, vec2D,} from "../utils/math"
+import {LineCollider} from "./Colliders/LineCollider"
 import CarObject from "./CarObject"
 import CheckpointObject from "./CheckpointObject"
 
@@ -113,16 +105,19 @@ interface RoadAnalysis {
     rightDistance: number
     centerDistance: number
     hasTurnAhead: boolean
+    bestPathDirection: number
 }
 
 export class CarAIController {
     private readonly car: CarObject
     private readonly ai: CarAI
     private readonly behaviorType: AIBehaviorType
-    private readonly maxSpeed: number = 180
+    private readonly maxSpeed: number = 200
     private readonly stuckCheckInterval: number = 2000
     private lastCheckTime: number = 0
     private lastPosition: Vec2D
+    private readonly CHECKPOINT_WEIGHT: number = 0.22
+    private readonly PATH_WEIGHT: number = 1 - this.CHECKPOINT_WEIGHT
 
     constructor(car: CarObject, behaviorType: AIBehaviorType) {
         this.car = car
@@ -167,12 +162,20 @@ export class CarAIController {
             rightRays.length
         const minDistance = Math.min(...raycastResults.map((r) => r.distance))
 
+        let bestPathDirection = 0;
+        if (leftDistance > centerDistance && leftDistance > rightDistance) {
+            bestPathDirection = -1;
+        } else if (rightDistance > centerDistance && rightDistance > leftDistance) {
+            bestPathDirection = 1;
+        }
+
         return {
             minDistance,
             leftDistance,
             rightDistance,
             centerDistance,
             hasTurnAhead: centerDistance < this.ai.rayLength * 0.8,
+            bestPathDirection
         }
     }
 
@@ -186,13 +189,29 @@ export class CarAIController {
         while (steerAngle > Math.PI) steerAngle -= 2 * Math.PI
         while (steerAngle < -Math.PI) steerAngle += 2 * Math.PI
 
-        if (roadAnalysis.minDistance < this.ai.rayLength * 0.5) {
-            const pathCorrection =
-                (roadAnalysis.rightDistance - roadAnalysis.leftDistance) * 0.02
-            steerAngle = steerAngle * 0.7 + pathCorrection
+        const pathBasedSteering = this.calculatePathBasedSteering(roadAnalysis);
+
+        const finalSteerAngle =
+            (steerAngle * this.CHECKPOINT_WEIGHT) +
+            (pathBasedSteering * this.PATH_WEIGHT);
+
+        return Math.max(-Math.PI / 4, Math.min(Math.PI / 4, finalSteerAngle));
+    }
+
+    private calculatePathBasedSteering(roadAnalysis: RoadAnalysis): number {
+        if (roadAnalysis.minDistance < this.ai.rayLength * 0.3) {
+            if (roadAnalysis.leftDistance > roadAnalysis.rightDistance) {
+                return -Math.PI / 6;
+            } else {
+                return Math.PI / 6;
+            }
         }
 
-        return Math.max(-Math.PI / 4, Math.min(Math.PI / 4, steerAngle))
+        if (roadAnalysis.bestPathDirection !== 0) {
+            return roadAnalysis.bestPathDirection * (Math.PI / 8);
+        }
+
+        return (roadAnalysis.rightDistance - roadAnalysis.leftDistance) * 0.03;
     }
 
     private handleStuckState(): void {
@@ -208,6 +227,8 @@ export class CarAIController {
                     Math.cos(this.car.rotation) * 5,
                     Math.sin(this.car.rotation) * 5
                 )
+
+                this.car.setSteerAngle((Math.random() * 2 - 1) * (Math.PI / 4));
             }
 
             this.lastPosition = { ...this.car.position }
@@ -260,13 +281,19 @@ export class CarAIController {
         )
         this.car.setSteerAngle(steerAngle)
 
+        let throttlePercentage = 1.0;
+
         if (roadAnalysis.hasTurnAhead) {
-            this.car.setThrottle(this.maxSpeed * 0.3)
-        } else {
-            this.car.setThrottle(this.maxSpeed)
+            throttlePercentage = 0.3;
+        } else if (roadAnalysis.minDistance < this.ai.rayLength * 0.5) {
+            throttlePercentage = 0.5;
         }
 
-        if (!roadAnalysis.hasTurnAhead && this.car.nitroAmount > 50) {
+        this.car.setThrottle(this.maxSpeed * throttlePercentage);
+
+        if (!roadAnalysis.hasTurnAhead &&
+            roadAnalysis.minDistance > this.ai.rayLength * 0.8 &&
+            this.car.nitroAmount > 50) {
             this.car.activateNitro();
         }
     }
@@ -281,7 +308,15 @@ export class CarAIController {
         )
         this.car.setSteerAngle(steerAngle)
 
-        this.car.setThrottle(this.maxSpeed * 0.6)
+        let throttlePercentage = 1 //0.6;
+
+        if (roadAnalysis.hasTurnAhead) {
+            throttlePercentage = 0.4;
+        } else if (roadAnalysis.minDistance < this.ai.rayLength * 0.5) {
+            throttlePercentage = 0.3;
+        }
+
+        this.car.setThrottle(this.maxSpeed * throttlePercentage);
     }
 
     private updateAggressiveChaser(
@@ -292,26 +327,41 @@ export class CarAIController {
         const toPlayer = subtract(playerCar.position, this.car.position)
         const distanceToPlayer = length(toPlayer)
 
-        const target =
-            distanceToPlayer < 20 ? playerCar.position : checkpoint.position
+        let target = checkpoint.position;
+        let targetWeight = 1.0;
+
+        if (distanceToPlayer < 20) {
+            targetWeight = Math.max(0, (20 - distanceToPlayer) / 20);
+            target = {
+                x: checkpoint.position.x * (1 - targetWeight) + playerCar.position.x * targetWeight,
+                y: checkpoint.position.y * (1 - targetWeight) + playerCar.position.y * targetWeight
+            };
+        }
+
         const steerAngle = this.calculateSteeringToTarget(target, roadAnalysis)
         this.car.setSteerAngle(steerAngle)
 
-        if (
-            distanceToPlayer < 15 &&
-            roadAnalysis.minDistance > this.ai.rayLength * 0.5
-        ) {
-            this.car.setThrottle(this.maxSpeed)
-        } else {
-            this.car.setThrottle(this.maxSpeed * 0.7)
+        let throttlePercentage = 1 //0.7;
+
+        if (distanceToPlayer < 15 && roadAnalysis.minDistance > this.ai.rayLength * 0.5) {
+            throttlePercentage = 1.0;
+        } else if (roadAnalysis.hasTurnAhead) {
+            throttlePercentage = 0.5;
+        } else if (roadAnalysis.minDistance < this.ai.rayLength * 0.3) {
+            throttlePercentage = 0.4;
         }
+
+        this.car.setThrottle(this.maxSpeed * throttlePercentage);
 
         const isPlayerAhead = dotProduct(
             toPlayer,
             vec2D(Math.cos(this.car.rotation), Math.sin(this.car.rotation))
         ) > 0;
-
-        if (isPlayerAhead && distanceToPlayer < 30 && distanceToPlayer > 10 && this.car.nitroAmount > 30) {
+        if (isPlayerAhead &&
+            distanceToPlayer < 30 &&
+            distanceToPlayer > 10 &&
+            roadAnalysis.minDistance > this.ai.rayLength * 0.6 &&
+            this.car.nitroAmount > 30) {
             this.car.activateNitro();
         }
     }
@@ -336,26 +386,34 @@ export class CarAIController {
                 vec2D(Math.cos(this.car.rotation), Math.sin(this.car.rotation))
             ) < 0
 
+        let steerAngle;
+        let throttlePercentage;
+
         if (distanceToPlayer > 30 && !isPlayerLastLap) {
-            const steerAngle = this.calculateSteeringToTarget(
+            steerAngle = this.calculateSteeringToTarget(
                 checkpoint.position,
                 roadAnalysis
             )
-            this.car.setSteerAngle(steerAngle)
-            this.car.setThrottle(this.maxSpeed * 0.2)
+            throttlePercentage = 0.2;
         } else if (isPlayerBehind && distanceToPlayer < 15) {
-            const blockingAngle =
-                (Math.sin(performance.now() / 1000) * Math.PI) / 8
-            this.car.setSteerAngle(blockingAngle)
-            this.car.setThrottle(this.maxSpeed * 0.4)
+            steerAngle = (Math.sin(performance.now() / 1000) * Math.PI) / 8;
+            throttlePercentage = 0.4;
         } else {
-            const steerAngle = this.calculateSteeringToTarget(
+            steerAngle = this.calculateSteeringToTarget(
                 checkpoint.position,
                 roadAnalysis
             )
-            this.car.setSteerAngle(steerAngle)
-            this.car.setThrottle(this.maxSpeed * 0.8)
+            throttlePercentage = 1 //0.8;
+
+            if (roadAnalysis.hasTurnAhead) {
+                throttlePercentage = 0.6;
+            } else if (roadAnalysis.minDistance < this.ai.rayLength * 0.4) {
+                throttlePercentage = 0.5;
+            }
         }
+
+        this.car.setSteerAngle(steerAngle);
+        this.car.setThrottle(this.maxSpeed * throttlePercentage);
     }
 
     getAI(): CarAI {

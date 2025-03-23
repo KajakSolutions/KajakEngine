@@ -9,6 +9,7 @@ import {
     subtract,
 } from "../../utils/math"
 import PolygonCollider from "./PolygonCollider"
+import {AABBCollider} from "./AABBCollider.ts";
 
 export class LineCollider extends Collider {
     private _start: Vec2D
@@ -47,8 +48,24 @@ export class LineCollider extends Collider {
             return this.checkCollisionWithPolygon(other)
         } else if (other instanceof LineCollider) {
             return this.checkCollisionWithLine(other)
+        }else if (other instanceof AABBCollider) {
+            return this.checkCollisionWithAABB(other)
         }
         return null
+    }
+
+    private checkCollisionWithAABB(other: AABBCollider): ColliderInfo | null {
+        const vertices = [
+            vec2D(other.position.x, other.position.y),
+            vec2D(other.position.x + other.size.x, other.position.y),
+            vec2D(
+                other.position.x + other.size.x,
+                other.position.y + other.size.y
+            ),
+            vec2D(other.position.x, other.position.y + other.size.y),
+        ]
+        const aabbPolygon = new PolygonCollider(vec2D(0, 0), vertices)
+        return this.checkCollisionWithPolygon(aabbPolygon)
     }
 
     private checkCollisionWithPolygon(

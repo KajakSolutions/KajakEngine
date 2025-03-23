@@ -25,6 +25,7 @@ interface MapConfig {
     aiCars: AiCarConfig[];
     obstacles: ObstacleConfig[];
     startPosition: Vec2D;
+    startRotation?: number;
     playerCarConfig: PlayerCarConfig;
     surfaces: SurfaceConfig;
     movingBarriers?: MovingBarrierConfig[];
@@ -132,7 +133,8 @@ export class MapLoader {
         size: Vec2D,
         isPlayer: boolean = false,
         carId: number,
-        surfaceManager: TrackSurfaceManager
+        surfaceManager: TrackSurfaceManager,
+        rotation: number = 0
     ): CarObject {
         return new CarObject({
             position,
@@ -143,7 +145,7 @@ export class MapLoader {
             maxGrip: 10,
             wheelBase: 4.5,
             drag: 25,
-
+            rotation,
             spriteManager: new SpriteManager({
                 imageSrc: spriteSrc,
                 cellSize: vec2D(32, 32),
@@ -229,13 +231,16 @@ export class MapLoader {
         trackBarriers.addToScene(scene);
 
         let nextCarId = 0;
+        const startRotation = config.startRotation ? degreesToRadians(config.startRotation) : 0;
+
         const playerCar = this.createCar(
             config.startPosition,
             config.playerCarConfig.spriteSrc,
             config.playerCarConfig.size,
             true,
             nextCarId++,
-            surfaceManager
+            surfaceManager,
+            startRotation
         );
         scene.addObject(playerCar);
 
@@ -251,7 +256,8 @@ export class MapLoader {
                 config.playerCarConfig.size,
                 false,
                 nextCarId++,
-                surfaceManager
+                surfaceManager,
+                startRotation
             );
 
             const aiController = new CarAIController(

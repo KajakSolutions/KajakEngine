@@ -48,7 +48,7 @@ export class SoundManager {
         if (options.virtualSound) {
             const sound: Sound = {
                 id,
-                audio: new Audio(), // Dummy audio element
+                audio: new Audio(),
                 loop: options.loop || false,
                 volume: options.volume || 1.0,
                 category: options.category || 'sfx',
@@ -88,7 +88,6 @@ export class SoundManager {
         const sound = this.sounds.get(id);
         if (!sound) return;
 
-        // Skip actual playback for virtual sounds
         if (sound.virtualSound) return;
 
         if (!this._initialized) {

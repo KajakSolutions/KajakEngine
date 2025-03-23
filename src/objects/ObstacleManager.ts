@@ -93,7 +93,7 @@ export class ObstacleManager {
                 obstacle,
                 (vehicle, obs) => {
                     if (obs instanceof BananaPeel && obs.active && vehicle instanceof CarObject) {
-                        if (vehicle.id == obs.ownerCarId) {
+                        if (vehicle.id != obs.ownerCarId) {
                             obs.applySlipEffect(vehicle);
 
                             if (this.itemSoundLoaded) {

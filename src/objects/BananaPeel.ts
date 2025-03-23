@@ -71,7 +71,7 @@ export default class BananaPeel extends PhysicObject {
     }
 
     applySlipEffect(car: CarObject): void {
-        // if (!this._active || car.id === this._ownerCarId) return;
+        if (!this._active || car.id === this._ownerCarId) return;
 
         car.applySlip();
         this.deactivate();
@@ -85,5 +85,9 @@ export default class BananaPeel extends PhysicObject {
             this._animationFrame,
             this.position
         );
+    }
+
+    override get aiDetectable(): boolean {
+        return false;
     }
 }

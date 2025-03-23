@@ -89,7 +89,6 @@ export class EngineSoundGenerator {
             this.engineOsc.start();
             this.engineLFO.start();
 
-            // Register with sound manager
             await soundManager.loadSound(`engine_${this.carId}`, '', {
                 category: 'sfx',
                 volume: 0.8,

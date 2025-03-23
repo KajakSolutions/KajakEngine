@@ -112,7 +112,7 @@ export default class PolygonCollider extends Collider {
         return Math.max(
             0,
             Math.min(projectionA.max, projectionB.max) -
-                Math.max(projectionA.min, projectionB.min)
+            Math.max(projectionA.min, projectionB.min)
         )
     }
 

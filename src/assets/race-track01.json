@@ -846,19 +846,19 @@
             "position": { "x": -30, "y": 5 },
             "respawnTime": 20000,
             "size": { "x": 2, "y": 2 },
-            "spriteSrc": "game/checkpoint.png"
+            "spriteSrc": "game/nitro.png"
         },
         {
             "position": { "x": 30, "y": -5 },
             "respawnTime": 30000,
             "size": { "x": 2, "y": 2 },
-            "spriteSrc": "game/checkpoint.png"
+            "spriteSrc": "game/nitro.png"
         },
         {
             "position": { "x": 0, "y": 20 },
             "respawnTime": 25000,
             "size": { "x": 3, "y": 3 },
-            "spriteSrc": "game/checkpoint.png"
+            "spriteSrc": "game/nitro.png"
         }
     ],
     "startPosition": { "x": -45, "y": -10 },

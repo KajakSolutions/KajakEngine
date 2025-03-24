@@ -47,6 +47,9 @@ export default class KajakEngine {
         `
             this._canvas.style.backgroundImage = `url(${this._currentScene.map.backgroundSrc})`
 
+            this._canvas.style.imageRendering = "pixelated";
+            this._canvas.style.imageRendering = "crisp-edges";
+
             if(this._currentScene.map.secondBackgroundSrc) {
                 const img = document.createElement("img");
                 img.src = this._currentScene.map.secondBackgroundSrc;

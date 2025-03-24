@@ -140,21 +140,15 @@ export default class ItemPickup extends PhysicObject {
         this._originalY = newPosition.y;
     }
 
-    draw(ctx: CanvasRenderingContext2D): void {
-        if (!this.active || !this.spriteManager) return;
-
-        this.spriteManager.drawSprite(
-            ctx,
-            this._animationFrame,
-            this.position
-        );
-    }
-
     get respawnTime(): number {
         return this._respawnTime;
     }
 
     get respawnTimer(): number {
         return this._respawnTimer;
+    }
+
+    override get aiDetectable(): boolean {
+        return false;
     }
 }

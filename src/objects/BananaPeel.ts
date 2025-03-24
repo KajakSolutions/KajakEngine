@@ -76,18 +76,4 @@ export default class BananaPeel extends PhysicObject {
         car.applySlip();
         this.deactivate();
     }
-
-    draw(ctx: CanvasRenderingContext2D): void {
-        if (!this.active || !this.spriteManager) return;
-
-        this.spriteManager.drawSprite(
-            ctx,
-            this._animationFrame,
-            this.position
-        );
-    }
-
-    override get aiDetectable(): boolean {
-        return false;
-    }
 }

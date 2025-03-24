@@ -376,6 +376,7 @@ export default class CarObject extends PhysicObject {
     }
 
     activateNitro(): boolean {
+        console.log("activateNitro");
         if (this._nitroAmount > 0 && !this._nitroActive) {
             this._nitroActive = true;
             this._nitroEffectTimer = performance.now();

@@ -10,7 +10,7 @@
     },
     "checkpoints": [
         {
-            "position": { "x": 0, "y": -30 },
+            "position": { "x": 0, "y": -31 },
             "size": { "x": 2, "y": 12 },
             "rotation": -95,
             "order": 0,
@@ -22,9 +22,9 @@
             }
         },
         {
-            "position": { "x": -40, "y": -32 },
+            "position": { "x": -40, "y": -33 },
             "size": { "x": 2, "y": 12 },
-            "rotation": -65,
+            "rotation": -70,
             "order": 1,
             "isFinishLine": false,
             "collider": {
@@ -58,7 +58,7 @@
             }
         },
         {
-            "position": { "x": -60, "y": 22 },
+            "position": { "x": -58.5, "y": 22 },
             "size": { "x": 12, "y": 2 },
             "rotation": 15,
             "order": 4,
@@ -70,7 +70,7 @@
             }
         },
         {
-            "position": { "x": -40, "y": 32 },
+            "position": { "x": -40, "y": 30 },
             "size": { "x": 2, "y": 12 },
             "rotation": 90,
             "order": 5,
@@ -82,7 +82,7 @@
             }
         },
         {
-            "position": { "x": 30, "y": 28 },
+            "position": { "x": 30, "y": 28.5 },
             "size": { "x": 2, "y": 12 },
             "rotation": 105,
             "order": 6,
@@ -94,9 +94,9 @@
             }
         },
         {
-            "position": { "x": 58, "y": 0 },
+            "position": { "x": 59.5, "y": 0 },
             "size": { "x": 12, "y": 2 },
-            "rotation": 195,
+            "rotation": 185,
             "order": 7,
             "isFinishLine": false,
             "collider": {

@@ -1,4 +1,4 @@
-import { soundManager } from "../../SoundManager.ts";
+import {soundManager} from "../../SoundManager.ts";
 
 export class EngineSoundGenerator {
     private audioContext!: AudioContext;
@@ -16,43 +16,6 @@ export class EngineSoundGenerator {
 
     constructor(carId: string = 'default') {
         this.carId = carId;
-        this.setupVisualization();
-    }
-
-    private setupVisualization() {
-        this.canvas = document.createElement('canvas');
-        this.canvas.width = 300;
-        this.canvas.height = 150;
-        this.canvas.style.position = 'fixed';
-        this.canvas.style.bottom = '20px';
-        this.canvas.style.right = '20px';
-        this.canvas.style.backgroundColor = 'white';
-        this.canvas.style.border = '1px solid #ccc';
-        this.canvas.style.borderRadius = '8px';
-        this.canvas.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
-
-        const container = document.createElement('div');
-        container.style.position = 'fixed';
-        container.style.bottom = '20px';
-        container.style.right = '20px';
-        container.style.background = 'white';
-        container.style.borderRadius = '8px';
-        container.style.padding = '10px';
-        container.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
-
-        const title = document.createElement('div');
-        title.textContent = 'Engine Sound Waveform';
-        title.style.marginBottom = '10px';
-        title.style.fontWeight = 'bold';
-        title.style.fontSize = '14px';
-
-        container.appendChild(title);
-        container.appendChild(this.canvas);
-        document.body.appendChild(container);
-
-        const ctx = this.canvas.getContext('2d');
-        if (!ctx) throw new Error('Could not get canvas context');
-        this.canvasCtx = ctx;
     }
 
     async initialize(): Promise<void> {
@@ -123,9 +86,7 @@ export class EngineSoundGenerator {
 
             const categoryVolume = soundManager.getCategoryVolume(sound.category) || 1.0;
 
-            const calculatedVolume = soundManager.getMasterVolume() * categoryVolume * (sound.volume || 1.0) * this.baseVolume;
-
-            this.masterGain.gain.value = calculatedVolume;
+            this.masterGain.gain.value = soundManager.getMasterVolume() * categoryVolume * (sound.volume || 1.0) * this.baseVolume;
         }
     }
 

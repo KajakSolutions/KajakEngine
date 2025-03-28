@@ -13,6 +13,7 @@ import Scene from "./Scene.ts";
 import {SurfaceType} from "./objects/TrackSurfaceSegment.ts";
 import {TrackSurfaceManager} from "./objects/TrackSurfaceManager.ts";
 import MovingBarrier from "./objects/MovingBarrier.ts";
+import {WeatherSystem, WeatherType} from "./objects/WeatherSystem.ts";
 
 
 interface MapConfig {
@@ -29,6 +30,19 @@ interface MapConfig {
     playerCarConfig: PlayerCarConfig;
     surfaces: SurfaceConfig;
     movingBarriers?: MovingBarrierConfig[];
+    weather?: WeatherConfig;
+}
+
+interface WeatherConfig {
+    initialWeather?: string;
+    minDuration?: number;
+    maxDuration?: number;
+    intensity?: number;
+    puddleSpawnPoints?: Array<{
+        position: Vec2D;
+        size: Vec2D;
+        type?: 'puddle' | 'ice';
+    }>;
 }
 
 interface SurfaceConfig {
@@ -182,11 +196,32 @@ export class MapLoader {
 
         const scene = new Scene(
             config.worldBounds,
-            new MapObject({ backgroundSrc: config.backgroundSrc ,
-            secondBackgroundSrc: config.secondBackgroundSrc})
+            new MapObject({
+                backgroundSrc: config.backgroundSrc ,
+                secondBackgroundSrc: config.secondBackgroundSrc,
+                worldBounds: config.worldBounds
+            })
         );
 
         const surfaceManager = new TrackSurfaceManager();
+
+        if (config.weather) {
+            let initialWeather;
+            if (config.weather.initialWeather) {
+                initialWeather = WeatherType[config.weather.initialWeather as keyof typeof WeatherType];
+            }
+
+            const weatherSystem = new WeatherSystem(scene, {
+                initialWeather,
+                minDuration: config.weather.minDuration,
+                maxDuration: config.weather.maxDuration,
+                intensity: config.weather.intensity,
+                puddleSpawnPoints: config.weather.puddleSpawnPoints
+            });
+
+            scene.setWeatherSystem(weatherSystem);
+        }
+
 
         if (config.surfaces) {
             config.surfaces.segments.forEach(segment => {

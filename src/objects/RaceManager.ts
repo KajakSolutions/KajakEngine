@@ -140,7 +140,18 @@ export class RaceManager {
             this.checkpoints[Math.max(0, progress.lastCheckpoint)]
         car.position = lastCheckpoint.position
         car.velocity = { x: 0, y: 0 }
-        car.rotation = 0
+
+        const nextCheckpointIndex =
+            (progress.lastCheckpoint + 1) % this.checkpoints.length
+        const nextCheckpoint = this.checkpoints[nextCheckpointIndex]
+
+        const direction = {
+            x: nextCheckpoint.position.x - lastCheckpoint.position.x,
+            y: nextCheckpoint.position.y - lastCheckpoint.position.y
+        }
+
+        car.rotation = Math.atan2(direction.x, direction.y)
+
         progress.lastCheckpointTime = performance.now()
 
         if (car.isPlayer) {
@@ -148,9 +159,6 @@ export class RaceManager {
                 if (cp.spriteManager) cp.spriteManager.hidden = true
             })
 
-            const nextCheckpointIndex =
-                (progress.lastCheckpoint + 1) % this.checkpoints.length
-            const nextCheckpoint = this.checkpoints[nextCheckpointIndex]
             if (nextCheckpoint.spriteManager) {
                 nextCheckpoint.spriteManager.hidden = false
             }

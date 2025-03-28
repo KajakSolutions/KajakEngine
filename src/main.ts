@@ -1,15 +1,11 @@
-import {
-    KajakEngine,
-    Scene,
-    CarObject,
-    Overlap, CheckpointObject,
-} from "./index";
+import {CarObject, CheckpointObject, KajakEngine, Overlap, Scene,} from "./index";
 import {MapLoader} from "./MapLoader.ts";
 import {soundManager} from "./SoundManager.ts";
 import {TrackSurfaceSegment} from "./objects/TrackSurfaceSegment.ts";
 import {NitroManager} from "./objects/NitroManager.ts";
-import { ObstacleManager } from "./objects/ObstacleManager.ts";
+import {ObstacleManager} from "./objects/ObstacleManager.ts";
 import {ItemManager} from "./objects/ItemManager.ts";
+import {WeatherSystem, WeatherType} from "./objects/WeatherSystem.ts";
 
 class Game {
     private engine: KajakEngine;
@@ -180,6 +176,56 @@ class Game {
 
         this.setupVolumeControls();
     }
+
+    private setupWeather(): void {
+        if (this.currentScene && !this.currentScene.weatherSystem) {
+            const puddleSpawnPoints = [
+                {
+                    position: { x: -30, y: -10 },
+                    size: { x: 5, y: 4 },
+                    type: 'puddle' as const
+                },
+                {
+                    position: { x: 15, y: 15 },
+                    size: { x: 6, y: 3 },
+                    type: 'puddle' as const
+                },
+                {
+                    position: { x: 40, y: -20 },
+                    size: { x: 4, y: 4 },
+                    type: 'ice' as const
+                },
+                {
+                    position: { x: -20, y: 30 },
+                    size: { x: 7, y: 3 },
+                    type: 'ice' as const
+                },
+                {
+                    position: { x: 0, y: -30 },
+                    size: { x: 5, y: 5 },
+                    type: 'puddle' as const
+                }
+            ];
+
+            const weatherTypes = [WeatherType.CLEAR, WeatherType.RAIN, WeatherType.SNOW];
+            const randomWeather = weatherTypes[Math.floor(Math.random() * weatherTypes.length)];
+
+            console.log(`Initializing weather system with ${randomWeather} weather`);
+
+            const weatherSystem = new WeatherSystem(this.currentScene, {
+                initialWeather: WeatherType.CLEAR,
+                minDuration: 3000,
+                maxDuration: 20000,
+                intensity: 0.8,
+                puddleSpawnPoints: puddleSpawnPoints,
+                allowedWeatherTypes: [WeatherType.CLEAR, WeatherType.RAIN]
+            });
+
+            this.currentScene.setWeatherSystem(weatherSystem);
+        }
+    }
+
+
     private setupVolumeControls(): void {
         document.getElementById('master-volume')?.addEventListener('input', (e) => {
             const volume = parseInt((e.target as HTMLInputElement).value) / 100;
@@ -362,6 +408,8 @@ class Game {
 
             if (this.currentScene) {
                 this.setupCollisions(this.currentScene);
+
+                this.setupWeather();
 
                 this.obstacleManager = new ObstacleManager(this.currentScene, {
                     maxActiveObstacles: 15,

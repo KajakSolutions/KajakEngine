@@ -33,8 +33,8 @@ export class ItemManager {
     constructor(scene: Scene, config: ItemManagerConfig = {}) {
         this.scene = scene;
         this.maxItems = config.maxItems || 5;
-        this.itemRespawnTime = config.itemRespawnTime || 15000; // 15 sekund
-        this.spawnInterval = config.spawnInterval || 10000; // 10 sekund
+        this.itemRespawnTime = config.itemRespawnTime || 15000;
+        this.spawnInterval = config.spawnInterval || 10000;
 
         if (config.spawnPoints && config.spawnPoints.length > 0) {
             this.spawnPoints = config.spawnPoints;

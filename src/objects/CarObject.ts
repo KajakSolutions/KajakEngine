@@ -63,6 +63,13 @@ export default class CarObject extends PhysicObject {
     private _bananaPeels: number;
     private readonly _maxBananaPeels: number;
 
+    private temporarySurfaceEffects: {
+        gripMultiplier: number;
+        dragMultiplier: number;
+        startTime: number;
+        duration: number;
+    }[] = [];
+
     constructor({
         resistance = 20,
         drag = 1,
@@ -151,6 +158,14 @@ export default class CarObject extends PhysicObject {
         return this._maxBananaPeels;
     }
 
+    applyTemporarySurfaceEffect(effect: { gripMultiplier: number; dragMultiplier: number }, duration: number = 0.5): void {
+        this.temporarySurfaceEffects.push({
+            ...effect,
+            startTime: performance.now(),
+            duration: duration * 1000
+        });
+    }
+
     update(deltaTime: number): void {
         this._soundSystem.update();
 
@@ -161,9 +176,31 @@ export default class CarObject extends PhysicObject {
         const cosAngle = Math.cos(angle)
         const sinAngle = Math.sin(angle)
 
-        const surfaceProps = this.surfaceManager
+        let  surfaceProps = this.surfaceManager
             ? this.surfaceManager.getSurfacePropertiesAt(this.position)
             : { gripMultiplier: 1.0, dragMultiplier: 1.0 };
+
+        const currentTime = performance.now();
+        let combinedGripMultiplier = 1.0;
+        let combinedDragMultiplier = 1.0;
+
+        this.temporarySurfaceEffects = this.temporarySurfaceEffects.filter(effect => {
+            const elapsed = currentTime - effect.startTime;
+            if (elapsed < effect.duration) {
+                combinedGripMultiplier *= effect.gripMultiplier;
+                combinedDragMultiplier *= effect.dragMultiplier;
+                return true;
+            }
+            return false;
+        });
+
+        const effectiveGripMultiplier = surfaceProps.gripMultiplier * combinedGripMultiplier;
+        const effectiveDragMultiplier = surfaceProps.dragMultiplier * combinedDragMultiplier;
+
+        surfaceProps = {
+            gripMultiplier: effectiveGripMultiplier,
+            dragMultiplier: effectiveDragMultiplier
+        };
 
         const localVelocity = {
             forward: this.velocity.x * sinAngle + this.velocity.y * cosAngle,

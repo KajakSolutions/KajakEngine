@@ -3,10 +3,10 @@
     "backgroundSrc": "src/assets/map2.png",
     "secondBackgroundSrc": "src/assets/map2_layer2.png",
     "worldBounds": {
-        "x": -640,
-        "y": -360,
-        "width": 1280,
-        "height": 720
+        "x": -64,
+        "y": -36,
+        "width": 128,
+        "height": 72
     },
     "checkpoints": [
         {
@@ -1125,33 +1125,15 @@
     },
     "raceConfig": {
         "totalLaps": 3,
-        "checkpointTimeout": 10000
+        "checkpointTimeout": 5000
     },
     "surfaces": {
         "segments": [
             {
-                "start": {"x": -46, "y": -35},
-                "end": {"x": -60, "y": -25},
+                "start": {"x": -22, "y": 23},
+                "end": {"x": -10, "y": 15},
                 "width": 10,
-                "type": "ICE"
-            },
-            {
-                "start": {"x": -5, "y": -8},
-                "end": {"x": 10, "y": -8},
-                "width": 10,
-                "type": "ICE"
-            },
-            {
-                "start": {"x": -52, "y": 24},
-                "end": {"x": -58, "y": 30},
-                "width": 10,
-                "type": "ICE"
-            },
-            {
-                "start": {"x": 58, "y": 15},
-                "end": {"x": 58, "y": 0},
-                "width": 10,
-                "type": "ICE"
+                "type": "MUD"
             }
         ]
     },

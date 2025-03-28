@@ -4,14 +4,6 @@ import { vec2D } from '../../../utils/math';
 
 describe('LineCollider', () => {
     describe('collision detection', () => {
-        // test('detects collision when lines share endpoint with enough thickness', () => {
-        //     const line1 = new LineCollider(vec2D(0, 0), vec2D(10.1, 0), 2);
-        //     const line2 = new LineCollider(vec2D(9.9, 0), vec2D(20, 0), 2);
-        //
-        //     const collision = line1.checkCollision(line2);
-        //     expect(collision).not.toBeNull();
-        // });
-
         test('detects intersection between crossing lines', () => {
             const line1 = new LineCollider(vec2D(0, 0), vec2D(10, 10), 1);
             const line2 = new LineCollider(vec2D(0, 10), vec2D(10, 0), 1);

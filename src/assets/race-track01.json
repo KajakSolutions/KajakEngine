@@ -670,7 +670,7 @@
     },
     "raceConfig": {
         "totalLaps": 3,
-        "checkpointTimeout": 10000
+        "checkpointTimeout": 7000
     },
     "surfaces": {
         "segments": [

@@ -15,6 +15,7 @@ import {soundManager} from "./SoundManager.ts";
 
 import {TrackSurfaceSegment} from "./objects/TrackSurfaceSegment.ts";
 import MovingBarrier, {BarrierState} from "./objects/MovingBarrier.ts";
+import {WeatherSystem} from "./objects/WeatherSystem.ts";
 
 export default class Scene {
     private _gameObjects: Map<number, PhysicObject> = new Map()
@@ -26,6 +27,8 @@ export default class Scene {
     static scale: number = 10
     private aiControllers: CarAIController[] = []
     private _debugMode: boolean = false
+
+    private _weatherSystem: WeatherSystem | null = null;
 
     constructor(
         worldBounds: BoundingBox,
@@ -43,6 +46,14 @@ export default class Scene {
         }).then(() => {
             soundManager.play('background_music');
         });
+    }
+
+    get weatherSystem(): WeatherSystem | null {
+        return this._weatherSystem;
+    }
+
+    setWeatherSystem(weatherSystem: WeatherSystem): void {
+        this._weatherSystem = weatherSystem;
     }
 
     get gameObjects(): Map<number, PhysicObject> {
@@ -70,7 +81,6 @@ export default class Scene {
         this._gameObjects.set(id, object)
         object.id = id
 
-        // Tylko  po to żeby nie trzeba było ręcznie dodawać samochodów i checkpointów do RaceManagera
         if (object instanceof CarObject) {
             this._raceManager.addCar(object)
         } else if (object instanceof CheckpointObject) {
@@ -125,6 +135,10 @@ export default class Scene {
             obj.update(deltaTime)
         }
 
+        if (this._weatherSystem) {
+            this._weatherSystem.update(deltaTime);
+        }
+
         this._raceManager.update()
         this.overlapManager.processOverlaps()
     }
@@ -150,12 +164,17 @@ export default class Scene {
             obj.spriteManager.drawSprite(ctx, spriteIndex, obj.position)
         }
 
+        if (this._weatherSystem) {
+            this._weatherSystem.draw(ctx);
+        }
+
         if (this._debugMode) {
             this.drawSurfaces(ctx);
             this.drawRays(ctx)
         }
 
         ctx.restore()
+
     }
 
 

@@ -6,7 +6,7 @@ export default defineConfig({
     server: {
         proxy: {
             '/game': {
-                target: 'http://localhost:5174/src/assets',
+                target: 'http://localhost:5173/src/assets',
                 changeOrigin: true,
                 rewrite: (path) => path.replace(/^\/game/, '')
             }

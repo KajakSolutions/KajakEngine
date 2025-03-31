@@ -14,6 +14,10 @@ export { default as MapObject } from "./objects/MapObject"
 export { default as SpriteManager } from "./objects/SpriteManager"
 export { default as NitroBonus } from "./objects/NitroBonus"
 export { default as MovingBarrier } from "./objects/MovingBarrier"
+export { ObstacleManager } from "./objects/ObstacleManager"
+export { ItemManager } from "./objects/ItemManager"
+export { TrackSurfaceSegment } from "./objects/TrackSurfaceSegment"
+
 
 // Colliders
 export { default as Collider } from "./objects/Colliders/Collider"
@@ -48,6 +52,8 @@ export type {
     TrackBarriersOptions,
 } from "./objects/BarierSystem"
 export type { MovingBarrierOptions } from "./objects/MovingBarrier"
+export type { WeatherType } from "./objects/WeatherSystem"
+
 
 // Utils
 export * from "./utils/math"

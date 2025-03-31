@@ -2,6 +2,7 @@ import PhysicObject, { PhysicObjectOptions } from "./PhysicObject.ts"
 import { Vec2D } from "../types/math"
 import { vec2D } from "../utils/math.ts"
 import { LineCollider } from "./Colliders/LineCollider.ts"
+import Scene from "../Scene.ts"
 
 export interface BarrierSegmentOptions
     extends Omit<PhysicObjectOptions, "collider"> {
@@ -56,12 +57,12 @@ export class TrackBarriers {
 
     constructor(options: TrackBarriersOptions) {
         this._segments = options.segments.map((segment) => {
-            // @ts-ignore
             return new BarrierSegment({
+                position: vec2D(0, 0),
                 start: segment.start,
                 end: segment.end,
                 thickness: options.thickness,
-                mass: 1000000,
+                mass: 1000000
             })
         })
     }
@@ -70,7 +71,7 @@ export class TrackBarriers {
         return this._segments
     }
 
-    addToScene(scene: any): void {
+    addToScene(scene: Scene): void {
         this._segments.forEach((segment) => {
             scene.addObject(segment)
         })

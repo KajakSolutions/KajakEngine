@@ -8,10 +8,8 @@ export class EngineSoundGenerator {
     private modulationGain!: GainNode;
     private initialized: boolean = false;
     private analyser!: AnalyserNode;
-    private canvas!: HTMLCanvasElement;
-    private canvasCtx!: CanvasRenderingContext2D;
     private animationFrameId: number | null = null;
-    private carId: string;
+    private readonly carId: string;
     private baseVolume: number = 1.0;
 
     constructor(carId: string = 'default') {
@@ -60,7 +58,6 @@ export class EngineSoundGenerator {
 
             this.initialized = true;
             this.updateVolumeFromSoundManager();
-            this.startVisualization();
 
             this.audioContext.onstatechange = async () => {
                 if (this.audioContext.state === 'suspended') {
@@ -90,45 +87,6 @@ export class EngineSoundGenerator {
         }
     }
 
-    private startVisualization() {
-        const bufferLength = this.analyser.frequencyBinCount;
-        const dataArray = new Uint8Array(bufferLength);
-
-        const draw = () => {
-            this.animationFrameId = requestAnimationFrame(draw);
-
-            this.analyser.getByteTimeDomainData(dataArray);
-
-            this.canvasCtx.fillStyle = 'rgb(200, 200, 200)';
-            this.canvasCtx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-            this.canvasCtx.lineWidth = 2;
-            this.canvasCtx.strokeStyle = 'rgb(0, 0, 0)';
-            this.canvasCtx.beginPath();
-
-            const sliceWidth = this.canvas.width / bufferLength;
-            let x = 0;
-
-            for (let i = 0; i < bufferLength; i++) {
-                const v = dataArray[i] / 128.0;
-                const y = v * this.canvas.height / 2;
-
-                if (i === 0) {
-                    this.canvasCtx.moveTo(x, y);
-                } else {
-                    this.canvasCtx.lineTo(x, y);
-                }
-
-                x += sliceWidth;
-            }
-
-            this.canvasCtx.lineTo(this.canvas.width, this.canvas.height / 2);
-            this.canvasCtx.stroke();
-        };
-
-        draw();
-    }
-
     async resume(): Promise<void> {
         if (this.audioContext && this.audioContext.state === 'suspended') {
             await this.audioContext.resume();
@@ -155,11 +113,6 @@ export class EngineSoundGenerator {
 
         if (this.animationFrameId !== null) {
             cancelAnimationFrame(this.animationFrameId);
-        }
-
-        const container = this.canvas.parentElement;
-        if (container) {
-            document.body.removeChild(container);
         }
 
         this.engineOsc.stop();

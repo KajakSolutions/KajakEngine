@@ -31,11 +31,11 @@ export class ObstacleManager {
         if (this.itemSoundLoaded) return;
 
         try {
-            await soundManager.loadSound('banana_drop', '/sounds/banana_drop.mp3', {
+            await soundManager.loadSound('banana_drop', 'game/sounds/pop.mp3', {
                 category: 'sfx'
             });
 
-            await soundManager.loadSound('banana_slip', '/sounds/banana_slip.mp3', {
+            await soundManager.loadSound('banana_slip', 'game/sounds/pop.mp3', {
                 category: 'sfx',
                 volume: 0.7
             });

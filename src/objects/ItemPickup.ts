@@ -70,7 +70,7 @@ export default class ItemPickup extends PhysicObject {
         if (this._soundLoaded) return;
 
         try {
-            await soundManager.loadSound('item_pickup', '/sounds/item_pickup.mp3', {
+            await soundManager.loadSound('item_pickup', 'game/sounds/pop.mp3', {
                 category: 'sfx',
                 volume: 0.5
             });

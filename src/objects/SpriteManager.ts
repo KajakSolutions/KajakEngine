@@ -11,7 +11,7 @@ export type SpriteOptions = {
 }
 
 export default class SpriteManager {
-    private readonly _spriteSheet = new Image()
+    private _spriteSheet = new Image()
     private readonly _cellSize: Vec2D
     private readonly _columns: number
     private readonly _count: number
@@ -67,6 +67,20 @@ export default class SpriteManager {
         const step = 360 / this._count
         return Math.floor(normalizedAngle / step + this._offset) % this._count
     }
+
+    updateSpriteSheet(newImageSrc: string) {
+        const newSpriteSheet = new Image();
+
+        newSpriteSheet.onload = () => {
+            this._spriteSheet = newSpriteSheet;
+        };
+
+        newSpriteSheet.onerror = (error) => {
+            console.error(`Błąd podczas ładowania sprite sheet: ${newImageSrc}`, error);
+        };
+
+        newSpriteSheet.src = newImageSrc;
+    };
 
     get cellSize(): Vec2D {
         return this._cellSize

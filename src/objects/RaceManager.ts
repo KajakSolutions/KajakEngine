@@ -31,12 +31,12 @@ export class RaceManager {
     private raceResults: RaceResults[] = []
     private _isRaceFinished: boolean = false
     private carProgress: Map<number, CarProgress> = new Map()
-    private readonly config: RaceConfiguration
+    private readonly _config: RaceConfiguration
 
     constructor(
         config: RaceConfiguration = { totalLaps: 3, checkpointTimeout: 20000 }
     ) {
-        this.config = config
+        this._config = config
         this.raceStartTime = performance.now()
     }
 
@@ -66,7 +66,7 @@ export class RaceManager {
 
             if (
                 currentTime - progress.lastCheckpointTime >
-                this.config.checkpointTimeout
+                this._config.checkpointTimeout
             ) {
                 this.resetCarToLastCheckpoint(car)
                 return
@@ -120,7 +120,7 @@ export class RaceManager {
         progress.currentLap++
         progress.lapStartTime = currentTime
 
-        if (progress.currentLap >= this.config.totalLaps) {
+        if (progress.currentLap >= this._config.totalLaps) {
             this.finishRace(car, currentTime)
         }
 
@@ -209,7 +209,7 @@ export class RaceManager {
                         <div class="leaderboard-entry">
                             <span>${index + 1}.</span>
                             <span>Car ${data.car.playerId}</span>
-                            <span>Lap ${data.progress.currentLap + 1}/${this.config.totalLaps}</span>
+                            <span>Lap ${data.progress.currentLap + 1}/${this._config.totalLaps}</span>
                             <span>Best: ${
                                 data.progress.bestLapTime !== Infinity
                                     ? (
@@ -233,7 +233,7 @@ export class RaceManager {
         bestLap: number
     ): void {
         if (car.isPlayer) {
-            console.log(`Lap ${lap}/${this.config.totalLaps} completed!`)
+            console.log(`Lap ${lap}/${this._config.totalLaps} completed!`)
             console.log(`Lap time: ${(lapTime / 1000).toFixed(2)}s`)
             console.log(`Best lap: ${(bestLap / 1000).toFixed(2)}s`)
         }
@@ -245,6 +245,10 @@ export class RaceManager {
 
     get results(): RaceResults[] {
         return this.raceResults
+    }
+
+    get config(): RaceConfiguration {
+        return this._config
     }
 
     getCarProgress(carId: number): CarProgress | undefined {

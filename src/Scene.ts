@@ -29,6 +29,7 @@ export default class Scene {
     private _debugMode: boolean = false
 
     private _weatherSystem: WeatherSystem | null = null;
+    private _secondBackground: HTMLImageElement
 
     constructor(
         worldBounds: BoundingBox,
@@ -39,13 +40,14 @@ export default class Scene {
         this._map = map
         this._raceManager = new RaceManager(raceManagerOptions)
 
+        this._secondBackground = new Image();
+        this._secondBackground.src = this.map.secondBackgroundSrc || "";
+
         soundManager.loadSound('background_music','game/sounds/background.mp3', {
             loop: true,
             volume: 0.5,
             category: 'music'
-        }).then(() => {
-            soundManager.play('background_music');
-        });
+        })
     }
 
     get weatherSystem(): WeatherSystem | null {
@@ -150,8 +152,10 @@ export default class Scene {
         ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2)
         ctx.scale(Scene.scale, Scene.scale)
 
+        const values = Array.from(this._gameObjects.values());
+        for (let i = values.length - 1; i >= 0; i--) {
+            const obj = values[i];
 
-        for (const obj of this._gameObjects.values()) {
             if (this._debugMode) {
                 this.drawObject(ctx, obj)
             }
@@ -164,6 +168,24 @@ export default class Scene {
             obj.spriteManager.drawSprite(ctx, spriteIndex, obj.position)
         }
 
+        if (this._secondBackground && this._secondBackground.complete) {
+            ctx.save();
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+            const imageRatio = this._secondBackground.width / this._secondBackground.height;
+
+
+            const drawWidth = ctx.canvas.width;
+            const drawHeight = ctx.canvas.width / imageRatio;
+
+            const drawX = (ctx.canvas.width - drawWidth) / 2;
+            const drawY = (ctx.canvas.height - drawHeight) / 2;
+
+            ctx.drawImage(this._secondBackground, drawX, drawY, drawWidth, drawHeight);
+
+            ctx.restore();
+        }
+
         if (this._weatherSystem) {
             this._weatherSystem.draw(ctx);
         }
@@ -174,7 +196,6 @@ export default class Scene {
         }
 
         ctx.restore()
-
     }
 
 

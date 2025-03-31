@@ -1,12 +1,12 @@
 {
     "name": "Race Track 3",
-    "backgroundSrc": "src/assets/map1.png",
-    "secondBackgroundSrc": "src/assets/map1_layer2.png",
+    "backgroundSrc": "game/map1.png",
+    "secondBackgroundSrc": "game/map1_layer2.png",
     "worldBounds": {
-        "x": -640,
-        "y": -360,
-        "width": 1280,
-        "height": 720
+        "x": -64,
+        "y": -36,
+        "width": 128,
+        "height": 72
     },
     "checkpoints": [
         {
@@ -625,23 +625,23 @@
     "aiCars": [
         {
             "type": "STRAIGHT_LINE_MASTER",
-            "spriteSrc": "src/assets/car1.png",
-            "startOffset": { "x": -3, "y": 2 }
+            "spriteSrc": "game/car1.png",
+            "startOffset": { "x": -6, "y": 0 }
         },
         {
             "type": "STEADY_MIDDLE",
-            "spriteSrc": "src/assets/car2.png",
-            "startOffset": { "x": -2, "y": -2 }
+            "spriteSrc": "game/car2.png",
+            "startOffset": { "x": -4, "y": -4 }
         },
         {
             "type": "AGGRESSIVE_CHASER",
-            "spriteSrc": "src/assets/car4.png",
+            "spriteSrc": "game/car4.png",
             "startOffset": { "x": -5, "y": 0 }
         },
         {
             "type": "TACTICAL_BLOCKER",
-            "spriteSrc": "src/assets/car5.png",
-            "startOffset": { "x": -5, "y": 2 }
+            "spriteSrc": "game/car5.png",
+            "startOffset": { "x": -5, "y": 4 }
         }
     ],
     "obstacles": [
@@ -655,7 +655,7 @@
             "spriteSrc": "game/nitro.png"
         },
         {
-            "position": { "x": 20, "y":-6.8 },
+            "position": { "x": 2, "y":-6.8 },
             "respawnTime": 20000,
             "size": { "x": 2, "y": 2 },
             "spriteSrc": "game/nitro.png"
@@ -665,7 +665,7 @@
     "startPosition": { "x": -14.34, "y": -20 },
     "startRotation": -100,
     "playerCarConfig": {
-        "spriteSrc": "src/assets/Honda2.png",
+        "spriteSrc": "game/Honda2.png",
         "size": { "x": 1.5, "y": 3 }
     },
     "raceConfig": {
@@ -673,32 +673,7 @@
         "checkpointTimeout": 7000
     },
     "surfaces": {
-        "segments": [
-            {
-                "start": {"x": -46, "y": -35},
-                "end": {"x": -60, "y": -25},
-                "width": 10,
-                "type": "ICE"
-            },
-            {
-                "start": {"x": -5, "y": -8},
-                "end": {"x": 10, "y": -8},
-                "width": 10,
-                "type": "ICE"
-            },
-            {
-                "start": {"x": -52, "y": 24},
-                "end": {"x": -58, "y": 30},
-                "width": 10,
-                "type": "ICE"
-            },
-            {
-                "start": {"x": 58, "y": 15},
-                "end": {"x": 58, "y": 0},
-                "width": 10,
-                "type": "ICE"
-            }
-        ]
+        "segments": []
     },
     "itemSpawns": [
         {
@@ -708,5 +683,29 @@
             "spawnChance": 0.8
         }
     ],
-    "movingBarriers": []
+    "movingBarriers": [],
+    "weather": {
+        "initialWeather": "CLEAR",
+        "minDuration": 20000,
+        "maxDuration": 60000,
+        "intensity": 0.8,
+        "allowedWeatherTypes": ["CLEAR", "RAIN"],
+        "puddleSpawnPoints": [
+            {
+                "position": { "x": -40, "y": -25 },
+                "size": { "x": 5, "y": 4 },
+                "type": "puddle"
+            },
+            {
+                "position": { "x": 15, "y": 5 },
+                "size": { "x": 6, "y": 3 },
+                "type": "puddle"
+            },
+            {
+                "position": { "x": 40, "y": -20 },
+                "size": { "x": 4, "y": 4 },
+                "type": "ice"
+            }
+        ]
+    }
 }

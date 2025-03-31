@@ -1,7 +1,7 @@
 {
     "name": "Race Track 3",
-    "backgroundSrc": "src/assets/map2.png",
-    "secondBackgroundSrc": "src/assets/map2_layer2.png",
+    "backgroundSrc": "game/map2.png",
+    "secondBackgroundSrc": "game/map2_layer2.png",
     "worldBounds": {
         "x": -64,
         "y": -36,
@@ -1076,22 +1076,22 @@
     "aiCars": [
         {
             "type": "STRAIGHT_LINE_MASTER",
-            "spriteSrc": "src/assets/car1.png",
+            "spriteSrc": "game/car1.png",
             "startOffset": { "x": -3, "y": 2 }
         },
         {
             "type": "STEADY_MIDDLE",
-            "spriteSrc": "src/assets/car2.png",
+            "spriteSrc": "game/car2.png",
             "startOffset": { "x": -2, "y": -2 }
         },
         {
             "type": "AGGRESSIVE_CHASER",
-            "spriteSrc": "src/assets/car4.png",
+            "spriteSrc": "game/car4.png",
             "startOffset": { "x": -5, "y": 0 }
         },
         {
             "type": "TACTICAL_BLOCKER",
-            "spriteSrc": "src/assets/car5.png",
+            "spriteSrc": "game/car5.png",
             "startOffset": { "x": -5, "y": 2 }
         }
     ],
@@ -1120,7 +1120,7 @@
     "startPosition": { "x": 55, "y": -10 },
     "startRotation": 0,
     "playerCarConfig": {
-        "spriteSrc": "src/assets/Honda2.png",
+        "spriteSrc": "game/Honda2.png",
         "size": { "x": 1.5, "y": 3 }
     },
     "raceConfig": {
@@ -1152,5 +1152,29 @@
         }
 
     ],
-    "movingBarriers": []
+    "movingBarriers": [],
+    "weather": {
+        "initialWeather": "CLEAR",
+        "minDuration": 20000,
+        "maxDuration": 60000,
+        "intensity": 0.8,
+        "allowedWeatherTypes": ["CLEAR", "RAIN"],
+        "puddleSpawnPoints": [
+            {
+                "position": { "x": -40, "y": -10 },
+                "size": { "x": 5, "y": 4 },
+                "type": "puddle"
+            },
+            {
+                "position": { "x": 20, "y": 10 },
+                "size": { "x": 6, "y": 3 },
+                "type": "puddle"
+            },
+            {
+                "position": { "x": 40, "y": -20 },
+                "size": { "x": 4, "y": 4 },
+                "type": "ice"
+            }
+        ]
+    }
 }

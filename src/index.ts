@@ -25,6 +25,7 @@ export { default as PolygonCollider } from "./objects/Colliders/PolygonCollider"
 export { CarAI, CarAIController, AIBehaviorType } from "./objects/CarAI"
 export { RaceManager } from "./objects/RaceManager"
 export { SoundManager } from "./SoundManager"
+export { soundManager } from "./SoundManager"
 
 // Barrier System
 export { TrackBarriers, BarrierSegment } from "./objects/BarierSystem"

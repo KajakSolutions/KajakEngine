@@ -67,7 +67,6 @@ export class NitroManager {
                         if(vehicle.playerId === 0) {
                             bonus.deactivate();
                         }
-                        console.log(`Car ${vehicle.playerId} collected nitro boost!`);
                     }
                 }
             );

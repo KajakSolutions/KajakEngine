@@ -22,7 +22,7 @@ export class PuddleObject extends PhysicObject {
         );
 
         const spriteManager = new SpriteManager({
-            imageSrc: options.type === 'puddle' ? "game/car1.png" : "game/car1.png",
+            imageSrc: options.type === 'puddle' ? "game/puddle.png" : "game/ice.png",
             cellSize: vec2D(32, 32),
             count: 1,
             columns: 1

@@ -39,7 +39,7 @@ export default class CarObject extends PhysicObject {
     private _nitroStrength: number;
     private _nitroActive: boolean = false;
     private _nitroEffectTimer: number = 0;
-    private readonly NITRO_EFFECT_DURATION: number = 3000;
+    private readonly NITRO_EFFECT_DURATION: number = 1500;
 
     // physics stuff
     private readonly inertia: number
@@ -52,7 +52,7 @@ export default class CarObject extends PhysicObject {
     private readonly wheelBase: number
     private readonly caFront: number = -5
     private readonly caRear: number = -5.2
-    private readonly driveTrain: number = 0
+    private _driveTrain: number = 0
     private readonly _wheelSize: Vec2D
     public readonly restitution: number = 0.3
     public readonly collisionDamping: number = 0.9
@@ -79,7 +79,7 @@ export default class CarObject extends PhysicObject {
         rearAxleToCg,
         wheelSize = vec2D(0.3, 0.7),
         maxNitro = 100,
-        nitroStrength = 2.5,
+        nitroStrength = 1.5,
         bananaPeels = 0,
         maxBananaPeels = 3,
         ...options
@@ -114,6 +114,15 @@ export default class CarObject extends PhysicObject {
         return this._wheelSize
     }
 
+
+    get driveTrain(): number {
+        return this._driveTrain
+    }
+
+    set driveTrain(value: number) {
+        this._driveTrain = value
+    }
+
     get frontAxleToCg(): number {
         return this._frontAxleToCg
     }
@@ -141,6 +150,11 @@ export default class CarObject extends PhysicObject {
     get nitroActive(): boolean {
         return this._nitroActive;
     }
+
+    get nitroStrength(): number {
+        return this._nitroStrength
+    }
+
 
     get maxNitro(): number {
         return this._maxNitro;
@@ -242,7 +256,7 @@ export default class CarObject extends PhysicObject {
                 Math.min(this.maxGrip, this.caRear * rearSlipAngle)
             ) * rearNormal * surfaceProps.gripMultiplier;
 
-        const driveRatio = 0.5 * this.driveTrain
+        const driveRatio = 0.5 * this._driveTrain
         const tractionForce =
             100 *
             (this.throttle *
@@ -346,6 +360,10 @@ export default class CarObject extends PhysicObject {
         this.brake = value
     }
 
+
+    set nitroStrength(value: number) {
+        this._nitroStrength = value
+    }
     onCollision(other: PhysicObject, collisionInfo: ColliderInfo): void {
         const relativeVelocity = subtract(this.velocity, other.velocity)
 

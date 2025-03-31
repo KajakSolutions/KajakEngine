@@ -5,7 +5,7 @@ import { EngineSoundGenerator } from "./EngineSoundGenerator.ts";
 export class CarSoundSystem {
     private readonly car: CarObject;
     private readonly engineSound: EngineSoundGenerator;
-    private readonly collisionSoundId: string;
+    // private readonly collisionSoundId: string;
     private readonly nitroSoundId: string;
     private lastSpeed: number = 0;
     private volumeChangeListener: () => void;
@@ -13,7 +13,6 @@ export class CarSoundSystem {
     constructor(car: CarObject) {
         this.car = car;
         this.engineSound = new EngineSoundGenerator();
-        this.collisionSoundId = `collision_${car.id}`;
         this.nitroSoundId = `nitro_${car.id}`;
 
         this.volumeChangeListener = this.onVolumeChange.bind(this);
@@ -24,9 +23,9 @@ export class CarSoundSystem {
 
         await this.engineSound.initialize();
 
-        await soundManager.loadSound(this.collisionSoundId, '/sounds/collision.mp3', {
-            category: 'sfx'
-        });
+        // await soundManager.loadSound(this.collisionSoundId, '/sounds/collision.mp3', {
+        //     category: 'sfx'
+        // });
 
         await soundManager.loadSound(this.nitroSoundId, '/sounds/nitro.mp3', {
             category: 'sfx',
@@ -55,10 +54,10 @@ export class CarSoundSystem {
 
         this.engineSound.updateEngine(normalizedSpeed, acceleration);
 
-        const speedDelta = Math.abs(currentSpeed - this.lastSpeed);
-        if (speedDelta > 1) {
-            soundManager.play(this.collisionSoundId);
-        }
+        // const speedDelta = Math.abs(currentSpeed - this.lastSpeed);
+        // if (speedDelta > 1) {
+        //     soundManager.play(this.collisionSoundId);
+        // }
 
         this.lastSpeed = currentSpeed;
     }

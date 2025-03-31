@@ -39,7 +39,7 @@ export const SURFACE_PROPERTIES: Record<SurfaceType, SurfaceProperties> = {
     },
     [SurfaceType.MUD]: {
         gripMultiplier: 0.5,
-        dragMultiplier: 1.5,
+        dragMultiplier: 3,
         color: "#795548"
     }
 };

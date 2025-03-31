@@ -43,7 +43,7 @@ interface NitroSpawnConfig {
 }
 
 interface WeatherConfig {
-    initialWeather?: string;
+    initialWeather?: WeatherType;
     minDuration?: number;
     maxDuration?: number;
     intensity?: number;
